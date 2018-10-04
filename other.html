@@ -1,0 +1,26 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700'>
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css'>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div id="app">
+        {{ message }}
+        <div class="songs-greed">
+            <ul class="songs-block">
+                <li class="songs-item" v-for="todo in todos">
+                    <div>{{ todo.id }}</div>
+                    <span>{{ todo.text }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript" src="main.js"></script>
+</body>
+
+</html>
