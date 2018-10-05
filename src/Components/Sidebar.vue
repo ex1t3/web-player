@@ -45,7 +45,7 @@ ul li {
 }
 .sidebar-legend:hover a:before{
   width: 110px;
-  left: 
+  left: 50px;
 }
 .sidebar-legend a {
   font-size: 40px;
