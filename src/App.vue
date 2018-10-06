@@ -1,8 +1,16 @@
 <template>
-<Sidebar/>
+<div class="page">
+  <Login v-if="!isLoggedIn"/>
+  <Sidebar v-if="isLoggedIn"/>
+  <div class="content-wrapper">
+      fsfsfsfjsfjsf
+    </div>
+</div>
 </template>
 <script>
+import {mapGetters} from 'vuex'
 import Sidebar from './Components/Sidebar'
+import Login from './Components/Login'
 
 export default {
   data () {
@@ -11,9 +19,21 @@ export default {
     }
   },
   name: 'App',
+  computed: mapGetters ({
+    isLoggedIn: 'isLoggedIn'  
+  }),
   components: {
-    Sidebar
+    Sidebar,
+    Login
   }
 }
-
 </script>
+<style>
+html, body {
+  font-family: 'Niramit', sans-serif;
+}
+.page {
+  position: relative;
+  display: block;
+}
+</style>
