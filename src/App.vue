@@ -19,8 +19,8 @@ export default {
     }
   },
   name: 'App',
-  computed: mapGetters ({
-    isLoggedIn: 'isLoggedIn'  
+  computed: mapGetters({
+    isLoggedIn: 'isLoggedIn'
   }),
   components: {
     Sidebar,

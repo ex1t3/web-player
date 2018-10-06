@@ -1,8 +1,11 @@
 <template>
     <div class="login-form-block">
-        <form>
-            <div class="login-form-content">
-                <div class="login-form-header">Log In</div>
+            <div v-bind:class="{ 'loginActive': loginActive }" class="login-form-content">
+                <div class="login-form-header">
+                    <div v-on:click="loginActive = true" class="left-header">Log in</div>
+                    <div v-on:click="loginActive = false" class="right-header">Sign up</div>
+                </div>
+                <form class="login-form">
                 <div class="login-form-body">
                     <div class="input-group">
                         <label class="label" for="Username">Username</label>
@@ -10,37 +13,95 @@
                     </div>
                     <div class="input-group">
                         <label class="label" for="Password">Password</label>
-                        <input placeholder="" class="input-field" type="password" required />
+                        <input class="input-field" type="password" required />
                     </div>
                     <div class="input-group centered">
                         <button v-on:click="logIn()" class="button-gradient" type="submit">LOGIN</button>
                     </div>
                 </div>
+                </form>
+                <form class="signup-form">
+                <div class="login-form-body">
+                    <div class="input-group">
+                        <label class="label" for="Username">Username</label>
+                        <input class="input-field" type="text" required />
+                    </div>
+                    <div class="input-group">
+                        <label class="label" for="Password">Email</label>
+                        <input class="input-field" type="email" required />
+                    </div>
+                    <div class="input-group">
+                        <label class="label" for="Username">Password</label>
+                        <input class="input-field" type="text" required />
+                    </div>
+                    <div class="input-group">
+                        <label class="label" for="Password">Confrim password</label>
+                        <input class="input-field" type="password" required />
+                    </div>
+                    <div class="input-group centered">
+                        <button v-on:click="register()" class="button-gradient" type="submit">SIGN UP</button>
+                    </div>
+                </div>
+                </form>
                 <div class="login-form-footer"></div>
             </div>
-        </form>
     </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 import store from '../store'
-import axios from 'axios'
+// import axios from 'axios'
 export default {
-  methods: {
-    logIn() {
-        this.$store.dispatch('logIn')
+  store,
+  data () {
+    return {
+      loginActive: true
     }
   },
-  beforeMount(){
-    //this.$store.dispatch('logIn')
+  methods: {
+    logIn () {
+      this.$store.dispatch('logIn')
+    },
+    register () {
+      this.$store.dispatch('logIn')
+    }
   },
-  computed: mapGetters ({
-    isLoggedIn: 'isLoggedIn'  
-    }),
+  beforeMount () {
+    // this.$store.dispatch('logIn')
+  },
+  computed: mapGetters({
+    isLoggedIn: 'isLoggedIn'
+  })
 }
 </script>
-
 <style>
+.login-form, .signup-form {
+  transition: 0.3s;
+  position: absolute;
+}
+.loginActive .login-form {
+    width: 100%;
+    opacity: 1;
+    transform: translateX(0);
+}
+.login-form-content:not(.loginActive) {   
+  min-height: 600px;
+}
+.login-form-content:not(.loginActive) .signup-form {
+    width: 100%;
+    opacity: 1;
+    transform: translateX(0);
+}
+.loginActive .signup-form { 
+  transform: translateX(500px);
+  opacity: 0;
+  width: 0;
+}
+.login-form-content:not(.loginActive) .login-form {
+  transform: translateX(-500px);
+  opacity: 0;
+  width: 0;
+}
 .input-group {
     width: 60%;
     margin: 25px auto;
@@ -48,13 +109,15 @@ export default {
 .input-group .label {
     font-size: 16px;
     text-transform: uppercase;
+    position: relative;
+    pointer-events: none;
 }
 .input-group .input-field {
     outline: none;
     display: block;
     width: 100%;
     border: 0;
-    border-bottom: 1px solid rgba(31, 28, 236, 0.44);
+    box-shadow: 0 1px 0 0 rgba(31, 28, 236, 0.41);
     box-sizing: border-box;
     padding: 5px 5px;
     color: rgba(0, 0, 0, 0.6);
@@ -62,12 +125,12 @@ export default {
     font-size: inherit;
     font-weight: 500;
     line-height: inherit;
-    transition: 0.3s ease;
-
+    transition: 0.5s box-shadow, border-bottom;
 }
-.input-group .input-field:active, 
+.input-group .input-field:active,
 .input-group .input-field:focus {
-    border-bottom: 2px solid rgba(31, 28, 236, 0.44);
+    border-bottom: 1px transparent;
+    box-shadow: 0 2px 0 0 rgba(31, 28, 236, 0.68);
 }
 .input-group .button-gradient:hover {
     background: linear-gradient(135deg, #9670e7 0%, #f57f52 100%);
@@ -117,16 +180,23 @@ button {
 .login-form-header {
   padding: 20px 35px;
   border-bottom: 1px solid #f1f1f1;
-  font-style: initial;
-  font-weight: 300;
-  font-size: 23px;
-  text-transform: uppercase;
-  background: -webkit-linear-gradient(
-    rgb(243, 133, 120),
-    rgba(31, 28, 236, 0.75)
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  display: flex;
+}
+.left-header, .right-header {
+    width: 50%;
+    cursor: pointer;
+    left: 0;
+    background: -webkit-linear-gradient(      rgb(243, 133, 120),      rgba(31, 28, 236, 0.75)    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-style: initial;
+    font-weight: 300;
+    font-size: 23px;
+    text-transform: uppercase;
+}
+.right-header {
+    text-align: right;
+    border-left: 1px solid #e6e6e6;
 }
 .login-form-content {
   position: relative;
@@ -136,6 +206,8 @@ button {
   min-height: 400px;
   max-width: 500px;
   min-width: 300px;
+  transition: 0.3s min-height;
+  overflow: hidden;
   border-radius: 5px;
   border: 1px solid rgba(111, 111, 111, 0.01);
   -moz-box-shadow: 0 19px 38px rgba(0, 0, 0, 0.18), 0 15px 12px rgba(0, 0, 0, 0);

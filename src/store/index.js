@@ -3,10 +3,10 @@ import {
   LOG_IN,
   LOG_OUT,
   START_LOADING,
-  STOP_LOADING,
+  STOP_LOADING
 } from './mutation-types'
 import Vue from 'vue'
-import axios from 'axios'
+// import axios from 'axios'
 import Vuex from 'vuex'
 import createLogger from 'vuex/dist/logger'
 const debug = process.env.NODE_ENV !== 'production'
@@ -18,7 +18,7 @@ Vue.use(Vuex)
 const state = {
   isLoading: false,
   isLoggedIn: false,
-  isHomePage: false,
+  isHomePage: false
 
 }
 
@@ -26,7 +26,7 @@ const state = {
 const getters = {
   isLoading: state => state.isLoading,
   isLoggedIn: state => state.isLoggedIn,
-  isHomePage: state => state.isHomePage,
+  isHomePage: state => state.isHomePage
 }
 // initialize store actions
 const actions = {
