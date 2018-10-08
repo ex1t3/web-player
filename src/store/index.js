@@ -3,7 +3,9 @@ import {
   LOG_IN,
   LOG_OUT,
   START_LOADING,
-  STOP_LOADING
+  STOP_LOADING,
+  ACTIVE_SIDEBAR,
+  DEACTIVE_SIDEBAR
 } from './mutation-types'
 import Vue from 'vue'
 // import axios from 'axios'
@@ -18,7 +20,8 @@ Vue.use(Vuex)
 const state = {
   isLoading: false,
   isLoggedIn: false,
-  isHomePage: false
+  isHomePage: false,
+  isActiveSidebar: false
 
 }
 
@@ -26,6 +29,7 @@ const state = {
 const getters = {
   isLoading: state => state.isLoading,
   isLoggedIn: state => state.isLoggedIn,
+  isActiveSidebar: state => state.isActiveSidebar,
   isHomePage: state => state.isHomePage
 }
 // initialize store actions
@@ -44,6 +48,12 @@ const actions = {
   },
   stopLoading ({commit}, data) {
     commit(STOP_LOADING, data)
+  },
+  activateSidebar ({commit}, data) {
+    commit(ACTIVE_SIDEBAR, data)
+  },
+  deactivateSidebar ({commit}, data) {
+    commit(DEACTIVE_SIDEBAR, data)
   }
 }
 const mutations = {
@@ -52,6 +62,12 @@ const mutations = {
   },
   [STOP_LOADING] (state) {
     state.LoadingVisability = false
+  },
+  [ACTIVE_SIDEBAR] (state) {
+    state.isActiveSidebar = true
+  },
+  [DEACTIVE_SIDEBAR] (state) {
+    state.isActiveSidebar = false
   },
   [LOG_IN] (state) {
     state.isLoggedIn = true

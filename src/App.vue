@@ -1,5 +1,5 @@
 <template>
-<div class="page">
+<div v-bind:class="{ 'sidebar-active': isActiveSidebar }" class="page">
   <Login v-if="!isLoggedIn"/>
   <Sidebar v-if="isLoggedIn"/>
   <div class="content-wrapper">
@@ -18,9 +18,25 @@ export default {
       message: 'dgdgdg'
     }
   },
+  mounted: function () {
+    if (window.innerWidth < 700) {
+      this.deactSidebar()
+    } else {
+      this.actSidebar()
+    }
+  },
+  methods: {
+    actSidebar () {
+      this.$store.dispatch('activateSidebar')
+    },
+    deactSidebar () {
+      this.$store.dispatch('deactivateSidebar')
+    }
+  },
   name: 'App',
   computed: mapGetters({
-    isLoggedIn: 'isLoggedIn'
+    isLoggedIn: 'isLoggedIn',
+    isActiveSidebar: 'isActiveSidebar'
   }),
   components: {
     Sidebar,
@@ -33,7 +49,7 @@ html, body {
   font-family: 'Niramit', sans-serif;
 }
 .page {
-  position: relative;
+  position: absolute;
   display: block;
 }
 </style>

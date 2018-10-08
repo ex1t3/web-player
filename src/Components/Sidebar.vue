@@ -1,6 +1,6 @@
 <template>
   <div class="sidebar">
-    <div v-bind:class="{ 'burger-active': isActiveBurger }" v-on:click="isActiveBurger = !isActiveBurger" class="sidebar-burger">
+    <div v-bind:class="{ 'burger-active': isActiveSidebar }" v-on:click="toggleSidebar()" class="sidebar-burger">
       <span class="burger-inner"></span>
     </div>
     <div class="sidebar-body">
@@ -17,16 +17,70 @@
   </div>
 </template>
 <script>
+import store from '../store'
+import { mapGetters } from 'vuex'
 export default {
+  store,
   data () {
     return {
-      message: 'dgdgdg',
-      isActiveBurger: true
+      message: 'dgdgdg'
     }
-  }
+  },
+  methods: {
+    toggleSidebar () {
+      if (this.isActiveSidebar) {
+        this.$store.dispatch('deactivateSidebar')
+      } else {
+        this.$store.dispatch('activateSidebar')
+      }
+    }
+  },
+  computed: mapGetters({
+    isActiveSidebar: 'isActiveSidebar'
+  })
 }
 </script>
 <style>
+.content-wrapper {
+    position: relative;
+    display: block;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    min-height: 100%;
+    z-index: 1;
+    transition: .3s;
+    animation: slide-out-body 1s;
+}
+.sidebar-active {
+  left: 220px;
+}
+.sidebar-active .sidebar-body ul li:nth-child(1) {
+  animation: slide-in 1.1s;
+}
+.sidebar-active .sidebar-body ul li:nth-child(2) {
+  animation: slide-in 1.3s;
+}
+.sidebar-active .sidebar-body ul li:nth-child(3) {
+  animation: slide-in 1.5s;
+}
+.sidebar-active .sidebar-body ul li:nth-child(4) {
+  animation: slide-in 1.6s;
+}
+
+@media (max-width: 700px) {
+  .content-wrapper {   
+    margin-top: 40px;
+  }
+  .sidebar-active .content-wrapper {
+    left: -220px;
+    background: linear-gradient(125deg, white, #625abb73);
+    filter: blur(10px);
+  }
+}
+.sidebar-active .content-wrapper {
+  animation: slide-in 1s;
+}
 ul {
   display: block;
   list-style-type: disc;
@@ -46,6 +100,16 @@ ul {
 .sidebar ul li:last-child {
   border: none;
 }
+.sidebar-active .sidebar {
+  animation: slide-in 1s;
+  transform: translateX(0);
+}
+.page:not(.sidebar-active) .sidebar {
+  animation: slide-out 1s;
+}
+.page:not(.sidebar-active) .sidebar-burger {
+  animation: roll-out 1s;
+}
 .sidebar {
   -ms-flex-direction: column;
   -webkit-flex-direction: column;
@@ -58,13 +122,15 @@ ul {
   left: 0;
   position: fixed;
   top: 0;
-  width: 220px;
+  transform: translateX(-220px);
   z-index: 100;
+  width: 220px;
 }
 .sidebar-burger {
   position: absolute;
   left: 250px;
   top: 30px;
+  animation: roll-in 1s;
   cursor: pointer;
   width: 40px;
   height: 40px;
@@ -182,5 +248,28 @@ ul {
   text-shadow: none;
   left: 85px;
 }
-
+@keyframes slide-in {
+  from {transform: translateX(-300px);}
+    to {transform: translateX(0px);}
+}
+@keyframes slide-out-body {
+  10% {transform: translateX(50px);}
+  100% {transform: translateX(0px);}
+}
+@keyframes slide-out {
+  from {transform: translateX(0px);}
+    to {transform: translateX(-220px);}
+}
+@keyframes roll-in {
+from {transform: translateX(-0px) rotate(-360deg);}
+to {transform: translateX(0px) rotate(0);}
+}
+@keyframes roll-out {
+from {transform: translateX(0px) rotate(360deg);}
+to {transform: translateX(-0px) rotate(0);}
+}
+@keyframes slide-up {
+  from {transform: translateY(900px);}
+    to {transform: translateY(0px);}
+}
 </style>

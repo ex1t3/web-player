@@ -9,11 +9,11 @@
                 <div class="login-form-body">
                     <div class="input-group">
                         <label class="label" for="Username">Username</label>
-                        <input class="input-field" type="text" required />
+                        <input id="UsernameLogin" class="input-field" type="text" required />
                     </div>
                     <div class="input-group">
                         <label class="label" for="Password">Password</label>
-                        <input class="input-field" type="password" required />
+                        <input id="PasswordLogin" class="input-field" type="password" required />
                     </div>
                     <div class="input-group centered">
                         <button v-on:click="logIn()" class="button-gradient" type="submit">LOGIN</button>
@@ -24,26 +24,25 @@
                 <div class="login-form-body">
                     <div class="input-group">
                         <label class="label" for="Username">Username</label>
-                        <input class="input-field" type="text" required />
+                        <input id="UsernameSignup" class="input-field" type="text" required />
                     </div>
                     <div class="input-group">
-                        <label class="label" for="Password">Email</label>
-                        <input class="input-field" type="email" required />
+                        <label class="label" for="EmailSignup">Email</label>
+                        <input id="EmailSignup" class="input-field" type="email" required />
                     </div>
                     <div class="input-group">
-                        <label class="label" for="Username">Password</label>
-                        <input class="input-field" type="text" required />
+                        <label class="label" for="PasswordSignup">Password</label>
+                        <input id="PasswordSignup" class="input-field" type="password" required />
                     </div>
                     <div class="input-group">
-                        <label class="label" for="Password">Confrim password</label>
-                        <input class="input-field" type="password" required />
+                        <label class="label" for="ConfirmPasswordSignup">Confrim password</label>
+                        <input id="ConfirmPasswordSignup" class="input-field" type="password" required />
                     </div>
                     <div class="input-group centered">
                         <button v-on:click="register()" class="button-gradient" type="submit">SIGN UP</button>
                     </div>
                 </div>
                 </form>
-                <div class="login-form-footer"></div>
             </div>
     </div>
 </template>
@@ -84,15 +83,15 @@ export default {
     opacity: 1;
     transform: translateX(0);
 }
-.login-form-content:not(.loginActive) {   
-  min-height: 600px;
+.login-form-content:not(.loginActive) {
+  min-height: 585px;
 }
 .login-form-content:not(.loginActive) .signup-form {
     width: 100%;
     opacity: 1;
     transform: translateX(0);
 }
-.loginActive .signup-form { 
+.loginActive .signup-form {
   transform: translateX(500px);
   opacity: 0;
   width: 0;
@@ -168,21 +167,20 @@ button {
     user-select: none;
 }
 .login-form-block {
-  position: absolute;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9999999999;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
 }
 .login-form-header {
-  padding: 20px 35px;
   border-bottom: 1px solid #f1f1f1;
   display: flex;
 }
 .left-header, .right-header {
+    padding: 20px 0;
+    text-align: center;
     width: 50%;
     cursor: pointer;
     left: 0;
@@ -195,22 +193,29 @@ button {
     text-transform: uppercase;
 }
 .right-header {
-    text-align: right;
     border-left: 1px solid #e6e6e6;
 }
 .login-form-content {
   position: relative;
   margin: auto auto;
   width: 50%;
-  bottom: -50%;
   min-height: 400px;
   max-width: 500px;
   min-width: 300px;
   transition: 0.3s min-height;
   overflow: hidden;
-  border-radius: 5px;
+  animation: fade-in 1s;
+  border-radius: 2px;
   border: 1px solid rgba(111, 111, 111, 0.01);
   -moz-box-shadow: 0 19px 38px rgba(0, 0, 0, 0.18), 0 15px 12px rgba(0, 0, 0, 0);
   box-shadow: 0 19px 38px rgba(0, 0, 0, 0.18), 0 15px 12px rgba(0, 0, 0, 0);
+}
+.login-form-body {
+    position: relative;
+    top: 10px;
+}
+@keyframes fade-in {
+    from{opacity: 0;}
+    to{opacity:1;}
 }
 </style>
