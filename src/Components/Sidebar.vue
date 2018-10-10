@@ -50,7 +50,18 @@ export default {
     min-height: 100%;
     z-index: 1;
     transition: .3s;
+    margin-top: 40px;
     animation: slide-out-body 1s;
+}
+@media (max-width: 700px) {
+  .sidebar-active .content-wrapper {
+    left: -220px;
+    background: linear-gradient(125deg, white, #625abb73);
+    filter: blur(10px);
+  }
+}
+.sidebar-active .content-wrapper {
+  animation: slide-in 1s;
 }
 .sidebar-active {
   left: 220px;
@@ -68,19 +79,6 @@ export default {
   animation: slide-in 1.6s;
 }
 
-@media (max-width: 700px) {
-  .content-wrapper {   
-    margin-top: 40px;
-  }
-  .sidebar-active .content-wrapper {
-    left: -220px;
-    background: linear-gradient(125deg, white, #625abb73);
-    filter: blur(10px);
-  }
-}
-.sidebar-active .content-wrapper {
-  animation: slide-in 1s;
-}
 ul {
   display: block;
   list-style-type: disc;
@@ -128,8 +126,8 @@ ul {
 }
 .sidebar-burger {
   position: absolute;
-  left: 250px;
-  top: 30px;
+  left: 235px;
+  top: 10px;
   animation: roll-in 1s;
   cursor: pointer;
   width: 40px;
@@ -240,7 +238,7 @@ ul {
 }
 .sidebar-legend a:after {
   content: "web";
-  margin-top: 10px;
+  top: 85px;
   position: absolute;
   color: #fff;
   font-size: 10px;

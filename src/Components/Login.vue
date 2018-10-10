@@ -16,9 +16,14 @@
                         <input id="PasswordLogin" class="input-field" type="password" required />
                     </div>
                     <div class="input-group centered">
-                        <button v-on:click="logIn()" class="button-gradient" type="submit">LOGIN</button>
+                        <button v-on:click="logIn()" class="button-form button-gradient" type="submit">LOGIN</button>
                     </div>
                 </div>
+                    <div class="separator">OR</div>
+                    <div class="social-block">
+                        <button type="button" class="button-form button-google"><i class="form-button-brand fab fa-google"></i>GOOGLE</button>
+                        <button type="button" class="button-form button-facebook"><i class="form-button-brand fab fa-facebook"></i>FACEBOOK</button>
+                    </div>
                 </form>
                 <form class="signup-form">
                 <div class="login-form-body">
@@ -39,7 +44,12 @@
                         <input id="ConfirmPasswordSignup" class="input-field" type="password" required />
                     </div>
                     <div class="input-group centered">
-                        <button v-on:click="register()" class="button-gradient" type="submit">SIGN UP</button>
+                        <button v-on:click="register()" class="button-form button-gradient" type="submit">SIGN UP</button>
+                    </div>
+                    <div class="separator">OR</div>
+                    <div class="social-block">
+                        <button type="button" class="button-form button-google"><i class="form-button-brand fab fa-google"></i>GOOGLE</button>
+                        <button type="button" class="button-form button-facebook"><i class="form-button-brand fab fa-facebook"></i>FACEBOOK</button>
                     </div>
                 </div>
                 </form>
@@ -74,6 +84,42 @@ export default {
 }
 </script>
 <style>
+.social-block {
+    text-align: center;
+}
+.separator {
+    position: relative;
+    text-align: center;
+    width: 50px;
+    color: #b775b3;
+    margin: 0px auto;
+    margin-top: -10px;
+}
+.loginActive .separator {
+    position: relative;
+    text-align: center;
+    width: 50px;
+    margin: 15px auto;
+    color: #b775b3;
+}
+.separator:before {
+    content: "";
+    width: 12px;
+    height: 1px;
+    background: #b775b3;
+    position: absolute;
+    top: 15px;
+    right: 0;
+}
+.separator:after {
+    content: "";
+    width: 12px;
+    height: 1px;
+    background: #b775b3;
+    position: absolute;
+    top: 15px;
+    left: 0;
+}
 .login-form, .signup-form {
   transition: 0.3s;
   position: absolute;
@@ -84,7 +130,7 @@ export default {
     transform: translateX(0);
 }
 .login-form-content:not(.loginActive) {
-  min-height: 585px;
+    min-height: 550px;
 }
 .login-form-content:not(.loginActive) .signup-form {
     width: 100%;
@@ -101,13 +147,16 @@ export default {
   opacity: 0;
   width: 0;
 }
+.login-form .input-group {
+    margin: 25px auto;
+}
 .input-group {
     width: 60%;
-    margin: 25px auto;
+    margin: 10px auto;
 }
 .input-group .label {
     font-size: 16px;
-    text-transform: uppercase;
+    text-transform: lowercase;
     position: relative;
     pointer-events: none;
 }
@@ -118,12 +167,12 @@ export default {
     border: 0;
     box-shadow: 0 1px 0 0 rgba(31, 28, 236, 0.41);
     box-sizing: border-box;
-    padding: 5px 5px;
     color: rgba(0, 0, 0, 0.6);
     font-family: inherit;
     font-size: inherit;
     font-weight: 500;
     line-height: inherit;
+    margin-top: -5px;
     transition: 0.5s box-shadow, border-bottom;
 }
 .input-group .input-field:active,
@@ -132,20 +181,11 @@ export default {
     box-shadow: 0 2px 0 0 rgba(31, 28, 236, 0.68);
 }
 .input-group .button-gradient:hover {
-    background: linear-gradient(135deg, #9670e7 0%, #f57f52 100%);
+    background: linear-gradient(335deg, #9670e7 0%, #f57f52 100%);
     box-shadow: 0px 11px 8em rgba(167, 151, 255, 0.63);
 }
 .input-group .button-gradient {
     color: white;
-    border-radius: 20px;
-    border: 0;
-    background: none;
-    border-radius: 20px;
-    padding: 1.2em 5em;
-    letter-spacing: 0.35em;
-    font-size: 0.7em;
-    transition: background-color 0.3s, box-shadow 0.3s, color 0.3s;
-    margin: 1em;
     background: linear-gradient(195deg, #9670e7 0%, #e87d67 100%);
 }
 .centered {
@@ -165,6 +205,38 @@ button {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+.button-form {
+    border-radius: 20px;
+    border: 0;
+    position: relative;
+    background: none;
+    border-radius: 20px;
+    padding: 1.2em 5em;
+    letter-spacing: 0.35em;
+    font-size: 0.7em;
+    transition: background-color 0.3s, box-shadow 0.3s, color 0.3s;
+    margin: 1em;
+}
+.button-google {
+    border: 1px solid rgba(219, 68, 55, 0.42);
+    color: #db4437;
+    padding-right: 3em;
+}
+.button-google:hover {
+    box-shadow: 1px 1px rgba(195, 94, 35, 0.4);
+}
+.button-facebook:hover {
+    box-shadow: 1px 1px rgba(80, 73, 169, 0.4);
+}
+.button-facebook {   
+    color: #443ca7;
+    padding-right: 2em;
+    border: 1px solid rgba(80, 73, 169, 0.4);
+}
+.form-button-brand {
+    position: absolute;
+    left: 20px;
 }
 .login-form-block {
     position: fixed;
@@ -199,7 +271,7 @@ button {
   position: relative;
   margin: auto auto;
   width: 50%;
-  min-height: 400px;
+  min-height: 500px;
   max-width: 500px;
   min-width: 300px;
   transition: 0.3s min-height;
@@ -217,5 +289,13 @@ button {
 @keyframes fade-in {
     from{opacity: 0;}
     to{opacity:1;}
+}
+@media (max-width: 800px) {
+    .login-form-content:not(.loginActive) {
+        min-height: 580px;
+    }
+    .login-form-content {
+        min-height: 580px;
+    }
 }
 </style>

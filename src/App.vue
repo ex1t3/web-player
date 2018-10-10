@@ -2,7 +2,7 @@
 <div v-bind:class="{ 'sidebar-active': isActiveSidebar }" class="page">
   <Login v-if="!isLoggedIn"/>
   <Sidebar v-if="isLoggedIn"/>
-  <div class="content-wrapper">
+  <div v-if="isLoggedIn" class="content-wrapper">
       fsfsfsfjsfjsf
     </div>
 </div>
