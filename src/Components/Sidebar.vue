@@ -1,4 +1,5 @@
 <template>
+<div class="absolute-items">
   <div class="sidebar">
     <div v-bind:class="{ 'burger-active': isActiveSidebar }" v-on:click="toggleSidebar()" class="sidebar-burger">
       <span class="burger-inner"></span>
@@ -14,6 +15,12 @@
         <li><a>Search</a></li>
       </ul>
     </div>
+  </div>
+  <div class="main-player-block">
+    <div class="player-buttons"><i class="fas fa-step-backward"></i><i class="fas fa-play"></i><i class="fas fa-step-forward"></i></div>
+    <div class="player-trackline">dgdgdgdg</div>
+    <div class="player-settings">dgdgdgdg</div>
+  </div>
   </div>
 </template>
 <script>
@@ -245,6 +252,37 @@ ul {
   font-family: Round Nova,sans-serif;
   text-shadow: none;
   left: 85px;
+}
+.main-player-block {
+    position: fixed;
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    bottom: 0;
+    height: 80px;
+    width: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    z-index: 999999;
+    box-shadow: 0 -3px 15px 0px rgba(51, 51, 51, 0.1);
+}
+.player-buttons {
+    width: 160px;
+    padding: 0 20px;
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+.player-buttons i {
+  font-size: 25px;
+  margin: 0 20px;
+  cursor: pointer;
+  color: rgb(58, 54, 84)
 }
 @keyframes slide-in {
   from {transform: translateX(-300px);}

@@ -165,7 +165,7 @@ export default {
     display: block;
     width: 100%;
     border: 0;
-    box-shadow: 0 1px 0 0 rgba(31, 28, 236, 0.41);
+    box-shadow: 0 1px 0 0 rgba(157, 113, 220, 0.6);
     box-sizing: border-box;
     color: rgba(0, 0, 0, 0.6);
     font-family: inherit;
@@ -178,7 +178,7 @@ export default {
 .input-group .input-field:active,
 .input-group .input-field:focus {
     border-bottom: 1px transparent;
-    box-shadow: 0 2px 0 0 rgba(31, 28, 236, 0.68);
+    box-shadow: 0 2px 0 0 rgba(160, 113, 216, 0.62)
 }
 .input-group .button-gradient:hover {
     background: linear-gradient(335deg, #9670e7 0%, #f57f52 100%);
@@ -229,7 +229,7 @@ button {
 .button-facebook:hover {
     box-shadow: 1px 1px rgba(80, 73, 169, 0.4);
 }
-.button-facebook {   
+.button-facebook {
     color: #443ca7;
     padding-right: 2em;
     border: 1px solid rgba(80, 73, 169, 0.4);
@@ -256,7 +256,7 @@ button {
     width: 50%;
     cursor: pointer;
     left: 0;
-    background: -webkit-linear-gradient(      rgb(243, 133, 120),      rgba(31, 28, 236, 0.75)    );
+    background: -webkit-linear-gradient(30deg, rgb(243, 133, 120), rgba(31, 28, 236, 0.88));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-style: initial;
