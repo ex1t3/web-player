@@ -26,9 +26,9 @@
       <div class="timeline">
       <span class="current-time">{{ currentTime }}</span>
       <span class="total-time">{{ duration }}</span>
-      <div class="slider">
+      <div v-on:click="onTimeChange($event)" class="slider">
        <div class="progress" v-bind:style="{ width: progressWidth }">
-         <div class="pin" id="progress-pin" v-bind:style="{ 'margin-left': progressWidth }"></div>
+         <div @mousedown="onMouseDown()" @mousemove="onMoveTimeChange($event)" class="pin" id="progress-pin" v-bind:style="{ 'margin-left': progressWidth }"></div>
       </div>
       </div>
      </div>
@@ -51,6 +51,7 @@ export default {
       currentTime: '0:00',
       isPlayed: true,
       isPaused: false,
+      isDragged: false,
       currentIndex: 0,
       audio: new Audio()
     }
@@ -58,6 +59,7 @@ export default {
   mounted () {
     this.loadSongs()
     this.preloadSong()
+    window.addEventListener('mouseup', this.onMouseUp)
   },
   methods: {
     loadSongs () {
@@ -81,6 +83,9 @@ export default {
       var min = Math.floor(time / 60)
       var sec = Math.floor(time % 60)
       return min + ':' + ((sec < 10) ? ('0' + sec) : sec)
+    },
+    formatBackTime (time) {
+      return this.audio.duration * time
     },
     formatProgress (time) {
       return (time / this.audio.duration) * 100 + '%'
@@ -116,6 +121,26 @@ export default {
       if (current === this.audio.duration) {
         this.pauseSong()
       }
+    },
+    onMouseDown () {
+      this.isDragged = true
+    },
+    onMouseUp () {
+      this.isDragged = false
+    },
+    onMoveTimeChange (e) {
+      if (this.isDragged) {
+        var x = e.clientX
+        console.log(x)
+        this.progressWidth = x / 200  + '%'
+      }
+    },
+    onTimeChange (e) {
+      var x = e.clientX
+      var offset = e.target.parentElement.offsetLeft === 0 ? e.target.parentElement.parentElement.offsetLeft : e.target.parentElement.offsetLeft
+      offset = x - offset
+      this.progressWidth = offset + 'px'
+      this.audio.currentTime = this.formatBackTime(offset / e.target.parentElement.clientWidth) 
     },
     preloadSong () {
       this.audio.src = this.songs[this.currentIndex]['name']
