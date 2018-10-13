@@ -18,7 +18,16 @@
   </div>
   <div class="main-player-block">
     <div class="player-buttons"><i class="fas fa-step-backward"></i><i class="fas fa-play"></i><i class="fas fa-step-forward"></i></div>
-    <div class="player-trackline">dgdgdgdg</div>
+    <div class="player-trackline">
+      <div class="timeline">
+      <span class="current-time">0:00</span>
+      <span class="total-time"></span>
+      <div class="slider" data-direction="horizontal">
+				<div class="progress" style="width: 0%;">
+					<div class="pin" id="progress-pin" data-method="rewind"></div>
+				</div>
+			</div>
+     </div></div>
     <div class="player-settings">dgdgdgdg</div>
   </div>
   </div>
@@ -269,6 +278,23 @@ ul {
     z-index: 999999;
     box-shadow: 0 -3px 15px 0px rgba(51, 51, 51, 0.1);
 }
+.player-trackline {
+    padding: 0 40px;
+    width: 80%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.timeline {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 2px;
+  background: rgba(58, 54, 84, 0.5215686274509804)
+}
+.player-settings {
+  padding-right: 20px;
+}
 .player-buttons {
     width: 160px;
     padding: 0 20px;
@@ -279,10 +305,23 @@ ul {
     display: flex;
 }
 .player-buttons i {
-  font-size: 25px;
+  font-size: 20px;
   margin: 0 20px;
   cursor: pointer;
   color: rgb(58, 54, 84)
+}
+.player-buttons i:nth-child(2) {
+  font-size: 30px;
+}
+.current-time {
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+.total-time {
+    right: 0;
+    position: absolute;
+    top: 0;
 }
 @keyframes slide-in {
   from {transform: translateX(-300px);}
