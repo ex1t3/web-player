@@ -17,17 +17,22 @@
     </div>
   </div>
   <div class="main-player-block">
-    <div class="player-buttons"><i class="fas fa-step-backward"></i><i class="fas fa-play"></i><i class="fas fa-step-forward"></i></div>
+    <div class="player-buttons">
+      <i v-on:click="playPrev()" class="fas fa-backward"></i>
+      <i v-on:click="playSong()" v-bind:class="{hidden : isPaused}" class="fas fa-play"></i>
+      <i v-on:click="pauseSong()" v-bind:class="{hidden : isPlayed}" class="fas fa-pause"></i>
+      <i v-on:click="playNext()" class="fas fa-forward"></i></div>
     <div class="player-trackline">
       <div class="timeline">
-      <span class="current-time">0:00</span>
-      <span class="total-time"></span>
-      <div class="slider" data-direction="horizontal">
-				<div class="progress" style="width: 0%;">
-					<div class="pin" id="progress-pin" data-method="rewind"></div>
-				</div>
-			</div>
-     </div></div>
+      <span class="current-time">{{ currentTime }}</span>
+      <span class="total-time">{{ duration }}</span>
+      <div class="slider">
+       <div class="progress" v-bind:style="{ width: progressWidth }">
+         <div class="pin" id="progress-pin" v-bind:style="{ 'margin-left': progressWidth }"></div>
+      </div>
+      </div>
+     </div>
+     </div>
     <div class="player-settings">dgdgdgdg</div>
   </div>
   </div>
@@ -39,16 +44,98 @@ export default {
   store,
   data () {
     return {
-      message: 'dgdgdg'
+      message: 'dgdgdg',
+      songs: [],
+      duration: '0:00',
+      progressWidth: '0%',
+      currentTime: '0:00',
+      isPlayed: true,
+      isPaused: false,
+      currentIndex: 0,
+      audio: new Audio()
     }
   },
+  mounted () {
+    this.loadSongs()
+    this.preloadSong()
+  },
   methods: {
+    loadSongs () {
+      this.songs = [
+        { name: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Post%20Malone%20-%20I%20Fall%20Apart.mp3',
+          artist: 'Black'
+        },
+        { name: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Post%20Malone%20-%20rockstar%20ft.%2021%20Savage%20(1).mp3',
+          artist: 'Black'
+        }
+      ]
+    },
     toggleSidebar () {
       if (this.isActiveSidebar) {
         this.$store.dispatch('deactivateSidebar')
       } else {
         this.$store.dispatch('activateSidebar')
       }
+    },
+    formatTime (time) {
+      var min = Math.floor(time / 60)
+      var sec = Math.floor(time % 60)
+      return min + ':' + ((sec < 10) ? ('0' + sec) : sec)
+    },
+    formatProgress (time) {
+      return (time / this.audio.duration) * 100 + '%'
+    },
+    playSong () {
+      this.isPlayed = false
+      this.isPaused = true
+      if (this.audio.paused) {
+        this.audio.play()
+        var that = this
+        this.audio.onloadedmetadata = function () {
+          that.setDuration()
+        }
+      }
+    },
+    playNext () {
+      if (this.currentIndex === this.songs.length - 1) this.currentIndex = 0
+      else this.currentIndex++
+      this.preloadSong()
+      this.playSong()
+    },
+    playPrev () {
+      console.log(this.songs.length)
+      if (this.currentIndex === 0) this.currentIndex = this.songs.length - 1
+      else this.currentIndex--
+      this.preloadSong()
+      this.playSong()
+    },
+    updateTime () {
+      var current = this.audio.currentTime
+      this.progressWidth = this.formatProgress(current)
+      this.currentTime = this.formatTime(current)
+      if (current === this.audio.duration) {
+        this.pauseSong()
+      }
+    },
+    preloadSong () {
+      this.audio.src = this.songs[this.currentIndex]['name']
+      this.audio.preload = 'metadata'
+      var that = this
+      this.audio.onloadedmetadata = function () {
+        that.setDuration()
+      }
+      this.audio.ontimeupdate = function () {
+        that.updateTime()
+      }
+    },
+    setDuration () {
+      this.duration = this.formatTime(this.audio.duration)
+    },
+    pauseSong () {
+      this.isPlayed = true
+      this.isPaused = false
+      var audio = this.audio
+      audio.pause()
     }
   },
   computed: mapGetters({
@@ -94,7 +181,9 @@ export default {
 .sidebar-active .sidebar-body ul li:nth-child(4) {
   animation: slide-in 1.6s;
 }
-
+.hidden {
+  display: none;
+}
 ul {
   display: block;
   list-style-type: disc;
@@ -288,9 +377,6 @@ ul {
   position: relative;
   display: flex;
   align-items: center;
-  width: 100%;
-  height: 2px;
-  background: rgba(58, 54, 84, 0.5215686274509804)
 }
 .player-settings {
   padding-right: 20px;
@@ -310,18 +396,72 @@ ul {
   cursor: pointer;
   color: rgb(58, 54, 84)
 }
-.player-buttons i:nth-child(2) {
+.player-buttons i:nth-child(2),
+.player-buttons i:nth-child(3) {
   font-size: 30px;
+}
+.player-buttons i:first-child {
+  margin-right: 20px;
+  margin-left: 15px;
 }
 .current-time {
     left: 0;
-    position: absolute;
-    top: 0;
+}
+.current-time, .total-time {
+    position: relative;
+    top: -10px;
+    font-size: 10px;
+    cursor: initial;
 }
 .total-time {
-    right: 0;
+    margin-left: calc(100% - 41px);
+}
+.player-trackline .pin {
+    background-color: #3a3654;
+    border-radius: 8px;
+    height: 8px;
     position: absolute;
-    top: 0;
+    pointer-events: all;
+    top: -3px;
+    width: 8px;
+    -webkit-box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.32);
+    -moz-box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.32);
+    box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.32);
+    -webkit-transition: transform 0.25s ease;
+    -moz-transition: transform 0.25s ease;
+    -ms-transition: transform 0.25s ease;
+    -o-transition: transform 0.25s ease;
+    transition: transform 0.25s ease
+}
+.player-trackline .slider {
+  width: 100%;
+  cursor: pointer;
+  background: rgba(58, 54, 84, 0.31);
+  height: 2px;
+  position: absolute
+}
+.progress {
+  background: #3a3654;
+  height: 100%
+}
+.player-trackline .slider:hover {
+  height: 4px;
+  border-radius: 5px
+}
+.player-trackline .slider:hover .pin {
+  height: 10px;
+  width: 10px
+}
+.player-trackline .pin:active,
+.player-trackline .pin:focus {
+    -moz-transform: scale(1.5);
+    -o-transform: scale(1.5);
+    -ms-transform: scale(1.5);
+    -webkit-transform: scale(1.5);
+    transform: scale(1.5)
+}
+:focus {
+  outline: none
 }
 @keyframes slide-in {
   from {transform: translateX(-300px);}
