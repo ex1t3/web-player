@@ -23,17 +23,18 @@
       <i v-on:click="pauseSong()" v-bind:class="{hidden : isPlayed}" class="fas fa-pause"></i>
       <i v-on:click="playNext()" class="fas fa-forward"></i></div>
     <div class="player-trackline">
+      <div class="title">{{ title }}</div>
       <div class="timeline">
       <span class="current-time">{{ currentTime }}</span>
       <span class="total-time">{{ duration }}</span>
       <div v-on:click="onTimeChange($event)" class="slider">
        <div class="progress" v-bind:style="{ width: progressWidth }">
-         <div @mousedown="onMouseDown()" @mousemove="onMoveTimeChange($event)" class="pin" id="progress-pin" v-bind:style="{ 'margin-left': progressWidth }"></div>
+         <div v-on:click="stopProp($event)" class="pin" id="progress-pin" v-bind:style="{ 'margin-left': progressWidth }"></div>
       </div>
       </div>
      </div>
      </div>
-    <div class="player-settings">dgdgdgdg</div>
+    <div v-on:click="shuffleSongs()" class="player-settings">dgdgdgdg</div>
   </div>
   </div>
 </template>
@@ -49,9 +50,12 @@ export default {
       duration: '0:00',
       progressWidth: '0%',
       currentTime: '0:00',
+      title: ' - ',
       isPlayed: true,
-      isPaused: false,
       isDragged: false,
+      isPaused: false,
+      songsLength: 0,
+      shuffleIndexes: [],
       currentIndex: 0,
       audio: new Audio()
     }
@@ -59,18 +63,37 @@ export default {
   mounted () {
     this.loadSongs()
     this.preloadSong()
-    window.addEventListener('mouseup', this.onMouseUp)
+    this.addListeners()
   },
   methods: {
     loadSongs () {
       this.songs = [
-        { name: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Post%20Malone%20-%20I%20Fall%20Apart.mp3',
-          artist: 'Black'
+        { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Post%20Malone%20-%20I%20Fall%20Apart.mp3',
+          artist: 'Black',
+          name: 'Wow'
         },
-        { name: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Post%20Malone%20-%20rockstar%20ft.%2021%20Savage%20(1).mp3',
-          artist: 'Black'
+        { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Post%20Malone%20-%20rockstar%20ft.%2021%20Savage%20(1).mp3',
+          artist: 'Wage War',
+          name: 'Disdain'
+        },
+        { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Marshmello%20-%20Silence%20ft.%20Khalid.mp3',
+          artist: 'Khalid',
+          name: 'Base'
+        },
+        { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/VAX%20-%20Fireproof%20Feat%20Teddy%20Sky.mp3',
+          artist: 'Teddy',
+          name: 'Fireproof'
+        },
+        { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/NF%20-%20Let%20You%20Down.mp3',
+          artist: 'Let Down',
+          name: 'Im not the only one'
         }
       ]
+      this.songsLength = this.songs.length
+      for (var i = 0; i < this.songsLength; i++) {
+        this.shuffleIndexes.push(i)
+      }
+      console.log(this.shuffleIndexes)
     },
     toggleSidebar () {
       if (this.isActiveSidebar) {
@@ -102,14 +125,13 @@ export default {
       }
     },
     playNext () {
-      if (this.currentIndex === this.songs.length - 1) this.currentIndex = 0
+      if (this.currentIndex === this.songsLength - 1) this.currentIndex = 0
       else this.currentIndex++
       this.preloadSong()
       this.playSong()
     },
     playPrev () {
-      console.log(this.songs.length)
-      if (this.currentIndex === 0) this.currentIndex = this.songs.length - 1
+      if (this.currentIndex === 0) this.currentIndex = this.songsLength - 1
       else this.currentIndex--
       this.preloadSong()
       this.playSong()
@@ -119,31 +141,43 @@ export default {
       this.progressWidth = this.formatProgress(current)
       this.currentTime = this.formatTime(current)
       if (current === this.audio.duration) {
-        this.pauseSong()
+        this.playNext()
       }
     },
-    onMouseDown () {
-      this.isDragged = true
+    addListeners () {
+      document.getElementById('progress-pin').addEventListener('mousedown', this.mouseDown, false)
+      window.addEventListener('mouseup', this.mouseUp, false)
     },
-    onMouseUp () {
+    mouseUp () {
+      window.removeEventListener('mousemove', this.onMoveTimeChange, true)
       this.isDragged = false
+    },
+    mouseDown (e) {
+      window.addEventListener('mousemove', this.onMoveTimeChange, true)
+      this.isDragged = true
     },
     onMoveTimeChange (e) {
       if (this.isDragged) {
         var x = e.clientX
-        console.log(x)
-        this.progressWidth = x / 200  + '%'
+        var slider = document.getElementsByClassName('slider')[0].offsetLeft
+        var timeline = document.getElementsByClassName('timeline')[0]
+        var offset = slider === 0 ? x - timeline.offsetLeft : x - slider.offsetLeft
+        this.progressWidth = offset + 'px'
+        this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
       }
     },
     onTimeChange (e) {
       var x = e.clientX
-      var offset = e.target.parentElement.offsetLeft === 0 ? e.target.parentElement.parentElement.offsetLeft : e.target.parentElement.offsetLeft
-      offset = x - offset
+      var slider = document.getElementsByClassName('slider')[0].offsetLeft
+      var timeline = document.getElementsByClassName('timeline')[0]
+      var offset = slider === 0 ? x - timeline.offsetLeft - 2 : x - slider - 2
       this.progressWidth = offset + 'px'
-      this.audio.currentTime = this.formatBackTime(offset / e.target.parentElement.clientWidth) 
+      this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
     },
     preloadSong () {
-      this.audio.src = this.songs[this.currentIndex]['name']
+      this.progressWidth = 0
+      this.audio.src = this.songs[this.currentIndex]['src']
+      this.title = this.songs[this.currentIndex]['name'] + ' - ' + this.songs[this.currentIndex]['artist']
       this.audio.preload = 'metadata'
       var that = this
       this.audio.onloadedmetadata = function () {
@@ -155,6 +189,15 @@ export default {
     },
     setDuration () {
       this.duration = this.formatTime(this.audio.duration)
+    },
+    stopProp (e) {
+      e.stopPropagation()
+    },
+    shuffleSongs () {
+      for (let i = this.songsLength - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        [this.shuffleIndexes[i], this.shuffleIndexes[j]] = [this.shuffleIndexes[j], this.shuffleIndexes[i]]
+      }
     },
     pauseSong () {
       this.isPlayed = true
@@ -180,13 +223,6 @@ export default {
     transition: .3s;
     margin-top: 40px;
     animation: slide-out-body 1s;
-}
-@media (max-width: 700px) {
-  .sidebar-active .content-wrapper {
-    left: -220px;
-    background: linear-gradient(125deg, white, #625abb73);
-    filter: blur(10px);
-  }
 }
 .sidebar-active .content-wrapper {
   animation: slide-in 1s;
@@ -384,7 +420,7 @@ ul {
     display: -ms-flexbox;
     display: flex;
     bottom: 0;
-    height: 80px;
+    height: 90px;
     width: 100%;
     left: 0;
     right: 0;
@@ -437,6 +473,8 @@ ul {
     top: -10px;
     font-size: 10px;
     cursor: initial;
+    color: #3a3654;
+    width: 20px;
 }
 .total-time {
     margin-left: calc(100% - 41px);
@@ -458,6 +496,10 @@ ul {
     -o-transition: transform 0.25s ease;
     transition: transform 0.25s ease
 }
+.player-trackline .title {
+  position: absolute;
+  top: 55%;
+}
 .player-trackline .slider {
   width: 100%;
   cursor: pointer;
@@ -470,12 +512,17 @@ ul {
   height: 100%
 }
 .player-trackline .slider:hover {
-  height: 4px;
-  border-radius: 5px
+  height: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.player-trackline .slider:hover .progress {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 .player-trackline .slider:hover .pin {
-  height: 10px;
-  width: 10px
+  height: 11px;
+  width: 11px
 }
 .player-trackline .pin:active,
 .player-trackline .pin:focus {
@@ -487,6 +534,45 @@ ul {
 }
 :focus {
   outline: none
+}
+@media (max-width: 700px) {
+  .sidebar-active .content-wrapper {
+    left: -220px;
+    background: linear-gradient(125deg, white, #625abb73);
+    filter: blur(10px);
+  }
+  .player-buttons {
+    width: 160px;
+    padding: 0;
+    margin: 0 auto;
+    margin-top: 25px;
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+  }
+  .player-trackline {
+    top: 15px;
+    padding: 0;
+    width: 95%;
+    position: absolute;
+    max-width: 800px;
+    margin: 0 auto;
+    left: 2.5%;
+  }
+  .player-settings {
+    display: none;
+  }
+  .total-time {
+    margin-left: calc(100% - 43px);
+  }
+  .current-time, .total-time {
+    font-size: 12px;
+  }
+  .main-player-block {
+    height: 100px;
+  }
 }
 @keyframes slide-in {
   from {transform: translateX(-300px);}
