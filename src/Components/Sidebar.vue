@@ -1,7 +1,7 @@
 <template>
 <div class="absolute-items">
   <div class="sidebar">
-    <div v-bind:class="{ 'burger-active': isActiveSidebar }" v-on:click="toggleSidebar()" class="sidebar-burger">
+    <div v-bind:class="{ 'burger-active': isActiveSidebar }" @click="toggleSidebar()" class="sidebar-burger">
       <span class="burger-inner"></span>
     </div>
     <div class="sidebar-body">
@@ -17,24 +17,30 @@
     </div>
   </div>
   <div class="main-player-block">
+    <div class="main-player-body">
     <div class="player-buttons">
-      <i v-on:click="playPrev()" class="fas fa-backward"></i>
-      <i v-on:click="playSong()" v-bind:class="{hidden : isPaused}" class="fas fa-play"></i>
-      <i v-on:click="pauseSong()" v-bind:class="{hidden : isPlayed}" class="fas fa-pause"></i>
-      <i v-on:click="playNext()" class="fas fa-forward"></i></div>
+      <button class="player-button-icon" @click="playPrev()"><i class="fas fa-backward"></i></button>
+      <button class="player-button-icon" @click="playSong()" v-bind:class="{hidden : isPaused}" ><i class="fas fa-play"></i></button>
+      <button class="player-button-icon" @click="pauseSong()" v-bind:class="{hidden : isPlayed}" ><i class="fas fa-pause"></i></button>
+      <button class="player-button-icon" @click="playNext()"><i class="fas fa-forward"></i></button></div>
     <div class="player-trackline">
       <div class="title">{{ title }}</div>
       <div class="timeline">
       <span class="current-time">{{ currentTime }}</span>
       <span class="total-time">{{ duration }}</span>
-      <div v-on:click="onTimeChange($event)" class="slider">
+      <div @click="onTimeChange($event)" class="slider">
        <div class="progress" v-bind:style="{ width: progressWidth }">
-         <div v-on:click="stopProp($event)" class="pin" id="progress-pin" v-bind:style="{ 'margin-left': progressWidth }"></div>
+         <div @click="stopProp($event)" class="pin" id="progress-pin" v-bind:style="{ 'margin-left': progressWidth }"></div>
       </div>
       </div>
      </div>
      </div>
-    <div v-on:click="shuffleSongs()" class="player-settings">dgdgdgdg</div>
+    <div class="player-settings">     
+      <i class="fas fa-volume-up"></i>
+      <i @click="shuffleSongs()" v-bind:class="{shuffled: isShuffled}" class="fas fa-random"></i>
+      <i class="fas fa-redo"></i>
+    </div>
+  </div>
   </div>
   </div>
 </template>
@@ -55,6 +61,8 @@ export default {
       isDragged: false,
       isPaused: false,
       songsLength: 0,
+      isShuffled: false,
+      isReplayed: false,
       shuffleIndexes: [],
       currentIndex: 0,
       audio: new Audio()
@@ -69,31 +77,36 @@ export default {
     loadSongs () {
       this.songs = [
         { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Post%20Malone%20-%20I%20Fall%20Apart.mp3',
-          artist: 'Black',
+          artist: '0',
           name: 'Wow'
         },
         { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Post%20Malone%20-%20rockstar%20ft.%2021%20Savage%20(1).mp3',
-          artist: 'Wage War',
+          artist: '1',
           name: 'Disdain'
         },
         { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Marshmello%20-%20Silence%20ft.%20Khalid.mp3',
-          artist: 'Khalid',
+          artist: '2',
           name: 'Base'
         },
         { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/VAX%20-%20Fireproof%20Feat%20Teddy%20Sky.mp3',
-          artist: 'Teddy',
+          artist: '3',
           name: 'Fireproof'
         },
         { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/NF%20-%20Let%20You%20Down.mp3',
-          artist: 'Let Down',
+          artist: '4',
           name: 'Im not the only one'
         }
       ]
       this.songsLength = this.songs.length
-      for (var i = 0; i < this.songsLength; i++) {
+      for (let i = 0; i < this.songsLength; i++) {
         this.shuffleIndexes.push(i)
       }
-      console.log(this.shuffleIndexes)
+    },
+    unShuffleSongs () {
+      this.currentIndex = this.shuffleIndexes[this.currentIndex]
+      for (let i = 0; i < this.songsLength; i++) {
+        this.shuffleIndexes[i] = i
+      }
     },
     toggleSidebar () {
       if (this.isActiveSidebar) {
@@ -159,25 +172,23 @@ export default {
     onMoveTimeChange (e) {
       if (this.isDragged) {
         var x = e.clientX
-        var slider = document.getElementsByClassName('slider')[0].offsetLeft
-        var timeline = document.getElementsByClassName('timeline')[0]
-        var offset = slider === 0 ? x - timeline.offsetLeft : x - slider.offsetLeft
+        var timeline = document.getElementsByClassName('main-player-body')[0]
+        var offset = x - timeline.offsetLeft
         this.progressWidth = offset + 'px'
         this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
       }
     },
     onTimeChange (e) {
       var x = e.clientX
-      var slider = document.getElementsByClassName('slider')[0].offsetLeft
-      var timeline = document.getElementsByClassName('timeline')[0]
-      var offset = slider === 0 ? x - timeline.offsetLeft - 2 : x - slider - 2
+      var timeline = document.getElementsByClassName('main-player-body')[0]
+      var offset = x - timeline.offsetLeft
       this.progressWidth = offset + 'px'
       this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
     },
     preloadSong () {
       this.progressWidth = 0
-      this.audio.src = this.songs[this.currentIndex]['src']
-      this.title = this.songs[this.currentIndex]['name'] + ' - ' + this.songs[this.currentIndex]['artist']
+      this.audio.src = this.songs[this.shuffleIndexes[this.currentIndex]]['src']
+      this.title = this.songs[this.shuffleIndexes[this.currentIndex]]['name'] + ' - ' + this.songs[this.shuffleIndexes[this.currentIndex]]['artist']
       this.audio.preload = 'metadata'
       var that = this
       this.audio.onloadedmetadata = function () {
@@ -194,10 +205,20 @@ export default {
       e.stopPropagation()
     },
     shuffleSongs () {
-      for (let i = this.songsLength - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        [this.shuffleIndexes[i], this.shuffleIndexes[j]] = [this.shuffleIndexes[j], this.shuffleIndexes[i]]
-      }
+      this.isShuffled = !this.isShuffled
+      if (this.isShuffled) {
+        var currentSongBeforeShuffle = this.shuffleIndexes[this.currentIndex]
+        for (let i = this.songsLength - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1))
+          let x = this.shuffleIndexes[i]
+          this.shuffleIndexes[i] = this.shuffleIndexes[j]
+          this.shuffleIndexes[j] = x
+        }
+        var currentSongIndex = this.shuffleIndexes.indexOf(currentSongBeforeShuffle)
+        this.shuffleIndexes[currentSongIndex] = this.shuffleIndexes[0]
+        this.shuffleIndexes[0] = currentSongBeforeShuffle
+        this.currentIndex = 0
+      } else this.unShuffleSongs()
     },
     pauseSong () {
       this.isPlayed = true
@@ -348,7 +369,7 @@ ul {
   font-size: 30px;
   font-family: 'Niramit', sans-serif;
   cursor: pointer;
-  color: #232121;
+  color: #3a3654;
   transition: .3s ease-in;
 }
 .sidebar li a::after {
@@ -388,7 +409,7 @@ ul {
   font-size: 40px;
   cursor: pointer;
   letter-spacing: 10px;
-  font-family: Nova Round,sans-serif;
+  font-family: 'Nova Round', sans-serif;
   color: #ffffff;
   text-shadow: 4px 1px 0 #ffa79c;
 }
@@ -420,7 +441,7 @@ ul {
     display: -ms-flexbox;
     display: flex;
     bottom: 0;
-    height: 90px;
+    height: 100px;
     width: 100%;
     left: 0;
     right: 0;
@@ -428,11 +449,21 @@ ul {
     z-index: 999999;
     box-shadow: 0 -3px 15px 0px rgba(51, 51, 51, 0.1);
 }
+.main-player-body {
+  width: 80%;
+  position: absolute;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+}
 .player-trackline {
-    padding: 0 40px;
-    width: 80%;
-    max-width: 800px;
+    top: 15px;
+    padding: 0;
+    width: 100%;
+    position: absolute;
     margin: 0 auto;
+    left: 0;
+    right: 0;
 }
 .timeline {
   position: relative;
@@ -440,44 +471,88 @@ ul {
   align-items: center;
 }
 .player-settings {
-  padding-right: 20px;
+  margin: 0 20px;
+  position: absolute;
+  top: 30px;
+  right: 0;
+}
+.main-player-block .player-button-icon {
+    background: none;
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    font-size: 20px;
+    color: #3a3654;
+    cursor: pointer;
+}
+.player-buttons .player-button-icon:hover i {
+    background: rgba(58, 54, 84, 0.1);
+}
+.player-buttons .player-button-icon i {
+    vertical-align: middle;
+    border-radius: 50%;
+    text-align: center;
+    padding: 15px;
+}
+.player-button-icon:nth-child(1) i,
+.player-button-icon:nth-child(4) i {
+    width: 17px;
+    height: 17px;
+    line-height: 17px;
+    padding: 10px;
+}
+.player-button-icon:nth-child(1) i{
+    width: 17px;
+    height: 17px;
+    line-height: 17px;
+    padding: 10px;
+    padding-right: 12px;
+    padding-left: 8px;
+}
+.player-button-icon:nth-child(2) i {
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    background: rgba(58, 54, 84, 0.1);
+    padding: 15px;
+}
+.player-button-icon:nth-child(3) i {
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    background: rgba(58, 54, 84, 0.1);
+    padding: 15px;
+    padding-left: 13px;
+    padding-right: 17px;
 }
 .player-buttons {
     width: 160px;
-    padding: 0 20px;
+    padding: 0;
+    margin: 0 auto;
+    margin-top: 25px;
     -webkit-align-items: center;
     align-items: center;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
 }
-.player-buttons i {
-  font-size: 20px;
-  margin: 0 20px;
-  cursor: pointer;
-  color: rgb(58, 54, 84)
-}
-.player-buttons i:nth-child(2),
-.player-buttons i:nth-child(3) {
+.player-buttons button:nth-child(2),
+.player-buttons button:nth-child(3) {
   font-size: 30px;
-}
-.player-buttons i:first-child {
-  margin-right: 20px;
-  margin-left: 15px;
 }
 .current-time {
     left: 0;
 }
 .current-time, .total-time {
     position: relative;
-    top: -10px;
-    font-size: 10px;
+    top: -12px;
+    font-size: 12px;
     cursor: initial;
     color: #3a3654;
     width: 20px;
 }
 .total-time {
-    margin-left: calc(100% - 41px);
+    margin-left: calc(100% - 45px);
 }
 .player-trackline .pin {
     background-color: #3a3654;
@@ -532,6 +607,19 @@ ul {
     -webkit-transform: scale(1.5);
     transform: scale(1.5)
 }
+.shuffled {
+  color: #3a3654 !important;
+  background: #ebeaed;
+}
+.player-settings i {
+  cursor: pointer;
+  color: rgba(58, 54, 84, 0.56);
+  padding: 6px;
+  border-radius: 50%;
+}
+.player-settings i:hover {
+  background: #ebeaed;
+}
 :focus {
   outline: none
 }
@@ -541,34 +629,8 @@ ul {
     background: linear-gradient(125deg, white, #625abb73);
     filter: blur(10px);
   }
-  .player-buttons {
-    width: 160px;
-    padding: 0;
-    margin: 0 auto;
-    margin-top: 25px;
-    -webkit-align-items: center;
-    align-items: center;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-  }
-  .player-trackline {
-    top: 15px;
-    padding: 0;
-    width: 95%;
-    position: absolute;
-    max-width: 800px;
-    margin: 0 auto;
-    left: 2.5%;
-  }
   .player-settings {
     display: none;
-  }
-  .total-time {
-    margin-left: calc(100% - 43px);
-  }
-  .current-time, .total-time {
-    font-size: 12px;
   }
   .main-player-block {
     height: 100px;
