@@ -56,6 +56,7 @@
 <script>
 import store from '../store'
 import { mapGetters } from 'vuex'
+var tagReader = require('jsmediatags')
 export default {
   store,
   data () {
@@ -228,6 +229,14 @@ export default {
       this.progressWidth = 0
       this.audio.volume = this.isVolumeOff ? 0 : this.volume
       this.audio.src = this.songs[this.shuffleIndexes[this.currentIndex]]['src']
+      new tagReader.Reader('https://cdn.mp3xa.pw/proxy/cs1-64v4.vkuseraudio.net/p10/2f10e554f56fdd.mp3').read({
+        onSuccess: function(tag) {
+          console.log(tag)
+        },
+        onError: function(error) {
+          console.log(':(', error.type, error.info)
+        }
+      })
       this.title = this.songs[this.shuffleIndexes[this.currentIndex]]['name'] + ' - ' + this.songs[this.shuffleIndexes[this.currentIndex]]['artist']
       this.audio.preload = 'metadata'
       var that = this
