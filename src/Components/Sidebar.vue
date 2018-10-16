@@ -35,10 +35,19 @@
       </div>
      </div>
      </div>
-    <div class="player-settings">     
-      <i class="fas fa-volume-up"></i>
-      <i @click="shuffleSongs()" v-bind:class="{shuffled: isShuffled}" class="fas fa-random"></i>
-      <i class="fas fa-redo"></i>
+    <div class="player-settings">
+      <i @click="muteSong($event)" v-bind:class="{hidden: isVolumeOff}" class="fas fa-volume-up">
+        <div @click="stopProp($event)" class="volume-raise-block">
+          <div @click="onVolumeChange($event)" class="slider">
+            <div class="progress" v-bind:style="{ width: progressVolumeWidth }">
+              <div @click="stopProp($event)" class="pin" id="progress-pin" v-bind:style="{ 'margin-left': progressVolumeWidth }"></div>
+            </div>
+          </div>
+        </div>
+      </i>
+      <i @click="unMuteSong()" v-bind:class="{hidden: !isVolumeOff, 'player-settings-active': isVolumeOff}" class="fas fa-volume-mute"></i>
+      <i @click="shuffleSongs()" v-bind:class="{'player-settings-active': isShuffled}" class="fas fa-random"></i>
+      <i @click="isReplayed=!isReplayed" v-bind:class="{'player-settings-active': isReplayed}" class="fas fa-redo"></i>
     </div>
   </div>
   </div>
@@ -55,13 +64,16 @@ export default {
       songs: [],
       duration: '0:00',
       progressWidth: '0%',
+      progressVolumeWidth: '50%',
       currentTime: '0:00',
       title: ' - ',
       isPlayed: true,
       isDragged: false,
       isPaused: false,
       songsLength: 0,
+      isVolumeOff: false,
       isShuffled: false,
+      volume: 0.5,
       isReplayed: false,
       shuffleIndexes: [],
       currentIndex: 0,
@@ -102,6 +114,15 @@ export default {
         this.shuffleIndexes.push(i)
       }
     },
+    muteSong (e) {
+      e.stopPropagation()
+      this.isVolumeOff = !this.isVolumeOff
+      this.audio.volume = 0
+    },
+    unMuteSong () {
+      this.isVolumeOff = !this.isVolumeOff
+      this.audio.volume = this.volume
+    },
     unShuffleSongs () {
       this.currentIndex = this.shuffleIndexes[this.currentIndex]
       for (let i = 0; i < this.songsLength; i++) {
@@ -122,6 +143,9 @@ export default {
     },
     formatBackTime (time) {
       return this.audio.duration * time
+    },
+    formatBackVolume (volume) {
+      return volume / 150
     },
     formatProgress (time) {
       return (time / this.audio.duration) * 100 + '%'
@@ -154,7 +178,8 @@ export default {
       this.progressWidth = this.formatProgress(current)
       this.currentTime = this.formatTime(current)
       if (current === this.audio.duration) {
-        this.playNext()
+        if (!this.isReplayed) this.playNext()
+        else this.playSong()
       }
     },
     addListeners () {
@@ -185,8 +210,23 @@ export default {
       this.progressWidth = offset + 'px'
       this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
     },
+    onVolumeChange (e) {
+      var x = e.clientX
+      var timeline = document.getElementsByClassName('player-settings')[0]
+      var mainLeft = document.getElementsByClassName('main-player-body')[0].offsetLeft
+      var offset = x - (timeline.offsetLeft + mainLeft) + 60
+      if (this.formatBackVolume(offset) >= 0) {
+        this.progressVolumeWidth = offset + 'px'
+        this.audio.volume = this.formatBackVolume(offset)
+      } else {
+        this.progressVolumeWidth = 0
+        this.audio.volume = 0
+      }
+      this.volume = this.audio.volume
+    },
     preloadSong () {
       this.progressWidth = 0
+      this.audio.volume = this.isVolumeOff ? 0 : this.volume
       this.audio.src = this.songs[this.shuffleIndexes[this.currentIndex]]['src']
       this.title = this.songs[this.shuffleIndexes[this.currentIndex]]['name'] + ' - ' + this.songs[this.shuffleIndexes[this.currentIndex]]['artist']
       this.audio.preload = 'metadata'
@@ -471,7 +511,6 @@ ul {
   align-items: center;
 }
 .player-settings {
-  margin: 0 20px;
   position: absolute;
   top: 30px;
   right: 0;
@@ -554,7 +593,7 @@ ul {
 .total-time {
     margin-left: calc(100% - 45px);
 }
-.player-trackline .pin {
+.main-player-block .pin {
     background-color: #3a3654;
     border-radius: 8px;
     height: 8px;
@@ -575,7 +614,7 @@ ul {
   position: absolute;
   top: 55%;
 }
-.player-trackline .slider {
+.main-player-block .slider {
   width: 100%;
   cursor: pointer;
   background: rgba(58, 54, 84, 0.31);
@@ -586,28 +625,28 @@ ul {
   background: #3a3654;
   height: 100%
 }
-.player-trackline .slider:hover {
+.main-player-block .slider:hover {
   height: 5px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
-.player-trackline .slider:hover .progress {
+.main-player-block .slider:hover .progress {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
 }
-.player-trackline .slider:hover .pin {
+.main-player-block .slider:hover .pin {
   height: 11px;
   width: 11px
 }
-.player-trackline .pin:active,
-.player-trackline .pin:focus {
+.main-player-block .pin:active,
+.main-player-block .pin:focus {
     -moz-transform: scale(1.5);
     -o-transform: scale(1.5);
     -ms-transform: scale(1.5);
     -webkit-transform: scale(1.5);
     transform: scale(1.5)
 }
-.shuffled {
+.player-settings-active {
   color: #3a3654 !important;
   background: #ebeaed;
 }
@@ -616,9 +655,47 @@ ul {
   color: rgba(58, 54, 84, 0.56);
   padding: 6px;
   border-radius: 50%;
+  position: relative;
 }
 .player-settings i:hover {
   background: #ebeaed;
+}
+.volume-raise-block {
+    position: absolute;
+    height: 50px;
+    background: #ffffff;
+    width: 150px;
+    border-radius: 50px;
+    bottom: 40px;
+    right: 0;
+    margin-left: -71px;
+    left: 0;
+    display: flex;
+    visibility: hidden;
+    align-items: center;
+    box-shadow: 0px 5px 20px #00000026;
+    padding: 0 10px;
+    transition: visibility 0.2s;
+}
+.volume-raise-block::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #fff transparent transparent transparent;
+}
+.player-settings i:nth-child(1):hover .volume-raise-block {
+  visibility: visible;
+}
+.volume-raise-block .slider{
+  width: 90%;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  position: absolute;
 }
 :focus {
   outline: none
