@@ -16,7 +16,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "element-ui": "^2.3.3",
-    "jsmediatags": "^3.8.1",
+    "id3-parser": "^2.0.0",
     "node-sass": "^4.8.3",
     "sass-loader": "^6.0.7",
     "vue": "^2.5.2",
