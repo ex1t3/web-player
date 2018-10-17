@@ -17,11 +17,12 @@
     </div>
   </div>
   <div class="main-player-block">
+    <div class="main-player-poster"><img v-bind:src="currentPoster"/></div>
     <div class="main-player-body">
     <div class="player-buttons">
       <button class="player-button-icon" @click="playPrev()"><i class="fas fa-backward"></i></button>
-      <button class="player-button-icon" @click="playSong()" v-bind:class="{hidden : isPaused}" ><i class="fas fa-play"></i></button>
-      <button class="player-button-icon" @click="pauseSong()" v-bind:class="{hidden : isPlayed}" ><i class="fas fa-pause"></i></button>
+      <button class="player-button-icon" @click="playSong()" v-bind:class="{hidden : !isPaused}" ><i class="fas fa-play"></i></button>
+      <button class="player-button-icon" @click="pauseSong()" v-bind:class="{hidden : isPaused}" ><i class="fas fa-pause"></i></button>
       <button class="player-button-icon" @click="playNext()"><i class="fas fa-forward"></i></button></div>
     <div class="player-trackline">
       <div class="title">{{ title }}</div>
@@ -56,7 +57,7 @@
 <script>
 import store from '../store'
 import { mapGetters } from 'vuex'
-var tagReader = require('jsmediatags')
+import universalParse from 'id3-parser/lib/universal'
 export default {
   store,
   data () {
@@ -68,12 +69,12 @@ export default {
       progressVolumeWidth: '50%',
       currentTime: '0:00',
       title: ' - ',
-      isPlayed: true,
       isDragged: false,
-      isPaused: false,
+      isPaused: true,
       songsLength: 0,
       isVolumeOff: false,
       isShuffled: false,
+      currentPoster: '',
       volume: 0.5,
       isReplayed: false,
       shuffleIndexes: [],
@@ -89,7 +90,7 @@ export default {
   methods: {
     loadSongs () {
       this.songs = [
-        { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Post%20Malone%20-%20I%20Fall%20Apart.mp3',
+        { src: require('../songs/1.mp3'),
           artist: '0',
           name: 'Wow'
         },
@@ -110,9 +111,27 @@ export default {
           name: 'Im not the only one'
         }
       ]
+      this.audio.preload = 'metadata'
+      var that = this
+      this.audio.onloadedmetadata = function () {
+        that.setDuration()
+      }
+      this.audio.ontimeupdate = function () {
+        that.updateTime()
+      }
       this.songsLength = this.songs.length
       for (let i = 0; i < this.songsLength; i++) {
         this.shuffleIndexes.push(i)
+      }
+    },
+    handleSpaceClick (e) {
+      e.preventDefault()
+      if (e.keyCode === 32) {
+        if (this.isPaused) {
+          this.playSong()
+        } else {
+          this.pauseSong()
+        }
       }
     },
     muteSong (e) {
@@ -152,21 +171,22 @@ export default {
       return (time / this.audio.duration) * 100 + '%'
     },
     playSong () {
-      this.isPlayed = false
-      this.isPaused = true
+      this.isPaused = false
       if (this.audio.paused) {
         this.audio.play()
-        var that = this
-        this.audio.onloadedmetadata = function () {
-          that.setDuration()
-        }
       }
+    },
+    pauseSong () {
+      this.isPaused = true
+      var audio = this.audio
+      audio.pause()
     },
     playNext () {
       if (this.currentIndex === this.songsLength - 1) this.currentIndex = 0
       else this.currentIndex++
       this.preloadSong()
       this.playSong()
+      console.log(this.currentIndex)
     },
     playPrev () {
       if (this.currentIndex === 0) this.currentIndex = this.songsLength - 1
@@ -178,7 +198,7 @@ export default {
       var current = this.audio.currentTime
       this.progressWidth = this.formatProgress(current)
       this.currentTime = this.formatTime(current)
-      if (current === this.audio.duration) {
+      if (this.audio.ended) {
         if (!this.isReplayed) this.playNext()
         else this.playSong()
       }
@@ -186,6 +206,7 @@ export default {
     addListeners () {
       document.getElementById('progress-pin').addEventListener('mousedown', this.mouseDown, false)
       window.addEventListener('mouseup', this.mouseUp, false)
+      document.addEventListener('keydown', this.handleSpaceClick, false)
     },
     mouseUp () {
       window.removeEventListener('mousemove', this.onMoveTimeChange, true)
@@ -199,7 +220,7 @@ export default {
       if (this.isDragged) {
         var x = e.clientX
         var timeline = document.getElementsByClassName('main-player-body')[0]
-        var offset = x - timeline.offsetLeft
+        var offset = x - timeline.offsetLeft - 1
         this.progressWidth = offset + 'px'
         this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
       }
@@ -207,7 +228,7 @@ export default {
     onTimeChange (e) {
       var x = e.clientX
       var timeline = document.getElementsByClassName('main-player-body')[0]
-      var offset = x - timeline.offsetLeft
+      var offset = x - timeline.offsetLeft - 1
       this.progressWidth = offset + 'px'
       this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
     },
@@ -229,23 +250,21 @@ export default {
       this.progressWidth = 0
       this.audio.volume = this.isVolumeOff ? 0 : this.volume
       this.audio.src = this.songs[this.shuffleIndexes[this.currentIndex]]['src']
-      new tagReader.Reader('https://cdn.mp3xa.pw/proxy/cs1-64v4.vkuseraudio.net/p10/2f10e554f56fdd.mp3').read({
-        onSuccess: function(tag) {
-          console.log(tag)
-        },
-        onError: function(error) {
-          console.log(':(', error.type, error.info)
+      universalParse(this.audio.src).then(tag => {
+        var image = tag.image
+        if (image) {
+          var base64String = ''
+          for (var i = 0; i < image.data.length; i++) {
+            base64String += String.fromCharCode(image.data[i])
+          }
+          var base64 = 'data:' + image.mime + ';base64,' +
+                window.btoa(base64String)
+          this.currentPoster = base64
+        } else {
+          this.currentPoster = ''
         }
+        this.title = tag.title + ' - ' + tag.artist
       })
-      this.title = this.songs[this.shuffleIndexes[this.currentIndex]]['name'] + ' - ' + this.songs[this.shuffleIndexes[this.currentIndex]]['artist']
-      this.audio.preload = 'metadata'
-      var that = this
-      this.audio.onloadedmetadata = function () {
-        that.setDuration()
-      }
-      this.audio.ontimeupdate = function () {
-        that.updateTime()
-      }
     },
     setDuration () {
       this.duration = this.formatTime(this.audio.duration)
@@ -268,12 +287,6 @@ export default {
         this.shuffleIndexes[0] = currentSongBeforeShuffle
         this.currentIndex = 0
       } else this.unShuffleSongs()
-    },
-    pauseSong () {
-      this.isPlayed = true
-      this.isPaused = false
-      var audio = this.audio
-      audio.pause()
     }
   },
   computed: mapGetters({
@@ -496,33 +509,7 @@ ul {
     right: 0;
     background: #fff;
     z-index: 999999;
-    box-shadow: 0 -3px 15px 0px rgba(51, 51, 51, 0.1);
-}
-.main-player-body {
-  width: 80%;
-  position: absolute;
-  margin: 0 auto;
-  left: 0;
-  right: 0;
-}
-.player-trackline {
-    top: 15px;
-    padding: 0;
-    width: 100%;
-    position: absolute;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
-}
-.timeline {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.player-settings {
-  position: absolute;
-  top: 30px;
-  right: 0;
+    box-shadow: 0 -3px 15px 0px rgba(51, 51, 51, 0.1)
 }
 .main-player-block .player-button-icon {
     background: none;
@@ -531,7 +518,45 @@ ul {
     padding: 10px;
     font-size: 20px;
     color: #3a3654;
-    cursor: pointer;
+    cursor: pointer
+}
+.main-player-body {
+  width: 80%;
+  position: relative;
+  margin: 0 auto;
+  margin-top: 10px;
+}
+.main-player-poster {
+    width: 70px;
+    height: 70px;
+    border-radius: 5px;
+    background: #3a3f68;
+    position: relative;
+    margin-left: auto
+}
+.main-player-poster img {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px
+}
+.player-trackline {
+    top: 15px;
+    padding: 0;
+    width: 100%;
+    position: absolute;
+    margin: 0 auto;
+    left: 0;
+    right: 0
+}
+.timeline {
+  position: relative;
+  display: flex;
+  align-items: center
+}
+.player-settings {
+  position: absolute;
+  top: 30px;
+  right: 0
 }
 .player-buttons .player-button-icon:hover i {
     background: rgba(58, 54, 84, 0.1);
@@ -708,6 +733,11 @@ ul {
 }
 :focus {
   outline: none
+}
+@media (min-width: 1500px) {
+  .main-player-poster {
+    margin: 0 auto;
+  }
 }
 @media (max-width: 700px) {
   .sidebar-active .content-wrapper {
