@@ -74,7 +74,7 @@ export default {
       songsLength: 0,
       isVolumeOff: false,
       isShuffled: false,
-      currentPoster: '',
+      currentPoster: require('../img/no-cover.png'),
       volume: 0.5,
       isReplayed: false,
       shuffleIndexes: [],
@@ -94,15 +94,15 @@ export default {
           artist: '0',
           name: 'Wow'
         },
-        { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Post%20Malone%20-%20rockstar%20ft.%2021%20Savage%20(1).mp3',
+        { src: require('../songs/2.mp3'),
           artist: '1',
           name: 'Disdain'
         },
-        { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/Marshmello%20-%20Silence%20ft.%20Khalid.mp3',
+        { src: require('../songs/3.mp3'),
           artist: '2',
           name: 'Base'
         },
-        { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/VAX%20-%20Fireproof%20Feat%20Teddy%20Sky.mp3',
+        { src: require('../songs/4.mp3'),
           artist: '3',
           name: 'Fireproof'
         },
@@ -261,7 +261,7 @@ export default {
                 window.btoa(base64String)
           this.currentPoster = base64
         } else {
-          this.currentPoster = ''
+          this.currentPoster = require('../img/no-cover.png')
         }
         this.title = tag.title + ' - ' + tag.artist
       })
@@ -749,7 +749,28 @@ ul {
     display: none;
   }
   .main-player-block {
-    height: 100px;
+    height: 120px;
+  }
+  .main-player-body {
+    margin-top: 0;
+  }
+  .player-buttons {
+    margin-top: 45px;
+  }
+  .main-player-poster {
+    width: 45px;
+    height: 45px;
+  }
+  .sidebar ul {
+    margin-top: 40px;
+  }
+}
+@media (max-width: 500px) {
+  .main-player-poster {
+    display: none;
+  }
+  .main-player-body {
+    width: 95%;
   }
 }
 @keyframes slide-in {
