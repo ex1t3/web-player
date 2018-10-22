@@ -2,15 +2,16 @@
 <div v-bind:class="{ 'sidebar-active': isActiveSidebar }" class="page">
   <Login v-if="!isLoggedIn"/>
   <Sidebar v-if="isLoggedIn"/>
-  <div v-if="isLoggedIn" class="content-wrapper">
-      fsfsfsfjsfjsf
-    </div>
+  <Player v-if="isLoggedIn"/>
+  <Content v-if="isLoggedIn"/>
 </div>
 </template>
 <script>
 import {mapGetters} from 'vuex'
 import Sidebar from './Components/Sidebar'
 import Login from './Components/Login'
+import Player from './Components/Player'
+import Content from './Components/Content'
 
 export default {
   data () {
@@ -40,7 +41,9 @@ export default {
   }),
   components: {
     Sidebar,
-    Login
+    Login,
+    Player,
+    Content
   }
 }
 </script>

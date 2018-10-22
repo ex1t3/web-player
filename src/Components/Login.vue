@@ -70,6 +70,7 @@ export default {
   methods: {
     logIn () {
       this.$store.dispatch('logIn')
+      this.$store.dispatch('setHomePage')
     },
     register () {
       this.$store.dispatch('logIn')
