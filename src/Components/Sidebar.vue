@@ -1,4 +1,6 @@
 <template>
+<div class="absolute-items">
+  <div class="profiler-round">logo</div>
   <div class="sidebar">
     <div v-bind:class="{ 'burger-active': isActiveSidebar }" @click="toggleSidebar()" class="sidebar-burger">
       <span class="burger-inner"></span>
@@ -14,6 +16,7 @@
         <li><a>Search</a></li>
       </ul>
     </div>
+  </div>
   </div>
 </template>
 <script>
@@ -56,23 +59,32 @@ export default {
 }
 </script>
 <style>
-.sidebar-active .content-wrapper {
-  animation: slide-in 1s;
+.profiler-round {
+    position: fixed;
+    right: 20px;
+    top: 17px;
+    width: 60px;
+    height: 60px;
+    align-items: center;
+    text-align: center;
+    background: #3a36547a;
+    border-radius: 50%;
+    cursor: pointer;
 }
 .sidebar-active {
   left: 220px;
 }
 .sidebar-active .sidebar-body ul li:nth-child(1) {
-  animation: slide-in 1.1s;
+  animation: slide-in 0.5s;
 }
 .sidebar-active .sidebar-body ul li:nth-child(2) {
-  animation: slide-in 1.3s;
+  animation: slide-in 0.6s;
 }
 .sidebar-active .sidebar-body ul li:nth-child(3) {
-  animation: slide-in 1.5s;
+  animation: slide-in 0.7s;
 }
 .sidebar-active .sidebar-body ul li:nth-child(4) {
-  animation: slide-in 1.6s;
+  animation: slide-in 0.8s;
 }
 .hidden {
   display: none;
@@ -97,14 +109,14 @@ ul {
   border: none;
 }
 .sidebar-active .sidebar {
-  animation: slide-in 1s;
+  animation: slide-in 0.5s;
   transform: translateX(0);
 }
 .page:not(.sidebar-active) .sidebar {
-  animation: slide-out 1s;
+  animation: slide-out 0.5s;
 }
 .page:not(.sidebar-active) .sidebar-burger {
-  animation: roll-out 1s;
+  animation: roll-out 0.5s;
 }
 .sidebar {
   -ms-flex-direction: column;
@@ -126,7 +138,7 @@ ul {
   position: absolute;
   left: 235px;
   top: 10px;
-  animation: roll-in 1s;
+  animation: roll-in 0.5s;
   cursor: pointer;
   width: 40px;
   height: 40px;
@@ -244,13 +256,7 @@ ul {
   text-shadow: none;
   left: 85px;
 }
-@media (max-width: 700px) {
-  .sidebar-active .content-wrapper {
-    left: -220px;
-    background: linear-gradient(125deg, white, #625abb73);
-    filter: blur(10px);
-  }
-}
+
 @keyframes slide-in {
   from {transform: translateX(-300px);}
     to {transform: translateX(0px);}

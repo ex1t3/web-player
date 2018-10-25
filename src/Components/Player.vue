@@ -14,22 +14,24 @@
       <span class="total-time">{{ duration }}</span>
       <div @click="onTimeChange($event)" class="slider">
        <div class="progress" v-bind:style="{ width: progressWidth }">
-         <div @click="stopProp($event)" class="pin" id="progress-pin" v-bind:style="{ 'margin-left': progressWidth }"></div>
+         <div @click="stopProp($event)" class="pin" v-bind:style="{ 'margin-left': progressWidth }"></div>
       </div>
       </div>
      </div>
      </div>
+    <div class="mobile-settings"><i class="fas fa-sliders-h"></i></div>
     <div class="player-settings">
       <i @click="muteSong($event)" v-bind:class="{hidden: isVolumeOff}" class="fas fa-volume-up">
         <div @click="stopProp($event)" class="volume-raise-block">
           <div @click="onVolumeChange($event)" class="slider">
             <div class="progress" v-bind:style="{ width: progressVolumeWidth }">
-              <div @click="stopProp($event)" class="pin" id="progress-pin" v-bind:style="{ 'margin-left': progressVolumeWidth }"></div>
+              <div @click="stopProp($event)" class="pin" v-bind:style="{ 'margin-left': progressVolumeWidth }"></div>
             </div>
           </div>
         </div>
       </i>
       <i @click="unMuteSong()" v-bind:class="{hidden: !isVolumeOff, 'player-settings-active': isVolumeOff}" class="fas fa-volume-mute"></i>
+      <i class="fas fa-th-list"></i>
       <i @click="shuffleSongs()" v-bind:class="{'player-settings-active': isShuffled}" class="fas fa-random"></i>
       <i @click="isReplayed=!isReplayed" v-bind:class="{'player-settings-active': isReplayed}" class="fas fa-redo"></i>
     </div>
@@ -49,7 +51,7 @@ export default {
       progressWidth: '0%',
       progressVolumeWidth: '50%',
       currentTime: '0:00',
-      title: ' - ',
+      title: ' · ',
       isDragged: false,
       isPaused: true,
       songsLength: 0,
@@ -160,7 +162,6 @@ export default {
       else this.currentIndex++
       this.preloadSong()
       this.playSong()
-      console.log(this.currentIndex)
     },
     playPrev () {
       if (this.currentIndex === 0) this.currentIndex = this.songsLength - 1
@@ -178,7 +179,7 @@ export default {
       }
     },
     addListeners () {
-      document.getElementById('progress-pin').addEventListener('mousedown', this.mouseDown, false)
+      document.getElementsByClassName('pin')[0].addEventListener('mousedown', this.mouseDown, false)
       window.addEventListener('mouseup', this.mouseUp, false)
       document.addEventListener('keydown', this.handleSpaceClick, false)
     },
@@ -236,7 +237,7 @@ export default {
         } else {
           this.currentPoster = require('../img/no-cover.png')
         }
-        this.title = tag.title + ' - ' + tag.artist
+        this.title = tag.title + ' · ' + tag.artist
       })
     },
     setDuration () {
@@ -273,6 +274,7 @@ export default {
     display: -ms-flexbox;
     display: flex;
     bottom: 0;
+    animation: fade-in 0.5s;
     height: 100px;
     width: 100%;
     left: 0;
@@ -327,6 +329,16 @@ export default {
   position: absolute;
   top: 30px;
   right: 0
+}
+.mobile-settings {
+  display: none;
+}
+.player-settings i, .mobile-settings i {
+  cursor: pointer;
+  color: rgba(58, 54, 84, 0.56);
+  padding: 6px;
+  border-radius: 50%;
+  position: relative;
 }
 .player-buttons .player-button-icon:hover i {
     background: rgba(58, 54, 84, 0.1);
@@ -454,13 +466,6 @@ export default {
   color: #3a3654 !important;
   background: #ebeaed;
 }
-.player-settings i {
-  cursor: pointer;
-  color: rgba(58, 54, 84, 0.56);
-  padding: 6px;
-  border-radius: 50%;
-  position: relative;
-}
 .player-settings i:hover {
   background: #ebeaed;
 }
@@ -512,6 +517,30 @@ export default {
 @media (max-width: 700px) {
   .player-settings {
     display: none;
+    top: -60px;
+    right: -6px;
+    background: #dedee2;
+    border-radius: 13px;
+    animation: fade-in 0.5s;
+    padding: 5px;
+    padding-bottom: 32px;
+  }
+  .player-settings i:not(:nth-child(3)) {
+    margin-top: 5px;
+  }
+  .mobile-settings {
+    display: block;
+    position: absolute;
+    top: 30px;
+    z-index: 2;
+    right: 0
+  }
+  .player-settings i.fa-volume-up {
+    display: none;
+  }
+  .mobile-settings:hover + .player-settings,
+  .player-settings:hover {
+    display: grid;
   }
   .main-player-block {
     height: 120px;

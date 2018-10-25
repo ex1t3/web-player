@@ -35,8 +35,15 @@ export default {
     bottom: 0;
     min-height: 100%;
     z-index: 1;
+    padding-left: 15px;
     transition: .3s;
     margin-top: 40px;
-    animation: slide-out-body 1s;
+}
+@media (max-width: 700px) {
+  .sidebar-active .content-wrapper {
+    left: -220px;
+    background: linear-gradient(125deg, white, #625abb73);
+    filter: blur(10px);
+  }
 }
 </style>
