@@ -31,9 +31,19 @@
         </div>
       </i>
       <i @click="unMuteSong()" v-bind:class="{hidden: !isVolumeOff, 'player-settings-active': isVolumeOff}" class="fas fa-volume-mute"></i>
-      <i class="fas fa-th-list"></i>
+      <i @click="isActiveQueue = !isActiveQueue" class="fas fa-th-list"></i>
       <i @click="shuffleSongs()" v-bind:class="{'player-settings-active': isShuffled}" class="fas fa-random"></i>
       <i @click="isReplayed=!isReplayed" v-bind:class="{'player-settings-active': isReplayed}" class="fas fa-redo"></i>
+    </div>
+  </div>
+  <div v-bind:class="{'queue-active': isActiveQueue}" class="music-queue-block">
+    <div @click="isActiveQueue = !isActiveQueue" class="queue-closer"><i class="fas fa-times"></i></div>
+    <div class="queue-body">
+      <div class="queue-list">
+        <div v-bind:key="item" v-for="(item, index) in shuffleIndexes">
+          {{ index }}. {{ item.name }}
+        </div>
+      </div>
     </div>
   </div>
   </div>
@@ -62,6 +72,7 @@ export default {
       isReplayed: false,
       shuffleIndexes: [],
       currentIndex: 0,
+      isActiveQueue: false,
       audio: new Audio()
     }
   },
@@ -266,6 +277,33 @@ export default {
 }
 </script>
 <style>
+.music-queue-block {
+    position: absolute;
+    transform: translateY(500px);
+    transition: .5s;
+    bottom: 0;
+    width: 100%;
+    height: 500px;
+    background: #ffffff;
+    box-shadow: 0 5px 20px 0px #00000040;
+}
+.queue-active.music-queue-block {
+  transform: translateY(0px);
+}
+.music-queue-block:not(.queue-active) .queue-closer{
+  transform: rotate(360deg);
+  transition: .5s;
+}
+.queue-closer {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    cursor: pointer;
+    width: auto;
+    height: auto;
+    font-size: 25px;
+    color: #d3b0d1;
+}
 .main-player-block {
     position: fixed;
     -webkit-align-items: center;
@@ -517,13 +555,13 @@ export default {
 @media (max-width: 700px) {
   .player-settings {
     display: none;
-    top: -60px;
-    right: -6px;
+    top: -72px;
+    right: -4.5px;
     background: #dedee2;
     border-radius: 13px;
     animation: fade-in 0.5s;
     padding: 5px;
-    padding-bottom: 32px;
+    padding-bottom: 36px;
   }
   .player-settings i:not(:nth-child(3)) {
     margin-top: 5px;
