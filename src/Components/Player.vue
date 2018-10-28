@@ -40,8 +40,10 @@
     <div @click="isActiveQueue = !isActiveQueue" class="queue-closer"><i class="fas fa-times"></i></div>
     <div class="queue-body">
       <div class="queue-list">
-        <div v-bind:key="item" v-for="(item, index) in shuffleIndexes">
-          {{ index }}. {{ item.name }}
+        <div @click="playDefinedSong(item)" v-bind:class="{'current-song': currentIndex==item}" class="queue-item" v-bind:key="item" v-for="item in shuffleIndexes">
+        
+      <button class="player-button-icon"><i class="fas" v-bind:class="{'fa-pause': currentIndex===item && !isPaused, 'fa-play' : isPaused || (currentIndex!=item && !isPaused)}"></i></button>
+      <div class="queue-item-title">{{ displaySongInQueue(item).name }} </div>
         </div>
       </div>
     </div>
@@ -143,6 +145,9 @@ export default {
         this.shuffleIndexes[i] = i
       }
     },
+    displaySongInQueue(index) {
+      return this.songs[index];
+    },
     formatTime (time) {
       var min = Math.floor(time / 60)
       var sec = Math.floor(time % 60)
@@ -218,6 +223,17 @@ export default {
       this.progressWidth = offset + 'px'
       this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
     },
+    playDefinedSong (index) {
+      if (index === this.currentIndex) { 
+        if (this.isPaused) this.playSong()
+        else this.pauseSong()
+      }
+      else {
+        this.currentIndex = index
+        this.preloadSong()
+        this.playSong()
+      }
+    },
     onVolumeChange (e) {
       var x = e.clientX
       var timeline = document.getElementsByClassName('player-settings')[0]
@@ -282,10 +298,14 @@ export default {
     transform: translateY(500px);
     transition: .5s;
     bottom: 0;
+    z-index: 999;
     width: 100%;
-    height: 500px;
     background: #ffffff;
     box-shadow: 0 5px 20px 0px #00000040;
+}
+.queue-body {
+  max-height: 500px;
+  overflow-y: auto;
 }
 .queue-active.music-queue-block {
   transform: translateY(0px);
@@ -293,16 +313,42 @@ export default {
 .music-queue-block:not(.queue-active) .queue-closer{
   transform: rotate(360deg);
   transition: .5s;
+  top: 0;
 }
 .queue-closer {
     position: absolute;
     right: 20px;
     top: 20px;
+    top: -50px;
     cursor: pointer;
     width: auto;
     height: auto;
     font-size: 25px;
-    color: #d3b0d1;
+    color: #908d9e;
+}
+.queue-list {
+  width: 100%;
+  margin: 0 auto;
+}
+.queue-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    color: #3a3654;
+    display: flex;
+    align-items: center;
+}
+.queue-item-title {
+  margin-left: 10px;
+}
+.queue-item.current-song {
+  background: rgba(160, 158, 173, 0.2901960784313726)
+}
+.queue-item:hover {
+  background: rgba(160, 158, 173, 0.2901960784313726);
+  transition: .5s
+}
+.queue-item .player-button-icon {
+  padding: 0 !important;
 }
 .main-player-block {
     position: fixed;
