@@ -42,9 +42,10 @@
     <div @click="isActiveQueue = !isActiveQueue" class="queue-closer"><i class="fas fa-times"></i></div>
     <div class="queue-body">
       <div class="queue-list">
-        <div @click="playDefinedSong(item)" v-bind:class="{'current-song': currentIndex==item}" class="queue-item" v-bind:key="item" v-for="item in shuffleIndexes">
-          <button class="player-button-icon"><i class="fas" v-bind:class="{'fa-pause': currentIndex===item && !isPaused, 'fa-play' : isPaused || (currentIndex!=item && !isPaused)}"></i></button>
-          <div class="queue-item-title">{{ displaySongInQueue(item).name }}</div>
+        <div @click="playDefinedSong(index)" v-bind:class="{'current-song': currentIndex===shuffleIndexes.indexOf(item)}" class="queue-item" v-bind:key="item" v-for="(item, index) in shuffleIndexes">
+          <button class="player-button-icon"><i class="fas" v-bind:class="{'fa-pause': currentIndex===shuffleIndexes.indexOf(item) && !isPaused, 'fa-play' : isPaused || (currentIndex!==shuffleIndexes.indexOf(item) && !isPaused)}"></i></button>
+          <div class="queue-item-title">{{ songs[item].name + " " + currentIndex}}</div>
+          <div class="queue-item-title">{{ songs[item].artist }}</div>
         </div>
       </div>
     </div>
@@ -89,23 +90,23 @@ export default {
       this.songs = [
         { src: require('../songs/1.mp3'),
           artist: '0',
-          name: 'Wow'
+          name: 'song1'
         },
         { src: require('../songs/2.mp3'),
           artist: '1',
-          name: 'Disdain'
+          name: 'song2'
         },
         { src: require('../songs/3.mp3'),
           artist: '2',
-          name: 'Base'
+          name: 'song3'
         },
         { src: require('../songs/4.mp3'),
           artist: '3',
-          name: 'Fireproof'
+          name: 'song4'
         },
         { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/NF%20-%20Let%20You%20Down.mp3',
           artist: '4',
-          name: 'Im not the only one'
+          name: 'song5'
         }
       ]
       this.audio.preload = 'metadata'
@@ -140,14 +141,26 @@ export default {
       this.isVolumeOff = !this.isVolumeOff
       this.audio.volume = this.volume
     },
+    shuffleSongs () {
+      this.isShuffled = !this.isShuffled
+      if (this.isShuffled) {
+        for (let i = this.songsLength - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1))
+          let x = this.shuffleIndexes[i]
+          this.shuffleIndexes[i] = this.shuffleIndexes[j]
+          this.shuffleIndexes[j] = x
+        }
+        console.log(this.shuffleIndexes)
+        console.log("INDEX BEFORE SHUFFLE: " + this.currentIndex)
+        this.currentIndex = this.shuffleIndexes.indexOf(this.currentIndex)
+        console.log("INDEX AFTER SHUFFLE: " + this.currentIndex)
+      } else this.unShuffleSongs()
+    },
     unShuffleSongs () {
       this.currentIndex = this.shuffleIndexes[this.currentIndex]
       for (let i = 0; i < this.songsLength; i++) {
         this.shuffleIndexes[i] = i
       }
-    },
-    displaySongInQueue (index) {
-      return this.songs[index]
     },
     formatTime (time) {
       var min = Math.floor(time / 60)
@@ -225,6 +238,8 @@ export default {
       this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
     },
     playDefinedSong (index) {
+      console.log("SONG: " + index)
+      console.log("INDEX: " + this.currentIndex)
       if (index === this.currentIndex) {
         if (this.isPaused) this.playSong()
         else this.pauseSong()
@@ -272,22 +287,6 @@ export default {
     },
     stopProp (e) {
       e.stopPropagation()
-    },
-    shuffleSongs () {
-      this.isShuffled = !this.isShuffled
-      if (this.isShuffled) {
-        var currentSongBeforeShuffle = this.shuffleIndexes[this.currentIndex]
-        for (let i = this.songsLength - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1))
-          let x = this.shuffleIndexes[i]
-          this.shuffleIndexes[i] = this.shuffleIndexes[j]
-          this.shuffleIndexes[j] = x
-        }
-        var currentSongIndex = this.shuffleIndexes.indexOf(currentSongBeforeShuffle)
-        this.shuffleIndexes[currentSongIndex] = this.shuffleIndexes[0]
-        this.shuffleIndexes[0] = currentSongBeforeShuffle
-        this.currentIndex = 0
-      } else this.unShuffleSongs()
     }
   }
 }
