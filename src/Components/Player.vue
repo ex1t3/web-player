@@ -1,6 +1,8 @@
 <template>
   <div class="main-player-block">
+    <div class="main-player-favorite"><i class="far fa-heart"></i></div>
     <div class="main-player-poster"><img v-bind:src="currentPoster"/></div>
+    <div class="main-player-add"><i class="fas fa-plus"></i></div>
     <div class="main-player-body">
     <div class="player-buttons">
       <button class="player-button-icon" @click="playPrev()"><i class="fas fa-backward"></i></button>
@@ -41,9 +43,8 @@
     <div class="queue-body">
       <div class="queue-list">
         <div @click="playDefinedSong(item)" v-bind:class="{'current-song': currentIndex==item}" class="queue-item" v-bind:key="item" v-for="item in shuffleIndexes">
-        
-      <button class="player-button-icon"><i class="fas" v-bind:class="{'fa-pause': currentIndex===item && !isPaused, 'fa-play' : isPaused || (currentIndex!=item && !isPaused)}"></i></button>
-      <div class="queue-item-title">{{ displaySongInQueue(item).name }} </div>
+          <button class="player-button-icon"><i class="fas" v-bind:class="{'fa-pause': currentIndex===item && !isPaused, 'fa-play' : isPaused || (currentIndex!=item && !isPaused)}"></i></button>
+          <div class="queue-item-title">{{ displaySongInQueue(item).name }}</div>
         </div>
       </div>
     </div>
@@ -69,7 +70,7 @@ export default {
       songsLength: 0,
       isVolumeOff: false,
       isShuffled: false,
-      currentPoster: require('../img/no-cover.png'),
+      currentPoster: require('../img/no-cover.svg'),
       volume: 0.5,
       isReplayed: false,
       shuffleIndexes: [],
@@ -145,8 +146,8 @@ export default {
         this.shuffleIndexes[i] = i
       }
     },
-    displaySongInQueue(index) {
-      return this.songs[index];
+    displaySongInQueue (index) {
+      return this.songs[index]
     },
     formatTime (time) {
       var min = Math.floor(time / 60)
@@ -224,11 +225,10 @@ export default {
       this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
     },
     playDefinedSong (index) {
-      if (index === this.currentIndex) { 
+      if (index === this.currentIndex) {
         if (this.isPaused) this.playSong()
         else this.pauseSong()
-      }
-      else {
+      } else {
         this.currentIndex = index
         this.preloadSong()
         this.playSong()
@@ -262,7 +262,7 @@ export default {
           var base64 = 'data:' + image.mime + ';base64,' + window.btoa(base64String)
           this.currentPoster = base64
         } else {
-          this.currentPoster = require('../img/no-cover.png')
+          this.currentPoster = require('../img/no-cover.svg')
         }
         this.title = tag.title + ' · ' + tag.artist
       })
@@ -293,6 +293,13 @@ export default {
 }
 </script>
 <style>
+.main-player-favorite, .main-player-add {
+  position: relative;
+  margin-left: auto;
+  font-size: 25px;
+  color: #3a3654;
+  cursor: pointer;
+}
 .music-queue-block {
     position: absolute;
     transform: translateY(500px);
@@ -593,8 +600,11 @@ export default {
 :focus {
   outline: none
 }
-@media (min-width: 1500px) {
+@media (min-width: 1000px) {
   .main-player-poster {
+    margin-left: auto;
+  }
+  .main-player-body {
     margin: 0 auto;
   }
 }
