@@ -42,8 +42,8 @@
     <div @click="isActiveQueue = !isActiveQueue" class="queue-closer"><i class="fas fa-times"></i></div>
     <div class="queue-body">
       <div class="queue-list">
-        <div @click="playDefinedSong(index)" v-bind:class="{'current-song': currentIndex===shuffleIndexes.indexOf(item)}" class="queue-item" v-bind:key="item" v-for="(item, index) in shuffleIndexes">
-          <button class="player-button-icon"><i class="fas" v-bind:class="{'fa-pause': currentIndex===shuffleIndexes.indexOf(item) && !isPaused, 'fa-play' : isPaused || (currentIndex!==shuffleIndexes.indexOf(item) && !isPaused)}"></i></button>
+        <div @click="playDefinedSong(index)" v-bind:class="{'current-song': currentIndex===index}" class="queue-item" v-bind:key="item" v-for="(item, index) in shuffleIndexes">
+          <button class="player-button-icon"><i class="fas" v-bind:class="{'fa-pause': currentIndex===index && !isPaused, 'fa-play' : isPaused || (currentIndex!==index && !isPaused)}"></i></button>
           <div class="queue-item-title">{{ songs[item].name + " " + currentIndex}}</div>
           <div class="queue-item-title">{{ songs[item].artist }}</div>
         </div>
@@ -295,7 +295,7 @@ export default {
 .main-player-favorite, .main-player-add {
   position: relative;
   margin-left: auto;
-  font-size: 25px;
+  font-size: 20px;
   color: #3a3654;
   cursor: pointer;
 }

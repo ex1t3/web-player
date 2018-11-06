@@ -2,7 +2,6 @@ import {
   OPEN_HOME,
   OPEN_PROFILE,
   OPEN_MUSIC,
-  OPEN_PLAYLISTS,
   OPEN_SETTINGS,
   LOG_IN,
   LOG_OUT,
@@ -28,7 +27,6 @@ const state = {
   isSettingsPage: false,
   isProfilePage: false,
   isMusicPage: false,
-  isPlaylistsPage: false,
   is: false,
   isActiveSidebar: false
 
@@ -42,8 +40,7 @@ const getters = {
   isHomePage: state => state.isHomePage,
   isSettingsPage: state => state.isSettingsPage,
   isProfilePage: state => state.isProfilePage,
-  isMusicPage: state => state.isMusicPage,
-  isPlaylistsPage: state => state.isPlaylistsPage
+  isMusicPage: state => state.isMusicPage
 }
 // initialize store actions
 const actions = {
@@ -64,9 +61,6 @@ const actions = {
   },
   setMusicPage ({commit}, data) {
     commit(OPEN_MUSIC, data)
-  },
-  setPlaylistsPage ({commit}, data) {
-    commit(OPEN_PLAYLISTS, data)
   },
   startLoading ({commit}, data) {
     commit(START_LOADING, data)
@@ -105,35 +99,24 @@ const mutations = {
     state.isProfilePage = false
     state.isSettingsPage = false
     state.isMusicPage = false
-    state.isPlaylistsPage = false
-  },
-  [OPEN_PLAYLISTS] (state) {
-    state.isHomePage = false
-    state.isProfilePage = false
-    state.isSettingsPage = false
-    state.isMusicPage = false
-    state.isPlaylistsPage = true
   },
   [OPEN_MUSIC] (state) {
     state.isHomePage = false
     state.isProfilePage = false
     state.isSettingsPage = false
     state.isMusicPage = true
-    state.isPlaylistsPage = false
   },
   [OPEN_PROFILE] (state) {
     state.isHomePage = false
     state.isProfilePage = true
     state.isSettingsPage = false
     state.isMusicPage = false
-    state.isPlaylistsPage = false
   },
   [OPEN_SETTINGS] (state) {
     state.isHomePage = false
     state.isProfilePage = false
     state.isSettingsPage = true
     state.isMusicPage = false
-    state.isPlaylistsPage = false
   }
 }
 // instantiate vuex store

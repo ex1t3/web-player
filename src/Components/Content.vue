@@ -1,14 +1,14 @@
 <template>
     <div class="content-wrapper">
         <div v-if="isHomePage">Home</div>
-        <div v-if="isMusicPage">Music</div>
-        <div v-if="isPlaylistsPage">Playlists</div>
+        <Music v-if="isMusicPage"/>
         <div v-if="isSettingsPage">Settings</div>
         <div v-if="isProfilePage">Profile</div>
     </div>
 </template>
 <script>
 import store from '../store'
+import Music from '../Components/Music'
 import {mapGetters} from 'vuex'
 
 export default {
@@ -20,10 +20,12 @@ export default {
   computed: mapGetters({
     isHomePage: 'isHomePage',
     isMusicPage: 'isMusicPage',
-    isPlaylistsPage: 'isPlaylistsPage',
     isSettingsPage: 'isSettingsPage',
     isProfilePage: 'isProfilePage'
-  })
+  }),
+  components: {
+    Music
+  }
 }
 </script>
 <style>
@@ -37,13 +39,14 @@ export default {
     z-index: 1;
     padding-left: 15px;
     transition: .3s;
-    margin-top: 40px;
+    margin-top: 70px;
 }
 @media (max-width: 700px) {
   .sidebar-active .content-wrapper {
     left: -220px;
     background: linear-gradient(125deg, white, #625abb73);
     filter: blur(10px);
+    position: fixed;
   }
 }
 </style>

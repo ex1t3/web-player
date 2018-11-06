@@ -12,7 +12,6 @@
      <ul>
         <li><a @click="openHome()">Home</a></li>
         <li><a @click="openMusic()">My music</a></li>
-        <li><a @click="openPlaylists()">Playlists</a></li>
         <li><a>Search</a></li>
       </ul>
     </div>
@@ -35,9 +34,6 @@ export default {
     },
     openSettings () {
       this.$store.dispatch('setSettingsPage')
-    },
-    openPlaylists () {
-      this.$store.dispatch('setPlaylistsPage')
     },
     openProfile () {
       this.$store.dispatch('setProfilePage')
@@ -203,7 +199,7 @@ ul {
   left: 5px;
   margin-top: 28px;
   height: 2px;
-  background: rgba(255, 255, 255, 0.61);
+  background: rgba(58, 54, 84, 0.4);
   transition: .3s ease-in;
 }
 .sidebar li a:hover,
