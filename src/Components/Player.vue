@@ -1,8 +1,7 @@
 <template>
   <div class="main-player-block">
-    <div class="main-player-favorite"><i class="far fa-heart"></i></div>
     <div class="main-player-poster"><img v-bind:src="currentPoster"/></div>
-    <div class="main-player-add"><i class="fas fa-plus"></i></div>
+    <div class="main-player-add-to"><i class="fas fa-plus"></i><i class="far fa-heart"></i></div>
     <div class="main-player-body">
     <div class="player-buttons">
       <button class="player-button-icon" @click="playPrev()"><i class="fas fa-backward"></i></button>
@@ -44,7 +43,7 @@
       <div class="queue-list">
         <div @click="playDefinedSong(index)" v-bind:class="{'current-song': currentIndex===index}" class="queue-item" v-bind:key="item" v-for="(item, index) in shuffleIndexes">
           <button class="player-button-icon"><i class="fas" v-bind:class="{'fa-pause': currentIndex===index && !isPaused, 'fa-play' : isPaused || (currentIndex!==index && !isPaused)}"></i></button>
-          <div class="queue-item-title">{{ songs[item].name + " " + currentIndex}}</div>
+          <div class="queue-item-title">{{ songs[item].name }}</div>
           <div class="queue-item-title">{{ songs[item].artist }}</div>
         </div>
       </div>
@@ -292,12 +291,16 @@ export default {
 }
 </script>
 <style>
-.main-player-favorite, .main-player-add {
+.main-player-add-to {
   position: relative;
   margin-left: auto;
   font-size: 20px;
-  color: #3a3654;
+  color: #918e9f;
   cursor: pointer;
+  display: grid;
+}
+.main-player-add-to i {
+  padding: 10px;
 }
 .music-queue-block {
     position: absolute;
@@ -342,6 +345,7 @@ export default {
     color: #3a3654;
     display: flex;
     align-items: center;
+    border-bottom: 1px solid #ebeaee;
 }
 .queue-item-title {
   margin-left: 10px;
@@ -471,7 +475,7 @@ export default {
     padding-right: 17px;
 }
 .player-buttons {
-    width: 160px;
+    width: 190px;
     padding: 0;
     margin: 0 auto;
     margin-top: 25px;
@@ -658,6 +662,23 @@ export default {
   }
   .main-player-body {
     width: 95%;
+  }
+  .main-player-add-to {
+    position: absolute;
+    display: block;
+    width: 95%;
+    margin-top: 20px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    height: 0;
+    z-index: 2;
+  }
+  .main-player-add-to i {
+    position: absolute;
+    padding: 4px;
+  }
+  .main-player-add-to i:nth-child(2) {
+    right: 0px;
   }
 }
 </style>

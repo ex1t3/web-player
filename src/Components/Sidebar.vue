@@ -10,9 +10,9 @@
         <a>AUDIO</a>
      </div>
      <ul>
-        <li><a @click="openHome()">Home</a></li>
-        <li><a @click="openMusic()">My music</a></li>
-        <li><a>Search</a></li>
+        <li><a @click="openTemplate('setHomePage')">Home</a></li>
+        <li><a @click="openTemplate('setMusicPage')">My music</a></li>
+        <li><a @click="openTemplate('setSearchPage')">Search</a></li>
       </ul>
     </div>
   </div>
@@ -29,17 +29,8 @@ export default {
     }
   },
   methods: {
-    openHome () {
-      this.$store.dispatch('setHomePage')
-    },
-    openSettings () {
-      this.$store.dispatch('setSettingsPage')
-    },
-    openProfile () {
-      this.$store.dispatch('setProfilePage')
-    },
-    openMusic () {
-      this.$store.dispatch('setMusicPage')
+    openTemplate (template) {
+      this.$store.dispatch(template)
     },
     toggleSidebar () {
       if (this.isActiveSidebar) {
@@ -66,6 +57,7 @@ export default {
     background: #3a36547a;
     border-radius: 50%;
     cursor: pointer;
+    z-index: 2;
 }
 .sidebar-active {
   left: 220px;

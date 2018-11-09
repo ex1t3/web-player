@@ -2,6 +2,7 @@
     <div class="content-wrapper">
         <div v-if="isHomePage">Home</div>
         <Music v-if="isMusicPage"/>
+        <Search v-if="isSearchPage"/>
         <div v-if="isSettingsPage">Settings</div>
         <div v-if="isProfilePage">Profile</div>
     </div>
@@ -9,6 +10,7 @@
 <script>
 import store from '../store'
 import Music from '../Components/Music'
+import Search from '../Components/Search'
 import {mapGetters} from 'vuex'
 
 export default {
@@ -21,10 +23,12 @@ export default {
     isHomePage: 'isHomePage',
     isMusicPage: 'isMusicPage',
     isSettingsPage: 'isSettingsPage',
+    isSearchPage: 'isSearchPage',
     isProfilePage: 'isProfilePage'
   }),
   components: {
-    Music
+    Music,
+    Search
   }
 }
 </script>
@@ -35,7 +39,6 @@ export default {
     right: 0;
     top: 0;
     bottom: 0;
-    min-height: 100%;
     z-index: 1;
     padding-left: 15px;
     transition: .3s;
@@ -43,9 +46,7 @@ export default {
 }
 @media (max-width: 700px) {
   .sidebar-active .content-wrapper {
-    left: -220px;
-    background: linear-gradient(125deg, white, #625abb73);
-    filter: blur(10px);
+    filter: blur(7px);
     position: fixed;
   }
 }

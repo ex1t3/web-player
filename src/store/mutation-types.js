@@ -2,6 +2,7 @@
 export const OPEN_HOME = 'OPEN_HOME'
 export const OPEN_SETTINGS = 'OPEN_SETTINGS'
 export const OPEN_PROFILE = 'OPEN_PROFILE'
+export const OPEN_SEARCH = 'OPEN_SEARCH'
 export const OPEN_MUSIC = 'OPEN_MUSIC'
 export const ACTIVE_SIDEBAR = 'ACTIVE_SIDEBAR'
 export const DEACTIVE_SIDEBAR = 'DEACTIVE_SIDEBAR'
