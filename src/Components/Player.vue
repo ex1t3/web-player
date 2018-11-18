@@ -150,9 +150,7 @@ export default {
           this.shuffleIndexes[j] = x
         }
         console.log(this.shuffleIndexes)
-        console.log("INDEX BEFORE SHUFFLE: " + this.currentIndex)
         this.currentIndex = this.shuffleIndexes.indexOf(this.currentIndex)
-        console.log("INDEX AFTER SHUFFLE: " + this.currentIndex)
       } else this.unShuffleSongs()
     },
     unShuffleSongs () {
@@ -237,8 +235,6 @@ export default {
       this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
     },
     playDefinedSong (index) {
-      console.log("SONG: " + index)
-      console.log("INDEX: " + this.currentIndex)
       if (index === this.currentIndex) {
         if (this.isPaused) this.playSong()
         else this.pauseSong()
@@ -396,7 +392,6 @@ export default {
     width: 70px;
     height: 70px;
     border-radius: 5px;
-    background: #3a3f68;
     position: relative;
     margin-left: auto
 }

@@ -40,9 +40,11 @@ export default {
     top: 0;
     bottom: 0;
     z-index: 1;
-    padding-left: 15px;
     transition: .3s;
     margin-top: 70px;
+    padding-bottom: 140px;
+    overflow: auto;
+    width: 100%;
 }
 @media (max-width: 700px) {
   .sidebar-active .content-wrapper {

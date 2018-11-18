@@ -1,14 +1,9 @@
 <template>
-<div class="tabs"> 
+<div class="tabs">
   <input type="radio" id="tab1" name="tab-control" checked>
   <input type="radio" id="tab2" name="tab-control">
   <ul>
-    <li title="My Playlists"><label for="tab1" role="button"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 448.138 448.138" style="enable-background:new 0 0 448.138 448.138;" xml:space="preserve"><path d="M436.768,151.845c-13.152-26.976-35.744-42.08-57.6-56.704C362.88,84.229,347.52,73.925,336.64,59.173l-2.016-2.72
-	c-6.4-8.608-13.696-18.368-14.816-26.56c-1.12-8.288-7.648-14.048-16.928-13.792C294.496,16.677,288,23.653,288,32.069v285.12
-	c-13.408-8.128-29.92-13.12-48-13.12c-44.096,0-80,28.704-80,64s35.904,64,80,64c44.128,0,80-28.704,80-64V181.573
-	c24.032,9.184,63.36,32.576,74.176,87.2c-2.016,2.976-3.936,6.208-6.176,8.736c-5.856,6.624-5.184,16.736,1.44,22.56
-	c6.592,5.888,16.704,5.184,22.56-1.44c20.032-22.752,33.824-58.784,35.968-94.016C449.024,187.237,445.152,168.997,436.768,151.845z
-	"/><path d="M16,48.069h192c8.832,0,16-7.168,16-16s-7.168-16-16-16H16c-8.832,0-16,7.168-16,16S7.168,48.069,16,48.069z"/><path d="M16,144.069h192c8.832,0,16-7.168,16-16s-7.168-16-16-16H16c-8.832,0-16,7.168-16,16S7.168,144.069,16,144.069z"/><path d="M112,208.069H16c-8.832,0-16,7.168-16,16s7.168,16,16,16h96c8.832,0,16-7.168,16-16S120.832,208.069,112,208.069z"/><path d="M112,304.069H16c-8.832,0-16,7.168-16,16s7.168,16,16,16h96c8.832,0,16-7.168,16-16S120.832,304.069,112,304.069z"/><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g>
+    <li title="My Playlists"><label for="tab1" role="button"><svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 448.138 448.138" style="enable-background:new 0 0 448.138 448.138;" xml:space="preserve"><path d="M436.768,151.845c-13.152-26.976-35.744-42.08-57.6-56.704C362.88,84.229,347.52,73.925,336.64,59.173l-2.016-2.72c-6.4-8.608-13.696-18.368-14.816-26.56c-1.12-8.288-7.648-14.048-16.928-13.792C294.496,16.677,288,23.653,288,32.069v285.12c-13.408-8.128-29.92-13.12-48-13.12c-44.096,0-80,28.704-80,64s35.904,64,80,64c44.128,0,80-28.704,80-64V181.573c24.032,9.184,63.36,32.576,74.176,87.2c-2.016,2.976-3.936,6.208-6.176,8.736c-5.856,6.624-5.184,16.736,1.44,22.56c6.592,5.888,16.704,5.184,22.56-1.44c20.032-22.752,33.824-58.784,35.968-94.016C449.024,187.237,445.152,168.997,436.768,151.845zs"/><path d="M16,48.069h192c8.832,0,16-7.168,16-16s-7.168-16-16-16H16c-8.832,0-16,7.168-16,16S7.168,48.069,16,48.069z"/><path d="M16,144.069h192c8.832,0,16-7.168,16-16s-7.168-16-16-16H16c-8.832,0-16,7.168-16,16S7.168,144.069,16,144.069z"/><path d="M112,208.069H16c-8.832,0-16,7.168-16,16s7.168,16,16,16h96c8.832,0,16-7.168,16-16S120.832,208.069,112,208.069z"/><path d="M112,304.069H16c-8.832,0-16,7.168-16,16s7.168,16,16,16h96c8.832,0,16-7.168,16-16S120.832,304.069,112,304.069z"/><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g>
 </svg><br><span>My Playlists</span></label></li>
     <li title="Favorite Tracks"><label for="tab2" role="button"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 43.995 43.995" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 43.995 43.995">
   <g>
@@ -21,31 +16,79 @@
       <path fill-rule="evenodd" d="m1,2.005h28c0.552,0 1-0.447 1-1s-0.448-1-1-1h-28c-0.552,0-1,0.447-1,1s0.448,1 1,1zm17,18h-17c-0.552,0-1,0.447-1,1s0.448,1 1,1h17c0.552,0 1-0.447 1-1s-0.448-1-1-1zm11-10h-28c-0.552,0-1,0.447-1,1s0.448,1 1,1h28c0.552,0 1-0.447 1-1s-0.448-1-1-1zm-14,20h-14c-0.552-3.55271e-15-1,0.447-1,1s0.448,1 1,1h14c0.552,0 1-0.447 1-1s-0.448-1-1-1z"/>
     </g>
   </g>
-</svg><br><span>Favorite Tracks</span></label></li> 
+</svg><br><span>Favorite Tracks</span></label></li>
   </ul>
-  
   <div class="slider"><div class="indicator"></div></div>
   <div class="content">
     <section>
-      <h2>My Playlists</h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea dolorem sequi, quo tempore in eum obcaecati atque quibusdam officiis est dolorum minima deleniti ratione molestias numquam. Voluptas voluptates quibusdam cum?</section>
+      <h2>My Playlists</h2>
+          <div class="playlist-block">
+            <div class="playlist-poster"><img src="../img/pc.svg"/></div>
+            <div class="playlist-content">
+              <p class="playlist-title">Playlist #1</p>
+              </div>
+          </div>
+          <div class="playlist-block">
+            <div class="playlist-poster"><img src="../img/pc.svg"/></div>
+            <div class="playlist-content">
+              <p class="playlist-title">GYM</p>
+              </div>
+          </div>
+      </section>
         <section>
           <h2>Favorite Tracks</h2>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem quas adipisci a accusantium eius ut voluptatibus ad impedit nulla, ipsa qui. Quasi temporibus eos commodi aliquid impedit amet, similique nulla.</section>
-        <section>
-          <h2>Shipping</h2>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam nemo ducimus eius, magnam error quisquam sunt voluptate labore, excepturi numquam! Alias libero optio sed harum debitis! Veniam, quia in eum.</section>
-    <section>
-          <h2>Returns</h2>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa dicta vero rerum? Eaque repudiandae architecto libero reprehenderit aliquam magnam ratione quidem? Nobis doloribus molestiae enim deserunt necessitatibus eaque quidem incidunt.</section>
+          sfsfsfsfs
+         </section>
   </div>
 </div>
 </template>
 <script>
 export default {
-    
+
 }
 </script>
 <style>
+.playlist-block {
+    width: 200px;
+    text-align: center;
+    height: 200px;
+    display: flex;
+    margin-top: 60px;
+    margin-left: 40px;
+    cursor: pointer;
+    position: relative;
+    transition: .3s;
+    align-items: center;
+    float: left;
+    box-shadow: 0px 5px 20px #d2d2d24a;
+}
+.playlist-block:hover {
+  transform: translateY(-5px)
+}
+.playlist-content {
+    width: 100%;
+    text-align: left;
+    padding: 15px 0;
+    z-index: 2;
+    position: absolute;
+    top: -45px;
+    background: #dcafc6;
+}
+.playlist-content .playlist-title {
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    padding-left: 10px;
+}
+.playlist-poster {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.playlist-poster img {
+  width: 100%;
+}
 .tabs {
 left: 50%;
     -webkit-transform: translateX(-50%);
@@ -56,7 +99,7 @@ left: 50%;
     padding-bottom: 80px;
     width: 90%;
     height: auto;
-    min-width: 240px; 
+    min-width: 240px;
 }
 .tabs input[name="tab-control"] {
   display: none;
@@ -66,7 +109,7 @@ left: 50%;
   font-family: 'Niramit', sans-serif;
   font-weight: bold;
   font-size: 18px;
-  color: #ab8bd2;
+  color: #d3b0d1;
 }
 .tabs ul {
   list-style-type: none;
@@ -129,7 +172,7 @@ position: relative;
     width: 80%;
     margin: 0 auto;
     height: 4px;
-    background: #ab8bd2;
+    background: #d3b0d1;
     border-radius: 1px;
 }
 .tabs .content {
@@ -150,7 +193,7 @@ position: relative;
   line-height: 1.4;
 }
 .tabs .content section h2 {
-  color: #ab8bd2;
+  color: #d3b0d1;
   display: none;
 }
 .tabs .content section h2::after {
@@ -159,16 +202,26 @@ position: relative;
   display: block;
   width: 30px;
   height: 3px;
-  background: #ab8bd2;
+  background: #d3b0d1;
   margin-top: 5px;
   left: 1px;
 }
 .tabs input[name="tab-control"]:nth-of-type(1):checked ~ ul > li:nth-child(1) > label {
   cursor: default;
-  color: #ab8bd2;
+  color: #d3b0d1;
 }
 .tabs input[name="tab-control"]:nth-of-type(1):checked ~ ul > li:nth-child(1) > label svg {
-  fill: #ab8bd2;
+  fill: #d3b0d1;
+}
+@media (max-width: 700px) {
+  .playlist-block {
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+    width: 150px;
+    height: 150px;
+    margin-top: 50px;
+  }
 }
 @media (max-width: 600px) {
   .tabs input[name="tab-control"]:nth-of-type(1):checked ~ ul > li:nth-child(1) > label {
@@ -184,10 +237,10 @@ position: relative;
 }
 .tabs input[name="tab-control"]:nth-of-type(2):checked ~ ul > li:nth-child(2) > label {
   cursor: default;
-  color: #ab8bd2;
+  color: #d3b0d1;
 }
 .tabs input[name="tab-control"]:nth-of-type(2):checked ~ ul > li:nth-child(2) > label svg {
-  fill: #ab8bd2;
+  fill: #d3b0d1;
 }
 @media (max-width: 600px) {
   .tabs input[name="tab-control"]:nth-of-type(2):checked ~ ul > li:nth-child(2) > label {
@@ -203,10 +256,10 @@ position: relative;
 }
 .tabs input[name="tab-control"]:nth-of-type(3):checked ~ ul > li:nth-child(3) > label {
   cursor: default;
-  color: #ab8bd2;
+  color: #d3b0d1;
 }
 .tabs input[name="tab-control"]:nth-of-type(3):checked ~ ul > li:nth-child(3) > label svg {
-  fill: #ab8bd2;
+  fill: #d3b0d1;
 }
 @media (max-width: 600px) {
   .tabs input[name="tab-control"]:nth-of-type(3):checked ~ ul > li:nth-child(3) > label {
@@ -222,10 +275,10 @@ position: relative;
 }
 .tabs input[name="tab-control"]:nth-of-type(4):checked ~ ul > li:nth-child(4) > label {
   cursor: default;
-  color: #ab8bd2;
+  color: #d3b0d1;
 }
 .tabs input[name="tab-control"]:nth-of-type(4):checked ~ ul > li:nth-child(4) > label svg {
-  fill: #ab8bd2;
+  fill: #d3b0d1;
 }
 @media (max-width: 600px) {
   .tabs input[name="tab-control"]:nth-of-type(4):checked ~ ul > li:nth-child(4) > label {
