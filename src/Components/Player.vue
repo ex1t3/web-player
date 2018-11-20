@@ -5,8 +5,8 @@
     <div class="main-player-body">
     <div class="player-buttons">
       <button class="player-button-icon" @click="playPrev()"><i class="fas fa-backward"></i></button>
-      <button class="player-button-icon" @click="playSong()" v-bind:class="{hidden : !isPaused}" ><i class="fas fa-play"></i></button>
-      <button class="player-button-icon" @click="pauseSong()" v-bind:class="{hidden : isPaused}" ><i class="fas fa-pause"></i></button>
+      <button class="player-button-icon" @click="playSong()" v-bind:class="{hidden : !$main.isPaused}" ><i class="fas fa-play"></i></button>
+      <button class="player-button-icon" @click="pauseSong()" v-bind:class="{hidden : $main.isPaused}" ><i class="fas fa-pause"></i></button>
       <button class="player-button-icon" @click="playNext()"><i class="fas fa-forward"></i></button></div>
     <div class="player-trackline">
       <div class="title">{{ title }}</div>
@@ -41,10 +41,12 @@
     <div @click="isActiveQueue = !isActiveQueue" class="queue-closer"><i class="fas fa-times"></i></div>
     <div class="queue-body">
       <div class="queue-list">
-        <div @click="playDefinedSong(index)" v-bind:class="{'current-song': currentIndex===index}" class="queue-item" v-bind:key="item" v-for="(item, index) in shuffleIndexes">
-          <button class="player-button-icon"><i class="fas" v-bind:class="{'fa-pause': currentIndex===index && !isPaused, 'fa-play' : isPaused || (currentIndex!==index && !isPaused)}"></i></button>
-          <div class="queue-item-title">{{ songs[item].name }}</div>
-          <div class="queue-item-title">{{ songs[item].artist }}</div>
+        <div @click="playDefinedSong(item)" v-bind:class="{'current-song': $main.currentIndex===item}" class="queue-item" :key="item" v-for="(item) in shuffleIndexes">
+          <button class="player-button-icon">
+            <i class="fas" v-bind:class="{'fa-pause': $main.currentIndex===item && !$main.isPaused, 'fa-play' : $main.isPaused || ($main.currentIndex!==item && !$main.isPaused)}"></i>
+          </button>
+          <div class="queue-item-title">{{ songs[lookUpper(item)].name }}</div>
+          <div class="queue-item-title">{{ songs[lookUpper(item)].artist }}</div>
         </div>
       </div>
     </div>
@@ -53,8 +55,21 @@
 </template>
 <script>
 import store from '../store'
-// import { mapGetters } from 'vuex'
+import Vue from 'vue'
 import universalParse from 'id3-parser/lib/universal'
+var indexes = new Vue({
+  data: {
+    currentIndex: 0,
+    isPaused: true
+  }
+})
+indexes.install = function () {
+  Object.defineProperty(Vue.prototype, '$main', {
+    get () { return indexes }
+  })
+}
+Vue.use(indexes)
+// import { mapGetters } from 'vuex'
 export default {
   store,
   data () {
@@ -66,7 +81,6 @@ export default {
       currentTime: '0:00',
       title: ' · ',
       isDragged: false,
-      isPaused: true,
       songsLength: 0,
       isVolumeOff: false,
       isShuffled: false,
@@ -74,40 +88,61 @@ export default {
       volume: 0.5,
       isReplayed: false,
       shuffleIndexes: [],
-      currentIndex: 0,
       isActiveQueue: false,
       audio: new Audio()
     }
   },
   mounted () {
     this.loadSongs()
+    this.$main.currentIndex = this.songs[0]['index']
     this.preloadSong()
     this.addListeners()
+    this.$root.$on('loadSongs', (songs) => {
+      this.loadSongs(songs)
+    })
+    this.$root.$on('playDefinedSong', (index) => {
+      this.playDefinedSong(index)
+    })
+    this.$root.$on('pauseSong', () => {
+      this.pauseSong()
+    })
   },
   methods: {
-    loadSongs () {
-      this.songs = [
-        { src: require('../songs/1.mp3'),
-          artist: '0',
-          name: 'song1'
-        },
-        { src: require('../songs/2.mp3'),
-          artist: '1',
-          name: 'song2'
-        },
-        { src: require('../songs/3.mp3'),
-          artist: '2',
-          name: 'song3'
-        },
-        { src: require('../songs/4.mp3'),
-          artist: '3',
-          name: 'song4'
-        },
-        { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/NF%20-%20Let%20You%20Down.mp3',
-          artist: '4',
-          name: 'song5'
-        }
-      ]
+    lookUpper (index) {
+      return this.songs.map(function (x){ return x.index }).indexOf(index)
+    },
+    loadSongs (songs) {
+      if (songs !== undefined) {
+        this.songs = songs
+      } else {
+        this.songs = [
+          { src: require('../songs/1.mp3'),
+            artist: '0',
+            name: 'song1',
+            index: '12'
+          },
+          { src: require('../songs/2.mp3'),
+            artist: '1',
+            name: 'song2',
+            index: '22'
+          },
+          { src: require('../songs/3.mp3'),
+            artist: '2',
+            name: 'song3',
+            index: '4334'
+          },
+          { src: require('../songs/4.mp3'),
+            artist: '3',
+            name: 'song4',
+            index: '5454'
+          },
+          { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/NF%20-%20Let%20You%20Down.mp3',
+            artist: '4',
+            name: 'song5',
+            index: '5353'
+          }
+        ]
+      }
       this.audio.preload = 'metadata'
       var that = this
       this.audio.onloadedmetadata = function () {
@@ -117,14 +152,16 @@ export default {
         that.updateTime()
       }
       this.songsLength = this.songs.length
+      this.shuffleIndexes = []
       for (let i = 0; i < this.songsLength; i++) {
-        this.shuffleIndexes.push(i)
+        this.shuffleIndexes.push(this.songs[i]['index'])
       }
+      console.log(this.shuffleIndexes)
     },
     handleSpaceClick (e) {
       e.preventDefault()
       if (e.keyCode === 32) {
-        if (this.isPaused) {
+        if (this.$main.isPaused) {
           this.playSong()
         } else {
           this.pauseSong()
@@ -149,14 +186,15 @@ export default {
           this.shuffleIndexes[i] = this.shuffleIndexes[j]
           this.shuffleIndexes[j] = x
         }
+        this.$main.currentIndex = this.shuffleIndexes[this.shuffleIndexes.indexOf(this.$main.currentIndex)]
+        console.log(this.$main.currentIndex)
         console.log(this.shuffleIndexes)
-        this.currentIndex = this.shuffleIndexes.indexOf(this.currentIndex)
       } else this.unShuffleSongs()
     },
     unShuffleSongs () {
-      this.currentIndex = this.shuffleIndexes[this.currentIndex]
+      this.$main.currentIndex = this.shuffleIndexes[this.shuffleIndexes.indexOf(this.$main.currentIndex)]
       for (let i = 0; i < this.songsLength; i++) {
-        this.shuffleIndexes[i] = i
+        this.shuffleIndexes[i] = this.songs[i]['index']
       }
     },
     formatTime (time) {
@@ -174,25 +212,31 @@ export default {
       return (time / this.audio.duration) * 100 + '%'
     },
     playSong () {
-      this.isPaused = false
+      this.$main.isPaused = false
       if (this.audio.paused) {
         this.audio.play()
       }
     },
     pauseSong () {
-      this.isPaused = true
+      this.$main.isPaused = true
       var audio = this.audio
       audio.pause()
     },
     playNext () {
-      if (this.currentIndex === this.songsLength - 1) this.currentIndex = 0
-      else this.currentIndex++
+      if (this.$main.currentIndex === this.songs[this.songsLength - 1]['index']) {
+        this.$main.currentIndex = this.songs[0]['index']
+      } else {
+        this.$main.currentIndex = this.songs[this.lookUpper(this.$main.currentIndex)+1]['index']
+      }
       this.preloadSong()
       this.playSong()
     },
     playPrev () {
-      if (this.currentIndex === 0) this.currentIndex = this.songsLength - 1
-      else this.currentIndex--
+      if (this.$main.currentIndex === this.songs[0]['index']) {
+        this.$main.currentIndex = this.songs[this.songsLength - 1]['index']
+      } else {
+        this.$main.currentIndex = this.songs[this.lookUpper(this.$main.currentIndex) - 1]['index']
+      }
       this.preloadSong()
       this.playSong()
     },
@@ -235,11 +279,11 @@ export default {
       this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
     },
     playDefinedSong (index) {
-      if (index === this.currentIndex) {
-        if (this.isPaused) this.playSong()
+      if (index === this.$main.currentIndex) {
+        if (this.$main.isPaused) this.playSong()
         else this.pauseSong()
       } else {
-        this.currentIndex = index
+        this.$main.currentIndex = index
         this.preloadSong()
         this.playSong()
       }
@@ -261,7 +305,9 @@ export default {
     preloadSong () {
       this.progressWidth = 0
       this.audio.volume = this.isVolumeOff ? 0 : this.volume
-      this.audio.src = this.songs[this.shuffleIndexes[this.currentIndex]]['src']
+      let index = this.lookUpper(this.$main.currentIndex)
+      console.log(index)
+      this.audio.src = this.songs[index]['src']
       universalParse(this.audio.src).then(tag => {
         var image = tag.image
         if (image) {
@@ -373,7 +419,7 @@ export default {
     z-index: 999999;
     box-shadow: 0 -3px 15px 0px rgba(51, 51, 51, 0.1)
 }
-.main-player-block .player-button-icon {
+.player-button-icon {
     background: none;
     border: none;
     border-radius: 50%;

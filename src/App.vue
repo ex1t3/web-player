@@ -1,7 +1,7 @@
 <template>
 <div v-bind:class="{ 'sidebar-active': isActiveSidebar }" class="page">
   <Login v-if="!isLoggedIn"/>
-  <Sidebar v-if="isLoggedIn"/> 
+  <Sidebar v-if="isLoggedIn"/>
   <Content v-if="isLoggedIn"/>
   <Player v-if="isLoggedIn"/>
 </div>

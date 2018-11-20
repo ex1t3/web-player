@@ -36,18 +36,121 @@
           </div>
       </section>
         <section>
-          <h2>Favorite Tracks</h2>
-          sfsfsfsfs
+          <h2 @click="pauseSong()">Favorite Tracks</h2>
+          <div class="favorite-songs-block">
+            <div class="favorite-songs-body">
+              <div class="favorite-songs-header">
+                <div class="favorite-songs-header-number">#</div>
+                <div class="favorite-songs-header-name">Name</div>
+                <div class="favorite-songs-header-artist">Artist</div>
+              </div>
+              <div @click="playSong(fav['index'])" v-bind:class="{'current-song': $main.currentIndex===fav['index']}" class="favorite-songs-item" :key="index" v-for="(fav, index) in songs">
+                <div class="favorite-song-number">
+                  <div class="favorite-song-number-hidden">{{ index + 1}}</div>
+                  <button class="player-button-icon"><i class="fas" v-bind:class="{'fa-pause': $main.currentIndex===fav['index'] && !$main.isPaused, 'fa-play' : $main.isPaused || ($main.currentIndex!==fav['index'] && !$main.isPaused)}"></i></button>
+                </div>
+                <div class="favorite-song-name">{{ fav['name'] }}</div>
+                <div class="favorite-song-title">{{ fav['artist'] }}</div>
+              </div>
+            </div>
+          </div>
          </section>
   </div>
 </div>
 </template>
 <script>
 export default {
-
+  data () {
+    return {
+      songs: []
+    }
+  },
+  mounted () {
+    this.loadSongs()
+    this.$root.$emit('loadSongs', this.songs)
+  },
+  methods: {
+    loadSongs () {
+      this.songs = [
+        { src: require('../songs/1.mp3'),
+          artist: '0',
+          name: 'gfgfg',
+          index: '12'
+        },
+        { src: require('../songs/2.mp3'),
+          artist: '1',
+          name: 'fggfgf',
+          index: '11'
+        },
+        { src: require('../songs/3.mp3'),
+          artist: '2',
+          name: 'fgfg',
+          index: '13'
+        },
+        { src: require('../songs/4.mp3'),
+          artist: '3',
+          name: 'gffg',
+          index: '14'
+        },
+        { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/NF%20-%20Let%20You%20Down.mp3',
+          artist: '4',
+          name: 'fgfgg',
+          index: '15'
+        }
+      ]
+    },
+    playSong (index) {
+      this.$root.$emit('playDefinedSong', index)
+    },
+    pauseSong () {
+      this.$root.$emit('pauseSong')
+    }
+  }
 }
 </script>
 <style>
+.favorite-songs-item:hover {
+  cursor: pointer;
+}
+.favorite-song-number .player-button-icon {
+  display: none;
+}
+.favorite-songs-item:hover .favorite-song-number .player-button-icon {
+  display: block;
+}
+.favorite-songs-item:hover .favorite-song-number .favorite-song-number-hidden {
+  display: none;
+}
+.favorite-songs-item.current-song .favorite-song-number .player-button-icon {
+  display: block;
+}
+.favorite-songs-item.current-song .favorite-song-number .favorite-song-number-hidden {
+  display: none;
+}
+.favorite-songs-header {
+  display: flex;
+  margin: 10px;
+  align-items: center;
+}
+.favorite-songs-item {
+  display: flex;
+  margin: 10px;
+  align-items: center;
+}
+.favorite-songs-block {
+  width: 100%;
+}
+.favorite-songs-header,
+.favorite-songs-item {
+  width: 100%;
+}
+.favorite-songs-header div,
+.favorite-songs-item div{
+  width: 20%;
+}
+.favorite-songs-item .player-button-icon {
+  padding: 0 !important;
+}
 .playlist-block {
     width: 200px;
     text-align: center;
@@ -220,7 +323,7 @@ position: relative;
     margin-right: auto;
     width: 150px;
     height: 150px;
-    margin-top: 50px;
+    margin-top: 70px;
   }
 }
 @media (max-width: 600px) {

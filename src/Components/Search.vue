@@ -13,11 +13,11 @@ export default {
       searchVal: ''
     }
   },
-    methods: {
-      searching () {
-        this.$refs.search.value = this.searchVal
-      }
+  methods: {
+    searching () {
+      this.$refs.search.value = this.searchVal
     }
+  }
 }
 </script>
 <style>
