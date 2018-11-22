@@ -109,8 +109,17 @@ export default {
 }
 </script>
 <style>
+.favorite-songs-item .player-button-icon,
+.favorite-songs-item .player-button-icon i {
+    background: none; 
+    padding: 0; 
+}
 .favorite-songs-item:hover {
   cursor: pointer;
+  background: #efeff17d;
+}
+.favorite-songs-item.current-song {
+  background: #efeff17d;
 }
 .favorite-song-number .player-button-icon {
   display: none;
@@ -127,15 +136,31 @@ export default {
 .favorite-songs-item.current-song .favorite-song-number .favorite-song-number-hidden {
   display: none;
 }
+.favorite-songs-item.current-song div, 
+.favorite-songs-item.current-song button {
+  color: #f39d93;
+}
 .favorite-songs-header {
   display: flex;
   margin: 10px;
   align-items: center;
 }
 .favorite-songs-item {
-  display: flex;
-  margin: 10px;
-  align-items: center;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    position: relative;
+    padding: 5px;
+}
+.favorite-songs-item::after {
+    content: '';
+    height: 1px;
+    background: #f4f4f4;
+    top: 0px;
+    width: calc(100% - 12px);
+    position: absolute;
+    left: 6px;
+    right: 6px;
 }
 .favorite-songs-block {
   width: 100%;
@@ -147,9 +172,6 @@ export default {
 .favorite-songs-header div,
 .favorite-songs-item div{
   width: 20%;
-}
-.favorite-songs-item .player-button-icon {
-  padding: 0 !important;
 }
 .playlist-block {
     width: 200px;
@@ -175,7 +197,7 @@ export default {
     z-index: 2;
     position: absolute;
     top: -45px;
-    background: #dcafc6;
+    background: #f39d93;
 }
 .playlist-content .playlist-title {
     margin-block-start: 0em;
@@ -212,7 +234,7 @@ left: 50%;
   font-family: 'Niramit', sans-serif;
   font-weight: bold;
   font-size: 18px;
-  color: #d3b0d1;
+  color: #f39d93;
 }
 .tabs ul {
   list-style-type: none;
@@ -275,7 +297,7 @@ position: relative;
     width: 80%;
     margin: 0 auto;
     height: 4px;
-    background: #d3b0d1;
+    background: #f39d93;
     border-radius: 1px;
 }
 .tabs .content {
@@ -296,7 +318,7 @@ position: relative;
   line-height: 1.4;
 }
 .tabs .content section h2 {
-  color: #d3b0d1;
+  color: #f39d93;
   display: none;
 }
 .tabs .content section h2::after {
@@ -305,16 +327,16 @@ position: relative;
   display: block;
   width: 30px;
   height: 3px;
-  background: #d3b0d1;
+  background: #f39d93;
   margin-top: 5px;
   left: 1px;
 }
 .tabs input[name="tab-control"]:nth-of-type(1):checked ~ ul > li:nth-child(1) > label {
   cursor: default;
-  color: #d3b0d1;
+  color: #f39d93;
 }
 .tabs input[name="tab-control"]:nth-of-type(1):checked ~ ul > li:nth-child(1) > label svg {
-  fill: #d3b0d1;
+  fill: #f39d93;
 }
 @media (max-width: 700px) {
   .playlist-block {
@@ -340,10 +362,10 @@ position: relative;
 }
 .tabs input[name="tab-control"]:nth-of-type(2):checked ~ ul > li:nth-child(2) > label {
   cursor: default;
-  color: #d3b0d1;
+  color: #f39d93;
 }
 .tabs input[name="tab-control"]:nth-of-type(2):checked ~ ul > li:nth-child(2) > label svg {
-  fill: #d3b0d1;
+  fill: #f39d93;
 }
 @media (max-width: 600px) {
   .tabs input[name="tab-control"]:nth-of-type(2):checked ~ ul > li:nth-child(2) > label {
@@ -359,10 +381,10 @@ position: relative;
 }
 .tabs input[name="tab-control"]:nth-of-type(3):checked ~ ul > li:nth-child(3) > label {
   cursor: default;
-  color: #d3b0d1;
+  color: #f39d93;
 }
 .tabs input[name="tab-control"]:nth-of-type(3):checked ~ ul > li:nth-child(3) > label svg {
-  fill: #d3b0d1;
+  fill: #f39d93;
 }
 @media (max-width: 600px) {
   .tabs input[name="tab-control"]:nth-of-type(3):checked ~ ul > li:nth-child(3) > label {
@@ -378,10 +400,10 @@ position: relative;
 }
 .tabs input[name="tab-control"]:nth-of-type(4):checked ~ ul > li:nth-child(4) > label {
   cursor: default;
-  color: #d3b0d1;
+  color: #f39d93;
 }
 .tabs input[name="tab-control"]:nth-of-type(4):checked ~ ul > li:nth-child(4) > label svg {
-  fill: #d3b0d1;
+  fill: #f39d93;
 }
 @media (max-width: 600px) {
   .tabs input[name="tab-control"]:nth-of-type(4):checked ~ ul > li:nth-child(4) > label {

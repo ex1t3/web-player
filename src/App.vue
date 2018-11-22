@@ -48,8 +48,10 @@ export default {
 }
 </script>
 <style>
-html, body {
-  font-family: 'Niramit', sans-serif;
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+body {
+  font-family: 'Montserrat', 'Helevtica', sans-serif;
+  color: #3a3654;
 }
 .page {
     position: absolute;

@@ -156,15 +156,15 @@ export default {
       for (let i = 0; i < this.songsLength; i++) {
         this.shuffleIndexes.push(this.songs[i]['index'])
       }
-      console.log(this.shuffleIndexes)
     },
     handleSpaceClick (e) {
-      e.preventDefault()
-      if (e.keyCode === 32) {
-        if (this.$main.isPaused) {
-          this.playSong()
-        } else {
-          this.pauseSong()
+      if (e.target.tagName.toUpperCase() !== 'INPUT' && e.target.tagName.toUpperCase() !== 'BUTTON') {
+        if (e.keyCode === 32) {
+          if (this.audio.paused) {
+            this.playSong()
+          } else {
+            this.pauseSong()
+          }
         }
       }
     },
@@ -187,8 +187,6 @@ export default {
           this.shuffleIndexes[j] = x
         }
         this.$main.currentIndex = this.shuffleIndexes[this.shuffleIndexes.indexOf(this.$main.currentIndex)]
-        console.log(this.$main.currentIndex)
-        console.log(this.shuffleIndexes)
       } else this.unShuffleSongs()
     },
     unShuffleSongs () {
@@ -223,19 +221,19 @@ export default {
       audio.pause()
     },
     playNext () {
-      if (this.$main.currentIndex === this.songs[this.songsLength - 1]['index']) {
-        this.$main.currentIndex = this.songs[0]['index']
+      if (this.$main.currentIndex === this.shuffleIndexes[this.songsLength - 1]) {
+        this.$main.currentIndex = this.shuffleIndexes[0]
       } else {
-        this.$main.currentIndex = this.songs[this.lookUpper(this.$main.currentIndex)+1]['index']
+        this.$main.currentIndex = this.shuffleIndexes[this.shuffleIndexes.indexOf(this.$main.currentIndex) + 1]
       }
       this.preloadSong()
       this.playSong()
     },
     playPrev () {
-      if (this.$main.currentIndex === this.songs[0]['index']) {
-        this.$main.currentIndex = this.songs[this.songsLength - 1]['index']
+      if (this.$main.currentIndex === this.shuffleIndexes[0]) {
+        this.$main.currentIndex = this.shuffleIndexes[this.songsLength - 1]
       } else {
-        this.$main.currentIndex = this.songs[this.lookUpper(this.$main.currentIndex) - 1]['index']
+        this.$main.currentIndex = this.shuffleIndexes[this.shuffleIndexes.indexOf(this.$main.currentIndex) - 1]
       }
       this.preloadSong()
       this.playSong()
@@ -306,7 +304,6 @@ export default {
       this.progressWidth = 0
       this.audio.volume = this.isVolumeOff ? 0 : this.volume
       let index = this.lookUpper(this.$main.currentIndex)
-      console.log(index)
       this.audio.src = this.songs[index]['src']
       universalParse(this.audio.src).then(tag => {
         var image = tag.image
@@ -540,6 +537,7 @@ export default {
     cursor: initial;
     color: #3a3654;
     width: 20px;
+    font-family: 'Niramit', sans-serif
 }
 .total-time {
     margin-left: calc(100% - 45px);
@@ -564,6 +562,7 @@ export default {
 .player-trackline .title {
   position: absolute;
   top: 55%;
+  font-family: 'Niramit', sans-serif;
 }
 .main-player-block .slider {
   width: 100%;

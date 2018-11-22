@@ -124,6 +124,7 @@ export default {
 .login-form, .signup-form {
   transition: 0.3s;
   position: absolute;
+  font-family: 'Niramit', sans-serif;
 }
 .loginActive .login-form {
     width: 100%;

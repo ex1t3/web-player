@@ -269,4 +269,10 @@ to {transform: translateX(-0px) rotate(0);}
   from {transform: translateY(900px);}
     to {transform: translateY(0px);}
 }
+@media (max-width: 700px) {
+  .profiler-round {
+    right: 10px;
+    top: 7px;
+  }
+}
 </style>
