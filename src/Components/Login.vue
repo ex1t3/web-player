@@ -59,7 +59,7 @@
 <script>
 import {mapGetters} from 'vuex'
 import store from '../store'
-// import axios from 'axios'
+import axios from 'axios'
 export default {
   store,
   data () {
@@ -69,6 +69,13 @@ export default {
   },
   methods: {
     logIn () {
+      axios.get('http://localhost:20809/api/Account/ExternalLogin')
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
       this.$store.dispatch('logIn')
       this.$store.dispatch('setHomePage')
     },

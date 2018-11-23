@@ -343,9 +343,12 @@ position: relative;
     float: none;
     margin-left: auto;
     margin-right: auto;
-    width: 150px;
+    width: 190px;
     height: 150px;
     margin-top: 70px;
+  }
+  .playlist-poster img {
+    width: 80%;
   }
 }
 @media (max-width: 600px) {

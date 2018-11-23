@@ -1,5 +1,7 @@
 .DS_Store
 node_modules/
+Web-Player_Server/bin
+Web-Player_Server/obj
 
 # Editor directories and files
 .idea

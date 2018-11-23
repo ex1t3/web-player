@@ -116,22 +116,22 @@ export default {
         this.songs = songs
       } else {
         this.songs = [
-          { src: require('../songs/1.mp3'),
+          { src: '../media/1.mp3',
             artist: '0',
             name: 'song1',
             index: '12'
           },
-          { src: require('../songs/2.mp3'),
+          { src: '../media/2.mp3',
             artist: '1',
             name: 'song2',
             index: '22'
           },
-          { src: require('../songs/3.mp3'),
+          { src: '../media/3.mp3',
             artist: '2',
             name: 'song3',
             index: '4334'
           },
-          { src: require('../songs/4.mp3'),
+          { src: '../media/4.mp3',
             artist: '3',
             name: 'song4',
             index: '5454'
