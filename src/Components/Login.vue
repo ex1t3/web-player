@@ -69,7 +69,7 @@ export default {
   },
   methods: {
     logIn () {
-      axios.get('http://localhost:20809/api/Account/ExternalLogin')
+      axios.post('http://localhost:20809/Token')
   .then(function (response) {
     console.log(response);
   })
