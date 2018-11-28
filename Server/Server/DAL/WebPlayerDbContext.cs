@@ -1,4 +1,6 @@
-﻿using System.Data.Entity;
+using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Server.Models;
 
 namespace Server.DAL
@@ -12,5 +14,10 @@ namespace Server.DAL
 
         public DbSet<User> Users { get; set; }
         public DbSet<Song> Songs { get; set; }
+        public DbSet<UserSession> UserSessions { get; set; }
+
+      protected override void OnModelCreating(DbModelBuilder modelBuilder)
+      {
     }
+  }
 }

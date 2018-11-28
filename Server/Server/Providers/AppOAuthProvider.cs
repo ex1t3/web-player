@@ -1,191 +1,103 @@
-﻿    using Microsoft.Owin.Security;
-    using Microsoft.Owin.Security.Cookies;
-    using Microsoft.Owin.Security.OAuth;
-    using Server.Models;
-    using Server.Services;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
-    using System.Web;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.OAuth;
+using Server.Models;
+using Server.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Web;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Server.DAL;
+
 namespace Server.Providers
 {
-    /// <summary>  
-    /// Application OAUTH Provider class.  
-    /// </summary>  
-    public class AppOAuthProvider : OAuthAuthorizationServerProvider
+  public class AppOAuthProvider : OAuthAuthorizationServerProvider
+  {
+    private readonly string _publicClientId;
+
+    public AppOAuthProvider(string publicClientId)
     {
-        #region Private Properties  
+      if (publicClientId == null)
+      {
+        throw new ArgumentNullException("publicClientId");
+      }
 
-        /// <summary>  
-        /// Public client ID property.  
-        /// </summary>  
-        private readonly string _publicClientId;
-
-        /// <summary>  
-        /// Database Store property.  
-        /// </summary>  
-        private UserService _userService = new UserService();
-
-        #endregion
-
-        #region Default Constructor method.  
-
-        /// <summary>  
-        /// Default Constructor method.  
-        /// </summary>  
-        /// <param name="publicClientId">Public client ID parameter</param>  
-        public AppOAuthProvider(string publicClientId)
-        {
-            //TODO: Pull from configuration  
-            if (publicClientId == null)
-            {
-                throw new ArgumentNullException(nameof(publicClientId));
-            }
-
-            // Settings.  
-            _publicClientId = publicClientId;
-        }
-
-        #endregion
-
-        #region Grant resource owner credentials override method.  
-
-        /// <summary>  
-        /// Grant resource owner credentials overload method.  
-        /// </summary>  
-        /// <param name="context">Context parameter</param>  
-        /// <returns>Returns when task is completed</returns>  
-        public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
-        {
-            // Initialization.  
-            string usernameVal = context.UserName;
-            string passwordVal = context.Password;
-            var user = this._userService.CheckIfUserExist(usernameVal, passwordVal);
-
-            // Verification.  
-            if (user == null)
-            {
-                // Settings.  
-                context.SetError("invalid_grant", "The user name or password is incorrect.");
-
-                // Return info.  
-                return;
-            }
-
-            // Initialization.  
-            var claims = new List<Claim>();
-
-            // Setting  
-            claims.Add(new Claim(ClaimTypes.Name, user.Username));
-
-            // Setting Claim Identities for OAUTH 2 protocol.  
-            ClaimsIdentity oAuthClaimIdentity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
-            ClaimsIdentity cookiesClaimIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationType);
-
-            // Setting user authentication.  
-            AuthenticationProperties properties = CreateProperties(user.Username);
-            AuthenticationTicket ticket = new AuthenticationTicket(oAuthClaimIdentity, properties);
-
-            // Grant access to authorize user.  
-            context.Validated(ticket);
-            context.Request.Context.Authentication.SignIn(cookiesClaimIdentity);
-        }
-
-        #endregion
-
-        #region Token endpoint override method.  
-
-        /// <summary>  
-        /// Token endpoint override method  
-        /// </summary>  
-        /// <param name="context">Context parameter</param>  
-        /// <returns>Returns when task is completed</returns>  
-        public override Task TokenEndpoint(OAuthTokenEndpointContext context)
-        {
-            foreach (KeyValuePair<string, string> property in context.Properties.Dictionary)
-            {
-                // Adding.  
-                context.AdditionalResponseParameters.Add(property.Key, property.Value);
-            }
-
-            // Return info.  
-            return Task.FromResult<object>(null);
-        }
-
-        #endregion
-
-        #region Validate Client authntication override method  
-
-        /// <summary>  
-        /// Validate Client authntication override method  
-        /// </summary>  
-        /// <param name="context">Contect parameter</param>  
-        /// <returns>Returns validation of client authentication</returns>  
-        public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
-        {
-            // Resource owner password credentials does not provide a client ID.  
-            if (context.ClientId == null)
-            {
-                // Validate Authoorization.  
-                context.Validated();
-            }
-
-            // Return info.  
-            return Task.FromResult<object>(null);
-        }
-
-        #endregion
-
-        #region Validate client redirect URI override method  
-
-        /// <summary>  
-        /// Validate client redirect URI override method  
-        /// </summary>  
-        /// <param name="context">Context parmeter</param>  
-        /// <returns>Returns validation of client redirect URI</returns>  
-        public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
-        {
-            // Verification.  
-            if (context.ClientId == _publicClientId)
-            {
-                // Initialization.  
-                Uri expectedRootUri = new Uri(context.Request.Uri, "/");
-
-                // Verification.  
-                if (expectedRootUri.AbsoluteUri == context.RedirectUri)
-                {
-                    // Validating.  
-                    context.Validated();
-                }
-            }
-
-            // Return info.  
-            return Task.FromResult<object>(null);
-        }
-
-        #endregion
-
-        #region Create Authentication properties method.  
-
-        /// <summary>  
-        /// Create Authentication properties method.  
-        /// </summary>  
-        /// <param name="userName">User name parameter</param>  
-        /// <returns>Returns authenticated properties.</returns>  
-        public static AuthenticationProperties CreateProperties(string userName)
-        {
-            // Settings.  
-            IDictionary<string, string> data = new Dictionary<string, string>
-                                               {
-                                                   { "userName", userName }
-                                               };
-
-            // Return info.  
-            return new AuthenticationProperties(data);
-        }
-
-        #endregion
+      _publicClientId = publicClientId;
     }
+
+    public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
+    {
+      var userService = new UserService();
+
+      var user = userService.CheckIfUserExist(context.UserName, context.Password);
+
+      if (user == null)
+      {
+        context.SetError("invalid_grant", "The user name or password is incorrect.");
+        return;
+      }
+
+      ClaimsIdentity oAuthIdentity = new ClaimsIdentity(OAuthDefaults.AuthenticationType);
+      ClaimsIdentity cookiesIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationType);
+
+      oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+      cookiesIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+      oAuthIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+      cookiesIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+
+      AuthenticationProperties properties = CreateProperties(user.Username);
+      AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
+      context.Validated(ticket);
+      context.Request.Context.Authentication.SignIn(cookiesIdentity);
+    }
+
+    public override Task TokenEndpoint(OAuthTokenEndpointContext context)
+    {
+      foreach (KeyValuePair<string, string> property in context.Properties.Dictionary)
+      {
+        context.AdditionalResponseParameters.Add(property.Key, property.Value);
+      }
+
+      return Task.FromResult<object>(null);
+    }
+
+    public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
+    {
+      // Resource owner password credentials does not provide a client ID.
+      if (context.ClientId == null)
+      {
+        context.Validated();
+      }
+
+      return Task.FromResult<object>(null);
+    }
+
+    public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
+    {
+      if (context.ClientId == _publicClientId)
+      {
+        Uri expectedRootUri = new Uri(context.Request.Uri, "/");
+
+        if (expectedRootUri.AbsoluteUri == context.RedirectUri)
+        {
+          context.Validated();
+        }
+      }
+
+      return Task.FromResult<object>(null);
+    }
+
+    public static AuthenticationProperties CreateProperties(string userName)
+    {
+      IDictionary<string, string> data = new Dictionary<string, string>
+            {
+                { "userName", userName }
+            };
+
+      return new AuthenticationProperties(data);
+    }
+  }
 }
