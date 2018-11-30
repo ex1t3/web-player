@@ -2,6 +2,7 @@ using System;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
+using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
@@ -11,8 +12,8 @@ using Server.Providers;
 
 namespace Server
 {
-    public partial class Startup
-    {
+  public partial class Startup
+  {
     #region Public /Protected Properties.  
 
     /// <summary>  
@@ -26,45 +27,47 @@ namespace Server
 
     #endregion
 
-    static Startup()
+    public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
+
+    public void ConfigureAuth(IAppBuilder app)
+    {
+
+      // Enable CORS
+      app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+
+      app.UseCookieAuthentication(new CookieAuthenticationOptions());
+      app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+
+      OAuthOptions = new OAuthAuthorizationServerOptions
       {
-        OAuthOptions = new OAuthAuthorizationServerOptions
-        {
-          TokenEndpointPath = new PathString("/Token"),
-          Provider = new AppOAuthProvider(PublicClientId),
-          AccessTokenExpireTimeSpan = TimeSpan.FromDays(365),
-          AllowInsecureHttp = true //Remove after development mode
-        };
-      }
+        TokenEndpointPath = new PathString("/Token"),
+        Provider = new AppOAuthProvider(PublicClientId),
+        AuthorizeEndpointPath = new PathString("/api/Account/SocialLogin"),
+        AccessTokenExpireTimeSpan = TimeSpan.FromDays(365),
+        AllowInsecureHttp = true //Remove after development mode
+      };
 
-      public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
+      // Enable the application to use bearer tokens to authenticate users
+      app.UseOAuthBearerTokens(OAuthOptions);
 
-      public void ConfigureAuth(IAppBuilder app)
-      {
-        // Enable CORS
-        app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+      // Uncomment the following lines to enable logging in with third party login providers  
+      //app.UseMicrosoftAccountAuthentication(  
+      //    clientId: "",  
+      //    clientSecret: "");  
 
-        // Enable the application to use bearer tokens to authenticate users
-        app.UseOAuthBearerTokens(OAuthOptions);
-      }
+      //app.UseTwitterAuthentication(  
+      //   consumerKey: "",  
+      //   consumerSecret: "");  
 
-    // Uncomment the following lines to enable logging in with third party login providers  
-    //app.UseMicrosoftAccountAuthentication(  
-    //    clientId: "",  
-    //    clientSecret: "");  
+      app.UseFacebookAuthentication(
+          appId: "204022623821507",
+          appSecret: "ae7d99936c42f782207d3eb868d5e5b2");
 
-    //app.UseTwitterAuthentication(  
-    //   consumerKey: "",  
-    //   consumerSecret: "");  
-
-    //app.UseFacebookAuthentication(  
-    //   appId: "",  
-    //   appSecret: "");  
-
-    //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()  
-    //{  
-    //    ClientId = "",  
-    //    ClientSecret = ""  
-    //});  
+      //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()  
+      //{  
+      //    ClientId = "",  
+      //    ClientSecret = ""  
+      //});
+    }
   }
- }
+}

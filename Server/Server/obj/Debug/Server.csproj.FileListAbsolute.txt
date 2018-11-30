@@ -165,7 +165,6 @@ C:\wamp64\www\web-player\Server\Server\bin\System.Web.WebPages.xml
 C:\wamp64\www\web-player\Server\Server\bin\System.Web.WebPages.Deployment.xml
 C:\wamp64\www\web-player\Server\Server\bin\System.Web.WebPages.Razor.xml
 C:\wamp64\www\web-player\Server\Server\bin\Antlr3.Runtime.pdb
-C:\wamp64\www\web-player\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
 C:\wamp64\www\web-player\Server\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
 C:\wamp64\www\web-player\Server\Server\obj\Debug\Server.csproj.CopyComplete
 C:\wamp64\www\web-player\Server\Server\obj\Debug\Server.dll
@@ -188,3 +187,7 @@ C:\wamp64\www\web-player\Server\Server\bin\Microsoft.Owin.Hosting.xml
 C:\wamp64\www\web-player\Server\Server\bin\Microsoft.Owin.Testing.xml
 C:\wamp64\www\web-player\Server\Server\bin\Microsoft.AspNet.Identity.EntityFramework.dll
 C:\wamp64\www\web-player\Server\Server\bin\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\wamp64\www\web-player\Server\Server\bin\Microsoft.Owin.Security.Facebook.dll
+C:\wamp64\www\web-player\Server\Server\bin\Microsoft.Owin.Security.Facebook.xml
+C:\wamp64\www\web-player\Server\Server\bin\Newtonsoft.Json.pdb
+C:\wamp64\www\web-player\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache

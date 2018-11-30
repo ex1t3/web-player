@@ -32,7 +32,7 @@ namespace Server.Providers
     {
       var userService = new UserService();
 
-      var user = userService.CheckIfUserExist(context.UserName, context.Password);
+      var user = userService.CheckIfUserExists(context.UserName, context.Password);
 
       if (user == null)
       {

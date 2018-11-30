@@ -4,8 +4,10 @@
     <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
 </div>
 <button id="login">Login</button>
+<button id="register">Register</button>
 <button id="token">Token</button>
 <button id="logout">Logout</button>
+<button id="external">External</button>
 <div class="row">
     <div class="col-md-4">
         <h2>Getting started</h2>
@@ -81,6 +83,33 @@
       headers: {Authorization: "Bearer " + sessionStorage.getItem('access_token')},
       success: function(e) {
         console.log(e);
+      }
+    });
+  });
+  $('#register').click(function() {
+    var loginData = {
+      Username: "test",
+      Password: "1234"
+    };
+    $.ajax({
+      type: 'POST',
+      url: '/api/Account/Register',
+      contentType: "application/json; charset=utf-8",
+      dataType:"json",
+      data: JSON.stringify(loginData),
+      success: function(e) {
+        sessionStorage.setItem('access_token', e.access_token);
+      }
+    });
+  });
+  $('#external').click(function () {
+    $.ajax({
+      type: "GET",
+      url: '/api/Account/ExternalLogins?returnUrl=%2F&generateState=true',
+      success: function(e) {
+        if (e.length > 0) {
+          window.location = e[0].url;
+        }
       }
     });
   });
