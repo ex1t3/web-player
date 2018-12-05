@@ -22,9 +22,9 @@ namespace Server.Services
       _dbSession = new DbRepository<UserSession>(new DefaultDbFactory());
     }
 
-    public User CheckIfUserExists(string username, string password)
+    public bool CheckIfUserExists(string username, string password)
     {
-      return _db.Users.FirstOrDefault(x => x.Password == password && x.Username == username);
+      return _db.Users.Any(x => x.Password == password && x.Username == username);
     }
 
     public UserExternalLogin CheckIfUserExternalLoginExists(string provider, string key)
@@ -56,6 +56,11 @@ namespace Server.Services
     public User GetUserById(int id)
     {
       return _dbUser.Get(x => x.Id == id);
+    }
+
+    public UserSession GetUserSession(int id)
+    {
+      return _dbSession.Get(x => x.OwnerUserId == id);
     }
 
     public void AddSession(UserSession userSession)

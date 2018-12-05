@@ -43,8 +43,9 @@ namespace Server.Controllers
 
     // POST api/Account/Register
     [HttpPost, AllowAnonymous, Route("Register")]
-    public async Task<IHttpActionResult> RegisterUser(User model)
+    public async Task<IHttpActionResult> RegisterUser(User model, bool isExtrenal = false)
     {
+      UserSessionManager.IsAuthenticated = false; //remove this after dev
       if (UserSessionManager.IsAuthenticated)
       {
         return this.BadRequest("User is already logged in.");
@@ -60,7 +61,7 @@ namespace Server.Controllers
         return this.BadRequest(this.ModelState);
       }
 
-      var emailExists = _userService.GetAll().Any(x => x.Email == model.Email);
+      var emailExists = _userService.CheckIfUserExists(model.Username, model.Password);
       if (emailExists)
       {
         return this.BadRequest("Email is already taken.");
@@ -71,15 +72,28 @@ namespace Server.Controllers
         Username = model.Username,
         Name = model.Name,
         Email = model.Email,
+        Password = model.Password,
+        IsExtraLogged = isExtrenal,
+        EmailConfirmed = model.EmailConfirmed
       };
 
       var isSuccedded = _userService.AddUser(user);
 
-      if (isSuccedded!=null)
+      if (isSuccedded==null)
       {
         return this.BadRequest("Sorry! Something went wrong");
       }
 
+      if (model.IsExtraLogged)
+      {
+
+        _userService.AddUserExtrenalLogin(new UserExternalLogin()
+        {
+          LoginProvider = "",
+          UserId = user.Id,
+          ProviderKey = user.Password
+        });
+      }
       var loginResult = await this.LoginUser(new LoginUserViewModel()
       {
         Username = model.Username,
@@ -99,6 +113,7 @@ namespace Server.Controllers
     [Route("SocialLogin", Name = "SocialLogin")]
     public async Task<IHttpActionResult> SocialLogin(string provider, string error = null)
     {
+      UserSessionManager.IsAuthenticated = false; //remove this after dev
       if (error != null)
       {
         return Redirect(Url.Content("~/") + "#error=" + Uri.EscapeDataString(error));
@@ -133,29 +148,35 @@ namespace Server.Controllers
 
       if (hasRegistered) //if user isn't registered yet, we should add him to database, so he'll able to pass all the next logins
       {
-        Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-
-        ClaimsIdentity oAuthIdentity = new ClaimsIdentity(OAuthDefaults.AuthenticationType);
-        ClaimsIdentity cookieIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationType);
-
-        AuthenticationProperties properties = AppOAuthProvider.CreateProperties(user.Username);
-        Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
-      }
-      else
-      {
         IEnumerable<Claim> claims = externalLogin.GetClaims();
         ClaimsIdentity identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
-        var result = await RegisterUser(new User() {Name = identity.Name});
+        var result = await LoginUser(new LoginUserViewModel(){Password = externalLogin.ProviderKey, Username = identity.Name});
         if (result is BadRequestErrorMessageResult)
         {
           string url = "https://" + Request.RequestUri.Authority + "?error_login=" + ((BadRequestErrorMessageResult)result).Message.Replace(" ", "_");
           Uri uri = new Uri(url);
           return Redirect(uri);
-        }
-        else
-        {
+        }       
           Authentication.SignIn(identity);
+      }
+      else
+      {
+        IEnumerable<Claim> claims = externalLogin.GetClaims();
+        ClaimsIdentity identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
+        var result = await RegisterUser(new User() {Username = identity.Name, Password = externalLogin.ProviderKey, IsExtraLogged = true, EmailConfirmed = true}, true);
+        var url = "";
+        if (result is BadRequestErrorMessageResult)
+        {
+          url = "https://" + Request.RequestUri.Authority + "?error_login=" + ((BadRequestErrorMessageResult)result).Message.Replace(" ", "_");
+          Uri uri = new Uri(url);
+          return Redirect(uri);
         }
+
+        var token = _userService.GetUserSession(_userService.GetUserByName(identity.Name).Id).AuthToken;
+        url = "https://" + Request.RequestUri.Authority + "#access_token=" + token;
+        return Redirect(url);
+      
+
       }
 
       return Ok();
@@ -206,6 +227,7 @@ namespace Server.Controllers
     [HttpPost, AllowAnonymous, Route("Login")]
     public async Task<IHttpActionResult> LoginUser(LoginUserViewModel model)
     {
+     // UserSessionManager.IsAuthenticated = false; //remove this after dev
       if (UserSessionManager.IsAuthenticated)
       {
         return this.BadRequest("User is already logged in.");

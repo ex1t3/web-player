@@ -62,7 +62,7 @@ namespace Server.SessionHandlers
       IsAuthenticated = true;
       var userSession = new UserSession()
       {
-        OwnerUserId = userId.ToString(),
+        OwnerUserId = userId,
         AuthToken = authToken
       };
       _userService.AddSession(userSession);
@@ -78,7 +78,7 @@ namespace Server.SessionHandlers
     {
       string authToken = this.GetCurrentBearerAuthrorizationToken();
       authToken = authToken?.Substring(7);
-      var currentUserId = this.GetCurrentUserId();
+      var currentUserId = Int32.Parse(this.GetCurrentUserId());
       var userSession = this._db.UserSessions.FirstOrDefault(session =>
           session.AuthToken == authToken && session.OwnerUserId == currentUserId);
       IsAuthenticated = false;
@@ -99,7 +99,7 @@ namespace Server.SessionHandlers
       string authToken = this.GetCurrentBearerAuthrorizationToken();
       authToken = authToken?.Substring(7);
       IsAuthenticated = true;
-      var currentUserId = this.GetCurrentUserId();
+      var currentUserId = this.GetCurrentUserId() == null ? 0 : Int32.Parse(GetCurrentUserId());
       var userSession = this._db.UserSessions.FirstOrDefault(session => session.AuthToken == authToken && session.OwnerUserId == currentUserId);
 
       if (userSession == null)

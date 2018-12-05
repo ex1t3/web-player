@@ -16,16 +16,18 @@ namespace Server.Models
     public int Id { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
+    public bool IsExtraLogged { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
-    [ForeignKey("UserId")]
+    public bool EmailConfirmed { get; set; }
     public IEnumerable<UserExternalLogin> UserExternalLogins { get; set; }
+    public IEnumerable<UserSession> UserSessions { get; set; }
   }
 
   public class UserSession
   {
     public int Id { get; set; }
-    public string OwnerUserId { get; set; }
+    public int OwnerUserId { get; set; }
     public string AuthToken { get; set; }
     public DateTime ExpirationDateTime { get; set; }
   }
