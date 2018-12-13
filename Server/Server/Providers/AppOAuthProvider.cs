@@ -32,13 +32,7 @@ namespace Server.Providers
     {
       var userService = new UserService();
 
-      var flag = userService.CheckIfUserExists(context.UserName, context.Password);
-
-      if (!flag)
-      {
-        context.SetError("invalid_grant", "The user name or password is incorrect.");
-        return;
-      }
+      
       var user = userService.GetUserByName(context.UserName);
       ClaimsIdentity oAuthIdentity = new ClaimsIdentity(OAuthDefaults.AuthenticationType);
       ClaimsIdentity cookiesIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationType);

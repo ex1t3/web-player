@@ -9,47 +9,47 @@
                 <div class="login-form-body">
                     <div class="input-group">
                         <label class="label" for="Username">Username</label>
-                        <input id="UsernameLogin" class="input-field" type="text" required />
+                        <input ref="UsernameLogin" class="input-field" type="text" required />
                     </div>
                     <div class="input-group">
                         <label class="label" for="Password">Password</label>
-                        <input id="PasswordLogin" class="input-field" type="password" required />
+                        <input ref="PasswordLogin" class="input-field" type="password" required />
                     </div>
                     <div class="input-group centered">
-                        <button v-on:click="logIn()" class="button-form button-gradient" type="submit">LOGIN</button>
+                        <button v-on:click="logIn($event)" class="button-form button-gradient" type="submit">LOGIN</button>
                     </div>
                 </div>
                     <div class="separator">OR</div>
                     <div class="social-block">
-                        <button type="button" class="button-form button-google"><i class="form-button-brand fab fa-google"></i>GOOGLE</button>
-                        <button type="button" class="button-form button-facebook"><i class="form-button-brand fab fa-facebook"></i>FACEBOOK</button>
+                        <button @click="externalLogIn(1)" type="button" class="button-form button-google"><i class="form-button-brand fab fa-google"></i>GOOGLE</button>
+                        <button @click="externalLogIn(0)" type="button" class="button-form button-facebook"><i class="form-button-brand fab fa-facebook"></i>FACEBOOK</button>
                     </div>
                 </form>
-                <form class="signup-form">
+                <form ref="signup" class="signup-form">
                 <div class="login-form-body">
                     <div class="input-group">
-                        <label class="label" for="Username">Username</label>
-                        <input id="UsernameSignup" class="input-field" type="text" required />
+                        <label class="label">Username</label>
+                        <input name="Username" class="input-field" type="text" required />
                     </div>
                     <div class="input-group">
-                        <label class="label" for="EmailSignup">Email</label>
-                        <input id="EmailSignup" class="input-field" type="email" required />
+                        <label class="label">Email</label>
+                        <input name="Email" class="input-field" type="email" required />
                     </div>
                     <div class="input-group">
-                        <label class="label" for="PasswordSignup">Password</label>
-                        <input id="PasswordSignup" class="input-field" type="password" required />
+                        <label class="label">Password</label>
+                        <input name="Password" class="input-field" type="password" required />
                     </div>
                     <div class="input-group">
-                        <label class="label" for="ConfirmPasswordSignup">Confrim password</label>
-                        <input id="ConfirmPasswordSignup" class="input-field" type="password" required />
+                        <label class="label">Confrim password</label>
+                        <input name="ConfirmPassword" class="input-field" type="password" required />
                     </div>
                     <div class="input-group centered">
-                        <button v-on:click="register()" class="button-form button-gradient" type="submit">SIGN UP</button>
+                        <button v-on:click="register($event)" class="button-form button-gradient" type="submit">SIGN UP</button>
                     </div>
                     <div class="separator">OR</div>
                     <div class="social-block">
-                        <button type="button" class="button-form button-google"><i class="form-button-brand fab fa-google"></i>GOOGLE</button>
-                        <button type="button" class="button-form button-facebook"><i class="form-button-brand fab fa-facebook"></i>FACEBOOK</button>
+                        <button @click="externalLogIn(1)" type="button" class="button-form button-google"><i class="form-button-brand fab fa-google"></i>GOOGLE</button>
+                        <button @click="externalLogIn(0)" type="button" class="button-form button-facebook"><i class="form-button-brand fab fa-facebook"></i>FACEBOOK</button>
                     </div>
                 </div>
                 </form>
@@ -60,6 +60,7 @@
 import {mapGetters} from 'vuex'
 import store from '../store'
 import axios from 'axios'
+import swal from 'sweetalert'
 export default {
   store,
   data () {
@@ -68,23 +69,129 @@ export default {
     }
   },
   methods: {
-    logIn () {
-      axios.post('http://localhost:20809/Token')
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
-      this.$store.dispatch('logIn')
-      this.$store.dispatch('setHomePage')
+    handler (error) {
+      try {
+        let message = error.response.data.message
+        swal('Oops', message, 'error')
+      } catch (err) {
+          swal('Oops', 'Some error happened!', 'error')
+          console.log(error)
+      }      
     },
-    register () {
-      this.$store.dispatch('logIn')
+    logIn (e) {
+      e.preventDefault()
+      let loginData = {
+        Username: this.$refs.UsernameLogin.value,
+        Password: this.$refs.PasswordLogin.value
+      }
+      if (loginData.Username !== '' && loginData.Password !== '') {
+        let that = this
+        axios({
+          method: 'POST',
+          url: 'https://localhost:44304/api/Account/Login',
+          data: loginData,
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8'
+          }
+        })
+          .then(function (response) {
+            sessionStorage.setItem('access_token', response.data.access_token)
+            that.$main.isPaused = true
+            that.$store.dispatch('logIn')
+          })
+          .catch(function (error) {
+            that.handler(error)
+          })
+      } else {
+          swal('Oops', 'Username and Password cannot be empty', 'warning')
+      }
+    },
+    externalLogIn (provider) {
+      axios({
+        type: "GET",
+        url: 'https://localhost:44304/api/Account/ExternalLogins?returnUrl=%2F&generateState=true',
+      })
+        .then(function (e){
+          window.location = 'https://localhost:44304' + e.data[provider].url  
+        })
+    },
+    register (e) {
+      e.preventDefault()
+      let form = this.$refs.signup
+      let data = {}
+      for (let i = 0; i <= 3; i++) {
+        data[form[i].name] = form[i].value
+      }
+      if (data.Username === '' || data.Email === '' || data.Password === '') {
+        swal('Oops', 'All fields should be filled', 'error')
+        return
+      }
+      if (data.Password !== data.ConfirmPassword) {
+        swal('Oops', 'Passwords don\'t match', 'error')
+        return
+      } 
+      let that = this
+      axios({
+        method: 'POST',
+        url: 'https://localhost:44304/api/Account/Register',
+        data: data,
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8'
+        }
+      })
+        .then(function (response) {
+          sessionStorage.setItem('access_token', response.data.access_token)
+          that.$store.dispatch('logIn') 
+        })
+        .catch(function (error) {
+          that.handler(error)
+        })
     }
   },
   beforeMount () {
-    // this.$store.dispatch('logIn')
+    let that = this
+    if (window.location.hash) {
+      let parameter = window.location.hash.split('#').pop().split('=')
+      let arr = ''
+      history.replaceState(null, null, ' ')
+      switch (parameter[0]) {
+        case 'access_token':
+        {
+          arr = parameter[1]
+          if (arr.length > 0) {
+            sessionStorage.setItem('access_token', arr)
+          }
+          break
+        }
+        case 'error_login':
+        {
+          arr = parameter[1].replace(/_/g, ' ')
+          swal(arr, 'error')
+          break
+        }
+
+        default:
+      }
+    }
+    that.$main.isPaused = true
+    let token = sessionStorage.getItem('access_token')
+    if (token !== null) {
+      axios({
+        method: 'GET',
+        url: 'https://localhost:44304/api/Account/CheckToken',
+        headers: {
+          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+        }
+      })
+        .then(function (e) {
+          if (e.data) {
+            that.$store.dispatch('logIn')
+            that.$store.dispatch('setHomePage')
+          }
+        })
+        .catch(function (e) {
+        })
+    }
   },
   computed: mapGetters({
     isLoggedIn: 'isLoggedIn'
@@ -92,6 +199,12 @@ export default {
 }
 </script>
 <style>
+.swal-button:focus {
+    box-shadow: none !important;
+}
+.swal-modal {
+    border-radius: 0px !important;
+}
 .social-block {
     text-align: center;
 }

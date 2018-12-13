@@ -12,7 +12,6 @@ import Sidebar from './Components/Sidebar'
 import Login from './Components/Login'
 import Player from './Components/Player'
 import Content from './Components/Content'
-
 export default {
   data () {
     return {

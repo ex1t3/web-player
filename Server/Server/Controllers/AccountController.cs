@@ -47,10 +47,10 @@ namespace Server.Controllers
     [HttpPost, AllowAnonymous, Route("Register")]
     public async Task<IHttpActionResult> RegisterUser(User model, bool isExtrenal = false)
     {
-      if (UserSessionManager.IsAuthenticated)
-      {
-        return this.BadRequest("User is already logged in.");
-      }
+      //if (UserSessionManager.IsAuthenticated)
+      //{
+      //  return this.BadRequest("User is already logged in.");
+      //}
 
       if (model == null)
       {
@@ -62,10 +62,10 @@ namespace Server.Controllers
         return this.BadRequest(this.ModelState);
       }
 
-      var emailExists = _userService.CheckIfUserExists(model.Username, model.Password);
+      var emailExists = _userService.CheckIfUserExists(model.Username);
       if (emailExists)
       {
-        return this.BadRequest("Email is already taken.");
+        return this.BadRequest("Username is already taken.");
       }
 
       var user = new User()
@@ -167,7 +167,7 @@ namespace Server.Controllers
         var url = "";
         if (result is BadRequestErrorMessageResult)
         {
-          url = "https://" + Request.RequestUri.Authority + "?error_login=" + ((BadRequestErrorMessageResult)result).Message.Replace(" ", "_");
+          url = "https://" + Request.RequestUri.Authority + "#error_login=" + ((BadRequestErrorMessageResult)result).Message.Replace(" ", "_");
           Uri uri = new Uri(url);
           return Redirect(uri);
         }
@@ -175,11 +175,16 @@ namespace Server.Controllers
         var token = _userService.GetUserSession(_userService.GetUserByName(identity.Name).Id).AuthToken;
         url = "https://" + Request.RequestUri.Authority + "#access_token=" + token;
         return Redirect(url);
-
-
       }
 
       return Ok();
+    }
+
+    [HttpGet]
+    [Route("CheckToken")]
+    public bool CheckToken()
+    {
+      return true;
     }
 
     // GET api/Account/ExternalLogins?returnUrl=%2F&generateState=true
@@ -227,13 +232,19 @@ namespace Server.Controllers
     [HttpPost, AllowAnonymous, Route("Login")]
     public async Task<IHttpActionResult> LoginUser(LoginUserViewModel model)
     {
-      if (UserSessionManager.IsAuthenticated)
-      {
-        return this.BadRequest("User is already logged in.");
-      }
+      //if (User.Identity.Name!=null)
+      //{
+      //  return this.BadRequest("User is already logged in.");
+      //}
       if (model == null)
       {
         return this.BadRequest("Invalid user data");
+      }
+      var flag = _userService.CheckIfUserCredentialExists(model.Username, model.Password);
+
+      if (!flag)
+      {
+        return this.BadRequest("The user name or password is incorrect.");
       }
       // Invoke the "token" OWIN service to perform the login (POST /token)
       // Use Microsoft.Owin.Testing.TestServer to perform in-memory HTTP POST request
@@ -244,7 +255,7 @@ namespace Server.Controllers
         new KeyValuePair<string, string>("username", model.Username),
         new KeyValuePair<string, string>("password", model.Password)
       };
-
+      
       var requestParamsFormUrlEncoded = new FormUrlEncodedContent(requestParams);
       testServer.BaseAddress = new Uri("https://" + Request.RequestUri.Authority);
       var request = testServer.CreateRequest("/Token").And(x => x.Method = HttpMethod.Post)

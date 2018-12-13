@@ -22,9 +22,14 @@ namespace Server.Services
       _dbSession = new DbRepository<UserSession>(new DefaultDbFactory());
     }
 
-    public bool CheckIfUserExists(string username, string password)
+    public bool CheckIfUserCredentialExists(string username, string password)
     {
       return _db.Users.Any(x => x.Password == password && x.Username == username);
+    }
+
+    public bool CheckIfUserExists(string username)
+    {
+      return _db.Users.Any(x => x.Username == username);
     }
 
     public UserExternalLogin CheckIfUserExternalLoginExists(string provider, string key)

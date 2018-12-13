@@ -1,6 +1,14 @@
 <template>
 <div class="absolute-items">
-  <div class="profiler-round">logo</div>
+  <div class="profiler-round"> 
+  <div class="profile-menu">
+      <ul class="profile-link-list">
+        <li>Profile</li>
+        <li>Settings</li>
+        <li @click="logOut()">Logout</li>
+      </ul>
+    </div>
+  </div>
   <div class="sidebar">
     <div v-bind:class="{ 'burger-active': isActiveSidebar }" @click="toggleSidebar()" class="sidebar-burger">
       <span class="burger-inner"></span>
@@ -20,6 +28,7 @@
 </template>
 <script>
 import store from '../store'
+import axios from 'axios'
 import { mapGetters } from 'vuex'
 export default {
   store,
@@ -38,6 +47,30 @@ export default {
       } else {
         this.$store.dispatch('activateSidebar')
       }
+    },
+    logOut () {
+      var that = this
+      let token = sessionStorage.getItem('access_token')
+      that.$root.$emit('pauseSongRoot')
+      if (token == null) {
+        // window.location.reload()
+        that.$store.dispatch('logOut')
+      } else {
+        sessionStorage.removeItem('access_token')
+        axios({
+          method: 'POST',
+          url: 'https://localhost:44304/api/Account/Logout',
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        })
+          .then(function (e) {
+            // window.location.reload()
+            that.$store.dispatch('logOut')       
+          })
+          .catch(function (e) {
+          })
+      }
     }
   },
   computed: mapGetters({
@@ -46,6 +79,27 @@ export default {
 }
 </script>
 <style>
+.profile-link-list {
+    margin-top: 20px;
+    margin-left: -60px;
+    position: relative;
+    background: #fff;
+    text-align: right;
+    padding: 10px;
+    width: 100px;
+    box-shadow: 3px 2px 20px #00000026;
+}
+.profile-link-list li:not(:first-of-type) {
+  cursor: pointer;
+  padding-top: 10px;
+}
+.profile-menu {
+  display: none;
+  margin-top: 60px;
+}
+.profiler-round:hover .profile-menu {
+  display: block;
+}
 .profiler-round {
     position: fixed;
     right: 20px;
@@ -79,7 +133,7 @@ export default {
 }
 ul {
   display: block;
-  list-style-type: disc;
+  list-style-type: none;
   margin-block-start: 1em;
   margin-block-end: 1em;
   margin-inline-start: 0px;
@@ -149,7 +203,7 @@ ul {
   transition-duration: .15s;
   transition-property: transform;
   border-radius: 4px;
-  background-color: #d3b0d1;
+  background-color: #f39d93;
 }
 .burger-inner:after,
 .burger-inner:before {
@@ -244,7 +298,6 @@ ul {
   text-shadow: none;
   left: 85px;
 }
-
 @keyframes slide-in {
   from {transform: translateX(-300px);}
     to {transform: translateX(0px);}

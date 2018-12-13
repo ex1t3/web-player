@@ -36,7 +36,7 @@
           </div>
       </section>
         <section>
-          <h2 @click="pauseSong()">Favorite Tracks</h2>
+          <h2>Favorite Tracks</h2>
           <div class="favorite-songs-block">
             <div class="favorite-songs-body">
               <div class="favorite-songs-header">
@@ -67,7 +67,7 @@ export default {
   },
   mounted () {
     this.loadSongs()
-    this.$root.$emit('loadSongs', this.songs)
+    this.$root.$emit('loadSongsRoot', this.songs)
   },
   methods: {
     loadSongs () {
@@ -100,10 +100,11 @@ export default {
       ]
     },
     playSong (index) {
-      this.$root.$emit('playDefinedSong', index)
-    },
-    pauseSong () {
-      this.$root.$emit('pauseSong')
+      if (index === this.$main.currentIndex && !this.$main.isPaused) {
+        this.$root.$emit('pauseSongRoot')
+      } else {    
+        this.$root.$emit('playDefinedSongRoot', index)
+      }
     }
   }
 }
@@ -111,8 +112,8 @@ export default {
 <style>
 .favorite-songs-item .player-button-icon,
 .favorite-songs-item .player-button-icon i {
-    background: none; 
-    padding: 0; 
+    background: none;
+    padding: 0;
 }
 .favorite-songs-item:hover {
   cursor: pointer;
@@ -136,7 +137,7 @@ export default {
 .favorite-songs-item.current-song .favorite-song-number .favorite-song-number-hidden {
   display: none;
 }
-.favorite-songs-item.current-song div, 
+.favorite-songs-item.current-song div,
 .favorite-songs-item.current-song button {
   color: #f39d93;
 }

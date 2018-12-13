@@ -32,7 +32,7 @@ export default {
     searching (e) {
       this.isTyping = true
       this.searchVal = this.$refs.search.value.length
-      let value = this.searchVal   
+      let value = this.searchVal
       clearTimeout(typingTimer)
       if (value) {
         typingTimer = setTimeout(this.doneTyping, 1000)
@@ -42,11 +42,11 @@ export default {
       alert('We\'re done')
       this.isTyping = false
     },
-    stopSearch () {      
+    stopSearch () {
       clearTimeout(typingTimer)
       this.isTyping = false
       this.$refs.search.value = ''
-    }  
+    }
   }
 }
 </script>

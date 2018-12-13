@@ -55,20 +55,23 @@
 </template>
 <script>
 import store from '../store'
-import Vue from 'vue'
 import universalParse from 'id3-parser/lib/universal'
-var indexes = new Vue({
+import Vue from 'vue'
+
+// Це не оновлює.
+// я це вчора зробив коли намагався зробити так щоб аудыо не оновлювався і весь час використовувався той самий обєект
+var rootData = new Vue({
   data: {
     currentIndex: 0,
     isPaused: true
   }
 })
-indexes.install = function () {
+rootData.install = function () {
   Object.defineProperty(Vue.prototype, '$main', {
-    get () { return indexes }
+    get () { return rootData }
   })
 }
-Vue.use(indexes)
+Vue.use(rootData)
 // import { mapGetters } from 'vuex'
 export default {
   store,
@@ -97,19 +100,19 @@ export default {
     this.$main.currentIndex = this.songs[0]['index']
     this.preloadSong()
     this.addListeners()
-    this.$root.$on('loadSongs', (songs) => {
+    this.$root.$on('loadSongsRoot', (songs) => {
       this.loadSongs(songs)
     })
-    this.$root.$on('playDefinedSong', (index) => {
+    this.$root.$on('playDefinedSongRoot', (index) => {
       this.playDefinedSong(index)
     })
-    this.$root.$on('pauseSong', () => {
+    this.$root.$on('pauseSongRoot', () => {
       this.pauseSong()
     })
   },
   methods: {
     lookUpper (index) {
-      return this.songs.map(function (x){ return x.index }).indexOf(index)
+      return this.songs.map(function (x) { return x.index }).indexOf(index)
     },
     loadSongs (songs) {
       if (songs !== undefined) {
@@ -217,8 +220,7 @@ export default {
     },
     pauseSong () {
       this.$main.isPaused = true
-      var audio = this.audio
-      audio.pause()
+      this.audio.pause()
     },
     playNext () {
       if (this.$main.currentIndex === this.shuffleIndexes[this.songsLength - 1]) {
