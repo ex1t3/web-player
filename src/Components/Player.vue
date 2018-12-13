@@ -100,15 +100,14 @@ export default {
     this.$main.currentIndex = this.songs[0]['index']
     this.preloadSong()
     this.addListeners()
-    this.$root.$on('loadSongsRoot', (songs) => {
-      this.loadSongs(songs)
-    })
-    this.$root.$on('playDefinedSongRoot', (index) => {
-      this.playDefinedSong(index)
-    })
-    this.$root.$on('pauseSongRoot', () => {
-      this.pauseSong()
-    })
+    this.$root.$on('loadSongsRoot', this.loadSongs)
+    this.$root.$on('playDefinedSongRoot', this.playDefinedSong)
+    this.$root.$on('pauseSongRoot', this.pauseSong)
+  },
+  beforeDestroy () {
+    this.$root.$off('loadSongsRoot', this.loadSongs())
+    this.$root.$off('playDefinedSongRoot', this.playDefinedSong)
+    this.$root.$off('pauseSongRoot', this.pauseSong)
   },
   methods: {
     lookUpper (index) {
@@ -306,7 +305,8 @@ export default {
       this.progressWidth = 0
       this.audio.volume = this.isVolumeOff ? 0 : this.volume
       let index = this.lookUpper(this.$main.currentIndex)
-      this.audio.src = this.songs[index]['src']
+      console.log(this.songs[index], index);
+      this.audio.src = this.songs[index]['src'] // Еррор
       universalParse(this.audio.src).then(tag => {
         var image = tag.image
         if (image) {
