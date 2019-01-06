@@ -1,7 +1,11 @@
 <template>
   <div class="main-player-block">
     <div class="main-player-poster"><img v-bind:src="currentPoster"/></div>
-    <div class="main-player-add-to"><i class="fas fa-plus"></i><i class="far fa-heart"></i></div>
+    <div class="main-player-add-to">
+      <div class="main-player-add-menu" v-bind:class="{hidden: !isAddMenuActive}">Add to playlist</div>
+      <i @click="isAddMenuActive = !isAddMenuActive" v-clickOutside="hideAddMenu" class="fas fa-plus"></i>
+      <i @click="favHandler($event)" class="fa-heart" v-bind:class="{fas: favLookUpper() === true, far: favLookUpper() === false}"></i>
+    </div>
     <div class="main-player-body">
     <div class="player-buttons">
       <button class="player-button-icon" @click="playPrev()"><i class="fas fa-backward"></i></button>
@@ -45,8 +49,8 @@
           <button class="player-button-icon">
             <i class="fas" v-bind:class="{'fa-pause': $main.currentIndex===item && !$main.isPaused, 'fa-play' : $main.isPaused || ($main.currentIndex!==item && !$main.isPaused)}"></i>
           </button>
-          <div class="queue-item-title">{{ songs[lookUpper(item)].name }}</div>
-          <div class="queue-item-title">{{ songs[lookUpper(item)].artist }}</div>
+          <div class="queue-item-title">{{ songs[lookUpper(item)].Name }}</div>
+          <div class="queue-item-title">{{ songs[lookUpper(item)].Artist }}</div>
         </div>
       </div>
     </div>
@@ -55,11 +59,10 @@
 </template>
 <script>
 import store from '../store'
-import universalParse from 'id3-parser/lib/universal'
 import Vue from 'vue'
+import axios from 'axios'
+import swal from 'sweetalert'
 
-// Це не оновлює.
-// я це вчора зробив коли намагався зробити так щоб аудыо не оновлювався і весь час використовувався той самий обєект
 var rootData = new Vue({
   data: {
     currentIndex: 0,
@@ -78,9 +81,10 @@ export default {
   data () {
     return {
       songs: [],
+      favIndexes: [],
       duration: '0:00',
       progressWidth: '0%',
-      progressVolumeWidth: '50%',
+      progressVolumeWidth: '94%',
       currentTime: '0:00',
       title: ' · ',
       isDragged: false,
@@ -88,75 +92,140 @@ export default {
       isVolumeOff: false,
       isShuffled: false,
       currentPoster: require('../img/no-cover.svg'),
-      volume: 0.5,
+      volume: 1,
       isReplayed: false,
       shuffleIndexes: [],
+      isAddMenuActive: false,
       isActiveQueue: false,
       audio: new Audio()
     }
   },
+  directives: {
+    clickOutside: {
+      bind: function (el, binding, vnode) {
+        el.event = function (event) {
+          if (!(el === event.target || el.contains(event.target))) {
+            vnode.context[binding.expression](event)
+          }
+        }
+        document.body.addEventListener('click', el.event)
+      },
+      unbind: function (el) {
+        document.body.removeEventListener('click', el.event)
+      }
+    }
+  },
   mounted () {
     this.loadSongs()
-    this.$main.currentIndex = this.songs[0]['index']
-    this.preloadSong()
     this.addListeners()
-    this.$root.$on('loadSongsRoot', this.loadSongs)
+    this.$root.$on('loadSongsRoot', this.loadDefinedSongs)
     this.$root.$on('playDefinedSongRoot', this.playDefinedSong)
     this.$root.$on('pauseSongRoot', this.pauseSong)
+    this.$root.$on('playSongRoot', this.playSong)
   },
   beforeDestroy () {
-    this.$root.$off('loadSongsRoot', this.loadSongs())
+    this.$root.$off('loadSongsRoot', this.loadDefinedSongs)
     this.$root.$off('playDefinedSongRoot', this.playDefinedSong)
     this.$root.$off('pauseSongRoot', this.pauseSong)
+    this.$root.$off('playSongRoot', this.playSong)
+    this.removeListeners()
   },
   methods: {
-    lookUpper (index) {
-      return this.songs.map(function (x) { return x.index }).indexOf(index)
+    hideAddMenu () {
+      this.isAddMenuActive = false
     },
-    loadSongs (songs) {
-      if (songs !== undefined) {
-        this.songs = songs
+    userActionsHandler (flag, successfulMessage, errorMessage) {
+      if (flag) {
+        swal('Yes!', successfulMessage, 'success')
       } else {
-        this.songs = [
-          { src: '../media/1.mp3',
-            artist: '0',
-            name: 'song1',
-            index: '12'
-          },
-          { src: '../media/2.mp3',
-            artist: '1',
-            name: 'song2',
-            index: '22'
-          },
-          { src: '../media/3.mp3',
-            artist: '2',
-            name: 'song3',
-            index: '4334'
-          },
-          { src: '../media/4.mp3',
-            artist: '3',
-            name: 'song4',
-            index: '5454'
-          },
-          { src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/308622/NF%20-%20Let%20You%20Down.mp3',
-            artist: '4',
-            name: 'song5',
-            index: '5353'
-          }
-        ]
+        swal('Oops', errorMessage, 'error')
       }
+    },
+    lookUpper (index) {
+      return this.songs.map(function (x) { return x.Id }).indexOf(index)
+    },
+    favLookUpper () {
+      return this.favIndexes.indexOf(this.$main.currentIndex) !== -1
+    },
+    favHandler (e) {
+      let flag = e.target.className === 'fa-heart far'
+      let currentIndex = this.$main.currentIndex
+      let that = this
+      if (flag) {
+        axios({
+          method: 'POST',
+          url: 'https://localhost:44304/api/Songs/AddFavoriteSong',
+          data: currentIndex,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+          }
+        }).then(function (e) {
+          that.favIndexes.push(currentIndex)
+        })
+      } else {
+        axios({
+          method: 'POST',
+          url: 'https://localhost:44304/api/Songs/DeleteFavoriteSong',
+          data: currentIndex,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+          }
+        }).then(function (e) {
+          var index = that.favIndexes.indexOf(currentIndex)
+          if (index > -1) {
+            that.favIndexes.splice(index, 1)
+          }
+        })
+      }
+    },
+    loadDefinedSongs (songs) {
+      let that = this
+      if (songs.length > 0) {
+        that.songs = songs
+        that.$main.currentIndex = that.songs[0]['Id']
+        that.songsLength = that.songs.length
+        that.shuffleIndexes = []
+        for (let i = 0; i < that.songsLength; i++) {
+          that.shuffleIndexes.push(that.songs[i]['Id'])
+        }
+        that.preloadSong()
+      }
+    },
+    loadSongs () {
+      let that = this
+      axios({
+        method: 'GET',
+        url: 'https://localhost:44304/api/Songs/GetFavoriteSongsIndexes',
+        headers: {
+          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+        }
+      }).then(function (e) {
+        that.favIndexes = e.data
+      })
+      axios({
+        method: 'GET',
+        url: 'https://localhost:44304/api/Songs/GetSongs',
+        headers: {
+          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+        }
+      }).then(function (e) {
+        that.songs = e.data
+        that.$main.currentIndex = that.songs[0]['Id']
+        that.songsLength = that.songs.length
+        that.shuffleIndexes = []
+        for (let i = 0; i < that.songsLength; i++) {
+          that.shuffleIndexes.push(that.songs[i]['Id'])
+        }
+        that.preloadSong()
+      })
       this.audio.preload = 'metadata'
-      var that = this
       this.audio.onloadedmetadata = function () {
         that.setDuration()
       }
       this.audio.ontimeupdate = function () {
         that.updateTime()
-      }
-      this.songsLength = this.songs.length
-      this.shuffleIndexes = []
-      for (let i = 0; i < this.songsLength; i++) {
-        this.shuffleIndexes.push(this.songs[i]['index'])
       }
     },
     handleSpaceClick (e) {
@@ -194,7 +263,7 @@ export default {
     unShuffleSongs () {
       this.$main.currentIndex = this.shuffleIndexes[this.shuffleIndexes.indexOf(this.$main.currentIndex)]
       for (let i = 0; i < this.songsLength; i++) {
-        this.shuffleIndexes[i] = this.songs[i]['index']
+        this.shuffleIndexes[i] = this.songs[i]['Id']
       }
     },
     formatTime (time) {
@@ -253,6 +322,10 @@ export default {
       window.addEventListener('mouseup', this.mouseUp, false)
       document.addEventListener('keydown', this.handleSpaceClick, false)
     },
+    removeListeners () {
+      document.removeEventListener('keydown', this.handleSpaceClick, false)
+      window.removeEventListener('mouseup', this.mouseUp, false)
+    },
     mouseUp () {
       window.removeEventListener('mousemove', this.onMoveTimeChange, true)
       this.isDragged = false
@@ -285,6 +358,19 @@ export default {
         this.$main.currentIndex = index
         this.preloadSong()
         this.playSong()
+        axios({
+          method: 'POST',
+          url: 'https://localhost:44304/api/Songs/IncreaseActivity',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+          },
+          data: index
+        }).then(function (e) {
+          console.log(e)
+        }).catch(function (e) {
+          console.log(e)
+        })
       }
     },
     onVolumeChange (e) {
@@ -305,22 +391,9 @@ export default {
       this.progressWidth = 0
       this.audio.volume = this.isVolumeOff ? 0 : this.volume
       let index = this.lookUpper(this.$main.currentIndex)
-      console.log(this.songs[index], index);
-      this.audio.src = this.songs[index]['src'] // Еррор
-      universalParse(this.audio.src).then(tag => {
-        var image = tag.image
-        if (image) {
-          var base64String = ''
-          for (var i = 0; i < image.data.length; i++) {
-            base64String += String.fromCharCode(image.data[i])
-          }
-          var base64 = 'data:' + image.mime + ';base64,' + window.btoa(base64String)
-          this.currentPoster = base64
-        } else {
-          this.currentPoster = require('../img/no-cover.svg')
-        }
-        this.title = tag.title + ' · ' + tag.artist
-      })
+      this.audio.src = require('../songs/' + this.songs[index]['Source'])
+      this.currentPoster = this.songs[index]['AlbumCover']
+      this.title = this.songs[index]['Name'] + ' · ' + this.songs[index]['Artist']
     },
     setDuration () {
       this.duration = this.formatTime(this.audio.duration)
@@ -342,6 +415,38 @@ export default {
 }
 .main-player-add-to i {
   padding: 10px;
+}
+.main-player-add-menu {
+    position: absolute;
+    height: 200px;
+    width: 150px;
+    background: #fff;
+    display: block;
+    box-shadow: 3px 2px 20px rgba(0, 0, 0, 0.14901960784313725);
+    bottom: 90px;
+    font-size: 14px;
+    text-align: center;
+    padding: 3px;
+    padding-bottom: 0;
+}
+.main-player-add-menu::before, .main-player-add-menu::after {
+    left: 10px;
+    width: 0;
+    border-style: solid;
+    border-width: 0 11px 8px;
+    content: "";
+    transform: rotateX(180deg);
+    position: absolute;
+    height: auto;
+}
+.main-player-add-menu::before {
+    top: 203px;
+    z-index: 1;
+    border-color: transparent transparent #fff;
+}
+.main-player-add-menu::after {
+    top: 204px;
+    border-color: transparent transparent #cecece;
 }
 .music-queue-block {
     position: absolute;
@@ -502,7 +607,7 @@ export default {
     width: 22px;
     height: 22px;
     line-height: 22px;
-    background: rgba(58, 54, 84, 0.1);
+    /* background: rgba(58, 54, 84, 0.1); */
     padding: 15px;
 }
 .player-button-icon:nth-child(3) i {
@@ -573,6 +678,7 @@ export default {
   height: 2px;
   position: absolute
 }
+
 .progress {
   background: #3a3654;
   height: 100%
@@ -658,7 +764,7 @@ export default {
     display: none;
     top: -72px;
     right: -4.5px;
-    background: #dedee2;
+    background: #f1f1f1;
     border-radius: 13px;
     animation: fade-in 0.5s;
     padding: 5px;
@@ -713,7 +819,7 @@ export default {
     left: 50%;
     transform: translate(-50%, 0);
     height: 0;
-    z-index: 2;
+    z-index: 3;
   }
   .main-player-add-to i {
     position: absolute;
@@ -722,5 +828,12 @@ export default {
   .main-player-add-to i:nth-child(2) {
     right: 0px;
   }
+  .main-player-add-menu {
+    right: -5px;
+    bottom: 20px;
+}
+.main-player-add-menu::before, .main-player-add-menu::after{
+    left: 125px;
+}
 }
 </style>

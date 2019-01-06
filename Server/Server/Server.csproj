@@ -45,6 +45,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DevOne.Security.Cryptography.BCrypt, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\BCrypt.1.0.0.0\lib\DevOne.Security.Cryptography.BCrypt.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -289,6 +292,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\SongsController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="DAL\DefaultDbFactory.cs" />
     <Compile Include="DAL\IDbFactory.cs" />
@@ -297,6 +301,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\FavoriteSong.cs" />
+    <Compile Include="Models\Playlist.cs" />
+    <Compile Include="Models\PlaylistSongs.cs" />
     <Compile Include="Models\UserViewModels.cs" />
     <Compile Include="Models\Song.cs" />
     <Compile Include="Models\UserModels.cs" />
@@ -305,6 +312,7 @@
     <Compile Include="DAL\DbRepository.cs" />
     <Compile Include="DAL\IDbRepository.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
+    <Compile Include="Services\SongService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="SessionHandlers\SessionAuthorizeAttribute.cs" />
     <Compile Include="SessionHandlers\UserSessionManager.cs" />

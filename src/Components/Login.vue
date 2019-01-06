@@ -74,11 +74,12 @@ export default {
         let message = error.response.data.message
         swal('Oops', message, 'error')
       } catch (err) {
-          swal('Oops', 'Some error happened!', 'error')
-          console.log(error)
-      }      
+        swal('Oops', 'Some error happened!', 'error')
+        console.log(error)
+      }
     },
     logIn (e) {
+      this.$root.$emit('actLoadingRoot')
       e.preventDefault()
       let loginData = {
         Username: this.$refs.UsernameLogin.value,
@@ -95,27 +96,34 @@ export default {
           }
         })
           .then(function (response) {
+            that.$root.$emit('deactLoadingRoot')
             sessionStorage.setItem('access_token', response.data.access_token)
             that.$main.isPaused = true
             that.$store.dispatch('logIn')
           })
           .catch(function (error) {
+            that.$root.$emit('deactLoadingRoot')
             that.handler(error)
           })
       } else {
-          swal('Oops', 'Username and Password cannot be empty', 'warning')
+        swal('Oops', 'Username and Password cannot be empty', 'warning')
       }
+      this.$root.$emit('deactLoadingRoot')
     },
     externalLogIn (provider) {
+      this.$root.$emit('actLoadingRoot')
       axios({
-        type: "GET",
-        url: 'https://localhost:44304/api/Account/ExternalLogins?returnUrl=%2F&generateState=true',
+        type: 'GET',
+        url: 'https://localhost:44304/api/Account/ExternalLogins?returnUrl=%2F&generateState=true'
       })
-        .then(function (e){
-          window.location = 'https://localhost:44304' + e.data[provider].url  
+        .then(function (e) {
+          window.location = 'https://localhost:44304' + e.data[provider].url
         })
+      this.$root.$emit('deactLoadingRoot')
     },
     register (e) {
+      this.$root.$emit('actLoadingRoot')
+      let that = this
       e.preventDefault()
       let form = this.$refs.signup
       let data = {}
@@ -123,14 +131,15 @@ export default {
         data[form[i].name] = form[i].value
       }
       if (data.Username === '' || data.Email === '' || data.Password === '') {
+        that.$root.$emit('deactLoadingRoot')
         swal('Oops', 'All fields should be filled', 'error')
         return
       }
       if (data.Password !== data.ConfirmPassword) {
+        that.$root.$emit('deactLoadingRoot')
         swal('Oops', 'Passwords don\'t match', 'error')
         return
-      } 
-      let that = this
+      }
       axios({
         method: 'POST',
         url: 'https://localhost:44304/api/Account/Register',
@@ -140,40 +149,46 @@ export default {
         }
       })
         .then(function (response) {
+          that.$root.$emit('deactLoadingRoot')
           sessionStorage.setItem('access_token', response.data.access_token)
-          that.$store.dispatch('logIn') 
+          that.$store.dispatch('logIn')
         })
         .catch(function (error) {
           that.handler(error)
+          that.$root.$emit('deactLoadingRoot')
         })
     }
   },
   beforeMount () {
+    this.$root.$emit('actLoadingRoot')
     let that = this
     if (window.location.hash) {
-      let parameter = window.location.hash.split('#').pop().split('=')
-      let arr = ''
+      var url = window.location.hash.substring(1)
       history.replaceState(null, null, ' ')
-      switch (parameter[0]) {
+      const params = new URLSearchParams(url)
+      let paramObj = {}
+      for (var value of params.keys()) {
+        paramObj[value] = params.get(value)
+      }
+      var keyNames = Object.keys(paramObj)
+      switch (keyNames[0]) {
         case 'access_token':
         {
-          arr = parameter[1]
-          if (arr.length > 0) {
-            sessionStorage.setItem('access_token', arr)
-          }
+          that.$root.$emit('deactLoadingRoot')
+          sessionStorage.setItem('access_token', paramObj.access_token)
           break
         }
         case 'error_login':
         {
-          arr = parameter[1].replace(/_/g, ' ')
-          swal(arr, 'error')
+          that.$root.$emit('deactLoadingRoot')
+          let arr = paramObj.error_login.replace(/_/g, ' ')
+          swal('Error', arr, 'error')
           break
         }
 
-        default:
+        default: this.$root.$emit('deactLoadingRoot')
       }
     }
-    that.$main.isPaused = true
     let token = sessionStorage.getItem('access_token')
     if (token !== null) {
       axios({
@@ -184,13 +199,17 @@ export default {
         }
       })
         .then(function (e) {
+          that.$root.$emit('deactLoadingRoot')
           if (e.data) {
             that.$store.dispatch('logIn')
             that.$store.dispatch('setHomePage')
           }
         })
         .catch(function (e) {
+          that.$root.$emit('deactLoadingRoot')
         })
+    } else {
+      that.$root.$emit('deactLoadingRoot')
     }
   },
   computed: mapGetters({
@@ -309,9 +328,6 @@ export default {
 .input-group .button-gradient {
     color: white;
     background: linear-gradient(195deg, #9670e7 0%, #e87d67 100%);
-}
-.centered {
-    text-align: center;
 }
 button {
     display: inline-block;

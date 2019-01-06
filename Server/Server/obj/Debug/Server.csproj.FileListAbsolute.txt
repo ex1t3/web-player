@@ -191,3 +191,4 @@ C:\wamp64\www\web-player\Server\Server\bin\Microsoft.Owin.Security.Facebook.dll
 C:\wamp64\www\web-player\Server\Server\bin\Microsoft.Owin.Security.Facebook.xml
 C:\wamp64\www\web-player\Server\Server\bin\Newtonsoft.Json.pdb
 C:\wamp64\www\web-player\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
+C:\wamp64\www\web-player\Server\Server\bin\DevOne.Security.Cryptography.BCrypt.dll

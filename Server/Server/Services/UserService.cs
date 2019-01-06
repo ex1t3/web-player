@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using DevOne.Security.Cryptography.BCrypt;
 using Server.DAL;
 using Server.Models;
 namespace Server.Services
@@ -24,17 +25,22 @@ namespace Server.Services
 
     public bool CheckIfUserCredentialExists(string username, string password)
     {
-      return _db.Users.Any(x => x.Password == password && x.Username == username);
+      return _db.Users.Any(x => x.Password == password && x.Username == username && x.IsExtraLogged == false);
     }
 
-    public bool CheckIfUserExists(string username)
+    public bool CheckIfUserExists(string username, string email)
     {
-      return _db.Users.Any(x => x.Username == username);
+      return _db.Users.Any(x => x.Username == username || x.Email == email);
     }
 
-    public UserExternalLogin CheckIfUserExternalLoginExists(string provider, string key)
+    public string HashPassword(string password)
     {
-      return _db.UserExternalLogins.FirstOrDefault(x => x.LoginProvider == provider && x.ProviderKey == key);
+      return BCryptHelper.HashPassword(password, BCryptHelper.GenerateSalt(10));
+    }
+
+    public bool CheckPassword(string password, string hashed)
+    {
+      return BCryptHelper.CheckPassword(password, hashed);
     }
 
     public string AddUser(User user)

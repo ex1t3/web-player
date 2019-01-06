@@ -45,7 +45,7 @@ namespace Server.Controllers
 
     // POST api/Account/Register
     [HttpPost, AllowAnonymous, Route("Register")]
-    public async Task<IHttpActionResult> RegisterUser(User model, bool isExtrenal = false)
+    public async Task<IHttpActionResult> RegisterUser(User model, bool isExtrenal = false, string provider = null)
     {
       //if (UserSessionManager.IsAuthenticated)
       //{
@@ -62,10 +62,10 @@ namespace Server.Controllers
         return this.BadRequest(this.ModelState);
       }
 
-      var emailExists = _userService.CheckIfUserExists(model.Username);
+      var emailExists = _userService.CheckIfUserExists(model.Username, model.Email);
       if (emailExists)
       {
-        return this.BadRequest("Username is already taken.");
+        return this.BadRequest("Username or E-mail are already taken.");
       }
 
       var user = new User()
@@ -73,7 +73,7 @@ namespace Server.Controllers
         Username = model.Username,
         Name = model.Name,
         Email = model.Email,
-        Password = model.Password,
+        Password = _userService.HashPassword(model.Password),
         IsExtraLogged = isExtrenal,
         EmailConfirmed = model.EmailConfirmed
       };
@@ -90,7 +90,7 @@ namespace Server.Controllers
 
         _userService.AddUserExtrenalLogin(new UserExternalLogin()
         {
-          LoginProvider = "",
+          LoginProvider = provider,
           UserId = user.Id,
           ProviderKey = user.Password
         });
@@ -99,7 +99,7 @@ namespace Server.Controllers
       {
         Username = model.Username,
         Password = model.Password
-      });
+      }, true);
 
       return loginResult;
     }
@@ -125,7 +125,6 @@ namespace Server.Controllers
       }
 
       ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
-
       if (externalLogin == null)
       {
         return InternalServerError();
@@ -137,33 +136,38 @@ namespace Server.Controllers
         return new ChallengeResult(provider, this);
       }
 
-      var login = _userService.CheckIfUserExternalLoginExists(externalLogin.LoginProvider, externalLogin.ProviderKey);
-      User user = null;
-      if (login != null)
+      var user = _userService.GetUserByName(externalLogin.UserName);
+      if (_userService.CheckIfUserExists(externalLogin.UserName, externalLogin.Email))
       {
-        user = _userService.GetUserById(login.Id);
+        if (!_userService.CheckPassword(externalLogin.ProviderKey, user.Password))
+        {
+          return BadRequest("Incorrect user data.");
+        }
       }
-
       bool hasRegistered = user != null;
 
       if (hasRegistered) //if user isn't registered yet, we should add him to database, so he'll able to pass all the next logins
       {
         IEnumerable<Claim> claims = externalLogin.GetClaims();
         ClaimsIdentity identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
-        var result = await LoginUser(new LoginUserViewModel() { Password = externalLogin.ProviderKey, Username = identity.Name });
+
+        var result = await LoginUser(new LoginUserViewModel() { Password = _userService.HashPassword(identity.Name), Username = identity.Name }, true);
+        var url = "";
         if (result is BadRequestErrorMessageResult)
         {
-          string url = "https://" + Request.RequestUri.Authority + "?error_login=" + ((BadRequestErrorMessageResult)result).Message.Replace(" ", "_");
+          url = "https://" + Request.RequestUri.Authority + "?error_login=" + ((BadRequestErrorMessageResult)result).Message.Replace(" ", "_");
           Uri uri = new Uri(url);
           return Redirect(uri);
         }
-        Authentication.SignIn(identity);
+        var token = _userService.GetUserSession(_userService.GetUserByName(identity.Name).Id).AuthToken;
+        url = "https://" + Request.RequestUri.Authority + "#access_token=" + token;
+        return Redirect(url);
       }
       else
       {
         IEnumerable<Claim> claims = externalLogin.GetClaims();
         ClaimsIdentity identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
-        var result = await RegisterUser(new User() { Username = identity.Name, Password = externalLogin.ProviderKey, IsExtraLogged = true, EmailConfirmed = true }, true);
+        var result = await RegisterUser(new User() { Username = identity.Name, Email = externalLogin.Email, Password = _userService.HashPassword(identity.Name), IsExtraLogged = true}, true, externalLogin.LoginProvider);
         var url = "";
         if (result is BadRequestErrorMessageResult)
         {
@@ -230,22 +234,32 @@ namespace Server.Controllers
 
     // POST api/Account/Login
     [HttpPost, AllowAnonymous, Route("Login")]
-    public async Task<IHttpActionResult> LoginUser(LoginUserViewModel model)
+    public async Task<IHttpActionResult> LoginUser(LoginUserViewModel model, bool isExternal = false)
     {
-      //if (User.Identity.Name!=null)
-      //{
-      //  return this.BadRequest("User is already logged in.");
-      //}
-      if (model == null)
+      if (!isExternal)
       {
-        return this.BadRequest("Invalid user data");
-      }
-      var flag = _userService.CheckIfUserCredentialExists(model.Username, model.Password);
+        //if (User.Identity.Name!=null)
+        //{
+        //  return this.BadRequest("User is already logged in.");
+        //}
+        if (!ModelState.IsValid)
+        {
+          return BadRequest(ModelState);
+        }
 
-      if (!flag)
-      {
-        return this.BadRequest("The user name or password is incorrect.");
-      }
+        if (model == null)
+        {
+          return this.BadRequest("Invalid user data");
+        }
+
+        var user = _userService.GetUserByName(model.Username);
+        if (user == null) return BadRequest("Incorrect user data");
+          if (!_userService.CheckPassword(model.Password, user.Password))
+          {
+            return BadRequest("Incorrect user data");
+          }
+        }
+
       // Invoke the "token" OWIN service to perform the login (POST /token)
       // Use Microsoft.Owin.Testing.TestServer to perform in-memory HTTP POST request
       var testServer = TestServer.Create<Startup>();
@@ -304,6 +318,7 @@ namespace Server.Controllers
       public string LoginProvider { get; set; }
       public string ProviderKey { get; set; }
       public string UserName { get; set; }
+      public string Email { get; set; }
 
       public IList<Claim> GetClaims()
       {
@@ -313,6 +328,11 @@ namespace Server.Controllers
         if (UserName != null)
         {
           claims.Add(new Claim(ClaimTypes.Name, UserName, null, LoginProvider));
+        }
+
+        if (Email != null)
+        {
+          claims.Add(new Claim(ClaimTypes.Email, Email, null, LoginProvider));
         }
 
         return claims;
@@ -332,17 +352,16 @@ namespace Server.Controllers
         {
           return null;
         }
-
         if (providerKeyClaim.Issuer == ClaimsIdentity.DefaultIssuer)
         {
           return null;
         }
-
         return new ExternalLoginData
         {
           LoginProvider = providerKeyClaim.Issuer,
           ProviderKey = providerKeyClaim.Value,
-          UserName = identity.FindFirstValue(ClaimTypes.Name)
+          UserName = identity.FindFirstValue(ClaimTypes.Name),
+          Email = identity.FindFirstValue(ClaimTypes.Email)
         };
       }
     }

@@ -1,6 +1,6 @@
 <template>
 <div class="absolute-items">
-  <div class="profiler-round"> 
+  <div class="profiler-round">
   <div class="profile-menu">
       <ul class="profile-link-list">
         <li>Profile</li>
@@ -66,7 +66,7 @@ export default {
         })
           .then(function (e) {
             // window.location.reload()
-            that.$store.dispatch('logOut')       
+            that.$store.dispatch('logOut')
           })
           .catch(function (e) {
           })
@@ -81,13 +81,25 @@ export default {
 <style>
 .profile-link-list {
     margin-top: 20px;
-    margin-left: -60px;
+    margin-left: -45px;
     position: relative;
     background: #fff;
-    text-align: right;
+    text-align: left;
     padding: 10px;
     width: 100px;
-    box-shadow: 3px 2px 20px #00000026;
+    animation: fade-in 0.5s;
+    box-shadow: 3px 2px 20px rgba(0, 0, 0, 0.14901960784313725);
+}
+.profile-link-list::before {
+    left: 63px;
+    width: 0;
+    border-style: solid;
+    border-width: 0 11px 7px;
+    content: "";
+    position: absolute;
+    height: auto;
+    top: -7px;
+    border-color: transparent transparent #fff;
 }
 .profile-link-list li:not(:first-of-type) {
   cursor: pointer;
@@ -95,7 +107,7 @@ export default {
 }
 .profile-menu {
   display: none;
-  margin-top: 60px;
+  margin-top: 67px;
 }
 .profiler-round:hover .profile-menu {
   display: block;
@@ -127,9 +139,6 @@ export default {
 }
 .sidebar-active .sidebar-body ul li:nth-child(4) {
   animation: slide-in 0.8s;
-}
-.hidden {
-  display: none;
 }
 ul {
   display: block;
