@@ -1,10 +1,19 @@
 <template>
   <div class="main-player-block">
+  <div v-bind:class="{hidden: !isAddMenuActive}" class="mobile-layer"></div>
     <div class="main-player-poster"><img v-bind:src="currentPoster"/></div>
     <div class="main-player-add-to">
-      <div class="main-player-add-menu" v-bind:class="{hidden: !isAddMenuActive}">Add to playlist</div>
-      <i @click="isAddMenuActive = !isAddMenuActive" v-clickOutside="hideAddMenu" class="fas fa-plus"></i>
-      <i @click="favHandler($event)" class="fa-heart" v-bind:class="{fas: favLookUpper() === true, far: favLookUpper() === false}"></i>
+      <div v-clickOutside="hideAddMenu" class="main-player-add-menu" v-bind:class="{hidden: !isAddMenuActive}">
+        <h4>Add to playlist</h4>
+        <div class="main-player-add-menu-playlists">
+        <div @click="addSongToPlaylist(item.Id)" class="main-player-add-menu-item" :key="item.Id" v-for="item in $main.playlists">
+          <div class="main-player-add-menu-item-cover"><img class="main-player-add-menu-item-cover-image" v-bind:src="item.Cover"/></div>
+          <div class="main-player-add-menu-item-title">{{ item.Name }}</div>
+        </div>
+        </div>
+      </div>
+      <i data-toggler="true" v-bind:class="{'active-icon': isAddMenuActive}" @click="isAddMenuActive = !isAddMenuActive" class="fas fa-plus"></i>
+      <i @click="favHandler($event)" class="fa-heart" v-bind:class="{fas: favLookUpper($main.currentIndex) > -1, far: favLookUpper($main.currentIndex) < 0}"></i>
     </div>
     <div class="main-player-body">
     <div class="player-buttons">
@@ -29,8 +38,8 @@
       <i @click="muteSong($event)" v-bind:class="{hidden: isVolumeOff}" class="fas fa-volume-up">
         <div @click="stopProp($event)" class="volume-raise-block">
           <div @click="onVolumeChange($event)" class="slider">
-            <div class="progress" v-bind:style="{ width: progressVolumeWidth }">
-              <div @click="stopProp($event)" class="pin" v-bind:style="{ 'margin-left': progressVolumeWidth }"></div>
+            <div class="progress" v-bind:style="{ width: progressVolumeWidth}">
+              <div @click="stopProp($event)" class="pin" v-bind:style="{'margin-left' : progressVolumeWidth}"></div>
             </div>
           </div>
         </div>
@@ -66,7 +75,9 @@ import swal from 'sweetalert'
 var rootData = new Vue({
   data: {
     currentIndex: 0,
-    isPaused: true
+    isPaused: true,
+    playlists: [],
+    favoriteSongs: []
   }
 })
 rootData.install = function () {
@@ -81,10 +92,9 @@ export default {
   data () {
     return {
       songs: [],
-      favIndexes: [],
       duration: '0:00',
       progressWidth: '0%',
-      progressVolumeWidth: '94%',
+      progressVolumeWidth: '100%',
       currentTime: '0:00',
       title: ' · ',
       isDragged: false,
@@ -104,7 +114,7 @@ export default {
     clickOutside: {
       bind: function (el, binding, vnode) {
         el.event = function (event) {
-          if (!(el === event.target || el.contains(event.target))) {
+          if (!(el.target === event.target || el.contains(event.target) || event.target.hasAttribute('data-toggler'))) {
             vnode.context[binding.expression](event)
           }
         }
@@ -116,7 +126,9 @@ export default {
     }
   },
   mounted () {
-    this.loadSongs()
+    this.loadSongs()   
+    this.loadPlaylists()   
+    this.$root.$on('loadPlaylistsRoot', this.loadPlaylists)
     this.addListeners()
     this.$root.$on('loadSongsRoot', this.loadDefinedSongs)
     this.$root.$on('playDefinedSongRoot', this.playDefinedSong)
@@ -125,6 +137,7 @@ export default {
   },
   beforeDestroy () {
     this.$root.$off('loadSongsRoot', this.loadDefinedSongs)
+    this.$root.$off('loadPlaylistsRoot', this.loadPlaylists)
     this.$root.$off('playDefinedSongRoot', this.playDefinedSong)
     this.$root.$off('pauseSongRoot', this.pauseSong)
     this.$root.$off('playSongRoot', this.playSong)
@@ -141,11 +154,48 @@ export default {
         swal('Oops', errorMessage, 'error')
       }
     },
+    loadPlaylists () {
+      let that = this
+      axios({
+        method: 'GET',
+        url: 'https://localhost:44304/api/Songs/GetPlaylists',
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+        }
+      }).then(function (e) {
+        that.$main.playlists = e.data
+      }).catch(function (e) {
+        that.$root.$emit('deactLoadingRoot')
+        that.$root.$emit('errorHandler', e.response.status)
+      })
+    },
     lookUpper (index) {
       return this.songs.map(function (x) { return x.Id }).indexOf(index)
     },
-    favLookUpper () {
-      return this.favIndexes.indexOf(this.$main.currentIndex) !== -1
+    favLookUpper (index) {
+      console.log(this.songs)
+      return this.$main.favoriteSongs.map(function (x) { return x.Id }).indexOf(index)
+    },
+    addSongToPlaylist (playlistId) {
+      let that = this
+      let obj = {PlaylistId: playlistId, SongId: this.$main.currentIndex}
+      axios({
+        method: 'POST',
+        url: 'https://localhost:44304/api/Songs/AddSongToPlaylist',
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+        },
+        data: obj
+      }).then(function (e) {
+        that.$root.$emit('notificate', 'success', 'Song successfully added to playlist', 3000)
+        let index = that.lookUpper(obj.SongId)
+        let song = that.songs[index]
+        that.$root.$emit('addSongToPlaylist', song, obj.PlaylistId)
+      }).catch(function (e) {
+        that.$root.$emit('errorHandler', e.response.status)
+      })
     },
     favHandler (e) {
       let flag = e.target.className === 'fa-heart far'
@@ -161,7 +211,12 @@ export default {
             Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
           }
         }).then(function (e) {
-          that.favIndexes.push(currentIndex)
+          let song = that.songs[that.lookUpper(currentIndex)]
+          that.$main.favoriteSongs.push(song)
+          that.$root.$emit('notificate', 'success', 'Song is now in your favorites', 3000)
+        }).catch(function (e) {
+          console.log(e)
+          that.$root.$emit('errorHandler', e.response.status)
         })
       } else {
         axios({
@@ -173,17 +228,22 @@ export default {
             Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
           }
         }).then(function (e) {
-          var index = that.favIndexes.indexOf(currentIndex)
+          var index = that.favLookUpper(currentIndex)
           if (index > -1) {
-            that.favIndexes.splice(index, 1)
+            that.$main.favoriteSongs.splice(index, 1)
           }
+          that.$root.$emit('notificate', 'success', 'Song deleted from your favorites', 3000)
+        }).catch(function (e) {
+          console.log(e)
+          that.$root.$emit('errorHandler', e.response.status)
         })
       }
     },
     loadDefinedSongs (songs) {
       let that = this
-      if (songs.length > 0) {
-        that.songs = songs
+      let temporarySongs = JSON.parse(JSON.stringify(songs));
+      if (temporarySongs.length > 0) {
+        that.songs = temporarySongs
         that.$main.currentIndex = that.songs[0]['Id']
         that.songsLength = that.songs.length
         that.shuffleIndexes = []
@@ -197,15 +257,6 @@ export default {
       let that = this
       axios({
         method: 'GET',
-        url: 'https://localhost:44304/api/Songs/GetFavoriteSongsIndexes',
-        headers: {
-          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
-        }
-      }).then(function (e) {
-        that.favIndexes = e.data
-      })
-      axios({
-        method: 'GET',
         url: 'https://localhost:44304/api/Songs/GetSongs',
         headers: {
           Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
@@ -214,11 +265,26 @@ export default {
         that.songs = e.data
         that.$main.currentIndex = that.songs[0]['Id']
         that.songsLength = that.songs.length
+        that.preloadSong()
         that.shuffleIndexes = []
         for (let i = 0; i < that.songsLength; i++) {
           that.shuffleIndexes.push(that.songs[i]['Id'])
         }
-        that.preloadSong()
+      }).catch(function (e) {
+        console.log(e)
+        that.$root.$emit('errorHandler', e.response.status)
+      })
+      axios({
+        method: 'GET',
+        url: 'https://localhost:44304/api/Songs/GetFavoriteSongs',
+        headers: {
+          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+        }
+      }).then(function (e) {
+        that.$main.favoriteSongs = e.data
+      }).catch(function (e) {
+        console.log(e)
+        that.$root.$emit('errorHandler', e.response.status)
       })
       this.audio.preload = 'metadata'
       this.audio.onloadedmetadata = function () {
@@ -229,7 +295,10 @@ export default {
       }
     },
     handleSpaceClick (e) {
-      if (e.target.tagName.toUpperCase() !== 'INPUT' && e.target.tagName.toUpperCase() !== 'BUTTON') {
+      if (e.target.className === 'player-button-icon') {
+        e.preventDefault()
+      }
+      if (e.target.tagName.toUpperCase() !== 'INPUT') {
         if (e.keyCode === 32) {
           if (this.audio.paused) {
             this.playSong()
@@ -370,6 +439,7 @@ export default {
           console.log(e)
         }).catch(function (e) {
           console.log(e)
+          that.$root.$emit('errorHandler', e.response.status)
         })
       }
     },
@@ -378,9 +448,10 @@ export default {
       var timeline = document.getElementsByClassName('player-settings')[0]
       var mainLeft = document.getElementsByClassName('main-player-body')[0].offsetLeft
       var offset = x - (timeline.offsetLeft + mainLeft) + 60
-      if (this.formatBackVolume(offset) >= 0) {
+      let offsetFromatted = this.formatBackVolume(offset)
+      if (offsetFromatted >= 0) {
         this.progressVolumeWidth = offset + 'px'
-        this.audio.volume = this.formatBackVolume(offset)
+        this.audio.volume = offsetFromatted
       } else {
         this.progressVolumeWidth = 0
         this.audio.volume = 0
@@ -418,16 +489,20 @@ export default {
 }
 .main-player-add-menu {
     position: absolute;
-    height: 200px;
-    width: 150px;
+    height: 350px;
+    width: 300px;
     background: #fff;
     display: block;
-    box-shadow: 3px 2px 20px rgba(0, 0, 0, 0.14901960784313725);
+    box-shadow: 1px -1px 20px 1px rgba(0, 0, 0, 0.14901960784313725);
     bottom: 90px;
     font-size: 14px;
     text-align: center;
-    padding: 3px;
+    padding: 10px;
     padding-bottom: 0;
+    cursor: default;
+    left: -3px;
+    border-radius: 4px;
+    animation: fade-in 0.5s;
 }
 .main-player-add-menu::before, .main-player-add-menu::after {
     left: 10px;
@@ -440,13 +515,38 @@ export default {
     height: auto;
 }
 .main-player-add-menu::before {
-    top: 203px;
+    top: 359px;
     z-index: 1;
     border-color: transparent transparent #fff;
 }
 .main-player-add-menu::after {
-    top: 204px;
+    top: 360px;
     border-color: transparent transparent #cecece;
+}
+.main-player-add-menu-playlists {
+  display: block;
+  overflow: auto;
+  height: 290px;
+}
+.main-player-add-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  cursor: pointer;
+  margin: 5px 0;
+}
+.main-player-add-menu-item:hover {
+  background: #f6f6f7;
+}
+.main-player-add-menu-item-title {
+  margin-left: 10px;
+}
+.main-player-add-menu-item-cover {
+  height: 40px;
+  width: 40px;
+}
+.main-player-add-menu-item-cover-image {
+  width: 100%;
 }
 .music-queue-block {
     position: absolute;
@@ -578,6 +678,20 @@ export default {
   padding: 6px;
   border-radius: 50%;
   position: relative;
+}
+.main-player-add-to i:hover {
+  background: #ebeaed;
+  border-radius: 50%;
+}
+.main-player-add-to .active-icon {
+  background: #ebeaed;
+  border-radius: 50%;
+}
+.main-player-add-to .fa-plus {
+  margin-left: 2px;
+}
+.main-player-add-to .fa-heart {
+  margin-bottom: -2px;
 }
 .player-buttons .player-button-icon:hover i {
     background: rgba(58, 54, 84, 0.1);
@@ -715,7 +829,7 @@ export default {
     position: absolute;
     height: 50px;
     background: #ffffff;
-    width: 150px;
+    width: 170px;
     border-radius: 50px;
     bottom: 40px;
     right: 0;
@@ -725,7 +839,6 @@ export default {
     visibility: hidden;
     align-items: center;
     box-shadow: 0px 5px 20px #00000026;
-    padding: 0 10px;
     transition: visibility 0.2s;
 }
 .volume-raise-block::before {
@@ -811,6 +924,17 @@ export default {
   .main-player-body {
     width: 95%;
   }
+  .mobile-layer {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    z-index: 2;
+    bottom: 0px;
+    right: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: #9494944a;
+  }
   .main-player-add-to {
     position: absolute;
     display: block;
@@ -829,11 +953,13 @@ export default {
     right: 0px;
   }
   .main-player-add-menu {
-    right: -5px;
-    bottom: 20px;
+    right: 50%;
+    transform: translate(50%, -10%);
+    height: 400px;
+    left: auto;
 }
 .main-player-add-menu::before, .main-player-add-menu::after{
-    left: 125px;
+    display: none;
 }
 }
 </style>

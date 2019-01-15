@@ -5,6 +5,12 @@
     <div></div>
   <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>
+  <div v-if="notifications.length > 0" class="notification-bar">
+  <div :key="item.call" v-for="(item) in notifications" class="notification-bar-item">
+    <div class="notification-bar-status"><i class="fas" v-bind:class="{'fa-check-circle success':item.notificationStatus === 'success', 'fa-exclamation-circle error': item.notificationStatus === 'error'}"></i></div>
+    <div class="notification-bar-title"><h6>{{ item.notificationMessage }}</h6></div>
+  </div>
+  </div>
   <Login v-if="!isLoggedIn"/>
   <Sidebar v-if="isLoggedIn"/>
   <Player v-if="isLoggedIn"/>
@@ -13,6 +19,7 @@
 </template>
 <script>
 import {mapGetters} from 'vuex'
+import swal from 'sweetalert'
 import Sidebar from './Components/Sidebar'
 import Login from './Components/Login'
 import Player from './Components/Player'
@@ -21,7 +28,10 @@ export default {
   data () {
     return {
       message: 'dgdgdg',
-      isLoading: false
+      isNotificationActive: false,
+      isLoading: false,
+      notifications: [],
+      notificationCall: 0
     }
   },
   mounted: function () {
@@ -34,10 +44,14 @@ export default {
   beforeMount () {
     this.$root.$on('actLoadingRoot', this.actLoading)
     this.$root.$on('deactLoadingRoot', this.deactLoading)
+    this.$root.$on('notificate', this.notificate)
+    this.$root.$on('errorHandler', this.errorHandler)
   },
   beforeDestroy () {
     this.$root.$off('actLoadingRoot', this.actLoading)
     this.$root.$off('deactLoadingRoot', this.deactLoading)
+    this.$root.$off('notificate', this.notificate)
+    this.$root.$off('errorHandler', this.errorHandler)
   },
   methods: {
     actSidebar () {
@@ -51,6 +65,44 @@ export default {
     },
     deactLoading () {
       this.isLoading = false
+    },
+    errorHandler (data) {
+      let that = this
+      switch (data) {
+        case 401 : {
+          swal({
+            titleText: 'Oops',
+            text: 'Session has expired. You will be automatically located to Login form.',
+            icon: 'warning',
+            timer: '3000',
+            buttons: false
+          }).then(function () {
+            that.$root.$emit('pauseSongRoot')
+            that.$store.dispatch('logOut')
+          })
+          break
+        }
+        default : swal({
+            titleText: 'Hmm',
+            text: 'Some unknown problem happenned. Page will be automatically reloaded.',
+            icon: 'error',
+            timer: '4000',
+            buttons: false
+          }).then(function () {
+            window.location.reload()
+          })
+      }
+    },
+    notificate (status, message, time) {
+      this.notifications.push({
+        notificationMessage: message,
+        notificationStatus: status,
+        call: this.notificationCall++
+      })
+      let that = this
+      setTimeout(function () {
+        that.notifications.splice(this.notificationCall - 1, 1)
+      }, time)
     }
   },
   name: 'App',
@@ -74,6 +126,37 @@ body {
 }
 .hidden {
   display: none !important;
+}
+.notification-bar {
+    position: fixed;
+    z-index: 9999999;
+    top: 30px;
+    right: 30px;
+    width: 200px;
+    height: 70px;
+}
+.notification-bar-item {
+    background: #fff;
+    width: 200px;
+    height: 70px;
+    box-shadow: 0 0 20px 11px #a09f9f1a;
+    margin-bottom: 35px;
+    display: flex;
+    align-items: center;
+    animation: slideFromRight 0.2s;
+}
+.notification-bar-item .notification-bar-status {
+  font-size: 25px;
+  margin-left: 10px;
+}
+.notification-bar-status .error {
+  color: #f7776b;
+}
+.notification-bar-status .success {
+  color: #6bb049;;
+}
+.notification-bar-item .notification-bar-title {
+  margin-left: 10px;
 }
 .page {
     position: absolute;
@@ -385,5 +468,12 @@ body {
     opacity: 1;
   }
 }
-
+@keyframes slideFromRight {
+  0% {
+    transform: translateX(250px)
+  }
+  100% {
+    transform: translateX(0)
+  }
+}
 </style>

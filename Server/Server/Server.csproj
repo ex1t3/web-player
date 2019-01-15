@@ -303,7 +303,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\FavoriteSong.cs" />
     <Compile Include="Models\Playlist.cs" />
-    <Compile Include="Models\PlaylistSongs.cs" />
+    <Compile Include="Models\PlaylistSong.cs" />
     <Compile Include="Models\UserViewModels.cs" />
     <Compile Include="Models\Song.cs" />
     <Compile Include="Models\UserModels.cs" />

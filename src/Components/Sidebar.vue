@@ -53,10 +53,9 @@ export default {
       let token = sessionStorage.getItem('access_token')
       that.$root.$emit('pauseSongRoot')
       if (token == null) {
-        // window.location.reload()
         that.$store.dispatch('logOut')
       } else {
-        sessionStorage.removeItem('access_token')
+        // sessionStorage.removeItem('access_token')
         axios({
           method: 'POST',
           url: 'https://localhost:44304/api/Account/Logout',
@@ -65,8 +64,7 @@ export default {
           }
         })
           .then(function (e) {
-            // window.location.reload()
-            that.$store.dispatch('logOut')
+            // that.$store.dispatch('logOut')
           })
           .catch(function (e) {
           })
@@ -113,7 +111,7 @@ export default {
   display: block;
 }
 .profiler-round {
-    position: fixed;
+    position: absolute;
     right: 20px;
     top: 17px;
     width: 60px;

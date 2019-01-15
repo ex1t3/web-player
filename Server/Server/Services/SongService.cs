@@ -13,7 +13,7 @@ namespace Server.Services
     private readonly WebPlayerDbContext _db;
     private readonly IDbRepository<Song> _dbSong;
     private readonly IDbRepository<Playlist> _dbPlaylist;
-    private readonly IDbRepository<PlaylistSongs> _dbPlaylistSongs;
+    private readonly IDbRepository<PlaylistSong> _dbPlaylistSongs;
     private readonly IDbRepository<FavoriteSong> _dbFavoriteSong;
 
     public SongService()
@@ -21,7 +21,7 @@ namespace Server.Services
       _db = new WebPlayerDbContext();
       _dbSong = new DbRepository<Song>(new DefaultDbFactory());
       _dbPlaylist = new DbRepository<Playlist>(new DefaultDbFactory());
-      _dbPlaylistSongs = new DbRepository<PlaylistSongs>(new DefaultDbFactory());
+      _dbPlaylistSongs = new DbRepository<PlaylistSong>(new DefaultDbFactory());
       _dbFavoriteSong = new DbRepository<FavoriteSong>(new DefaultDbFactory());
     }
     public async Task<bool> AddSong(Song song)
@@ -35,6 +35,31 @@ namespace Server.Services
     {
       _dbFavoriteSong.Add(song);
       return song.Id.ToString();
+    }
+    public async Task<bool> AddSongToPLaylist(PlaylistSong song)
+    {
+      var flag = _db.PlaylistSongs.Any(x => x.PlaylistId == song.PlaylistId && x.SongId == song.SongId);
+      if (flag) return true;
+      _dbPlaylistSongs.Add(song);
+      await UpdatePlaylist(song);
+      return song.Id > 0;
+
+    }
+    public async Task<bool> UpdatePlaylist(int playlistId)
+    {
+      return true;
+    }
+    public async Task<bool> UpdatePlaylist(PlaylistSong song)
+    {
+      var songCover = _dbSong.Get(x => x.Id == song.SongId).AlbumCover;
+      var playlist = _dbPlaylist.Get(x => x.Id == song.PlaylistId);
+      if (playlist != null && songCover != null)
+      {
+        playlist.Cover = songCover;
+        _dbPlaylist.Update(playlist);
+        return true;
+      }
+      return false;
     }
     public async Task<List<Song>> GetAllSongs()
     {

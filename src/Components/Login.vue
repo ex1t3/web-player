@@ -69,15 +69,6 @@ export default {
     }
   },
   methods: {
-    handler (error) {
-      try {
-        let message = error.response.data.message
-        swal('Oops', message, 'error')
-      } catch (err) {
-        swal('Oops', 'Some error happened!', 'error')
-        console.log(error)
-      }
-    },
     logIn (e) {
       this.$root.$emit('actLoadingRoot')
       e.preventDefault()
@@ -94,17 +85,15 @@ export default {
           headers: {
             'Content-Type': 'application/json; charset=UTF-8'
           }
+        }).then(function (response) {
+          that.$root.$emit('deactLoadingRoot')
+          sessionStorage.setItem('access_token', response.data.access_token)
+          that.$main.isPaused = true
+          that.$store.dispatch('logIn')
+        }).catch(function (e) {
+          that.$root.$emit('deactLoadingRoot')
+          that.$root.$emit('errorHandler', e.response.status)
         })
-          .then(function (response) {
-            that.$root.$emit('deactLoadingRoot')
-            sessionStorage.setItem('access_token', response.data.access_token)
-            that.$main.isPaused = true
-            that.$store.dispatch('logIn')
-          })
-          .catch(function (error) {
-            that.$root.$emit('deactLoadingRoot')
-            that.handler(error)
-          })
       } else {
         swal('Oops', 'Username and Password cannot be empty', 'warning')
       }
@@ -147,16 +136,15 @@ export default {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8'
         }
+      }).then(function (response) {
+        that.$root.$emit('deactLoadingRoot')
+        sessionStorage.setItem('access_token', response.data.access_token)
+        that.$store.dispatch('logIn')
+      }).catch(function (e) {
+        that.$root.$emit('deactLoadingRoot')
+        console.log(e)
+        that.$root.$emit('errorHandler', e.response.status)
       })
-        .then(function (response) {
-          that.$root.$emit('deactLoadingRoot')
-          sessionStorage.setItem('access_token', response.data.access_token)
-          that.$store.dispatch('logIn')
-        })
-        .catch(function (error) {
-          that.handler(error)
-          that.$root.$emit('deactLoadingRoot')
-        })
     }
   },
   beforeMount () {
