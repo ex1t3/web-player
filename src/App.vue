@@ -167,15 +167,19 @@ body {
     top: 0;
 }
 .holder {
-    position: absolute;
+    position: fixed;
     left: 0px;
     top: 0px;
-    z-index: 999999;
+    z-index: 3;
     bottom: 0px;
     right: 0px;
     width: 100%;
     height: 100%;
+    overflow: hidden;
     background-color: #ffffff;
+}
+.sidebar-active .holder {
+  left: 220px;
 }
 .centered {
  text-align: center;

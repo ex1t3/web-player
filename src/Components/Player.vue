@@ -174,7 +174,6 @@ export default {
       return this.songs.map(function (x) { return x.Id }).indexOf(index)
     },
     favLookUpper (index) {
-      console.log(this.songs)
       return this.$main.favoriteSongs.map(function (x) { return x.Id }).indexOf(index)
     },
     addSongToPlaylist (playlistId) {
@@ -462,7 +461,7 @@ export default {
       this.progressWidth = 0
       this.audio.volume = this.isVolumeOff ? 0 : this.volume
       let index = this.lookUpper(this.$main.currentIndex)
-      this.audio.src = require('../songs/' + this.songs[index]['Source'])
+      this.audio.src = 'https://localhost:44304/Songs/' + this.songs[index]['Source']
       this.currentPoster = this.songs[index]['AlbumCover']
       this.title = this.songs[index]['Name'] + ' · ' + this.songs[index]['Artist']
     },
