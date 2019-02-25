@@ -25,6 +25,9 @@ export default {
       isTyping: false
     }
   },
+  beforeMount() {
+    this.$root.$emit('checkScreenWidth')
+  },
   mounted () {
     this.$refs.search.focus()
   },

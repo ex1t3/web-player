@@ -304,3 +304,14 @@ E:\wamp64\www\web-player\Server\Server\obj\Debug\Server.csprojResolveAssemblyRef
 E:\wamp64\www\web-player\Server\Server\bin\policy.2.0.taglib-sharp.dll
 E:\wamp64\www\web-player\Server\Server\bin\taglib-sharp.dll
 E:\wamp64\www\web-player\Server\Server\bin\policy.2.0.taglib-sharp.config
+E:\wamp64\www\web-player\Server\Server\bin\Microsoft.Threading.Tasks.dll
+E:\wamp64\www\web-player\Server\Server\bin\Microsoft.Threading.Tasks.Extensions.Desktop.dll
+E:\wamp64\www\web-player\Server\Server\bin\Microsoft.Threading.Tasks.Extensions.dll
+E:\wamp64\www\web-player\Server\Server\bin\System.Net.Http.Extensions.dll
+E:\wamp64\www\web-player\Server\Server\bin\System.Net.Http.Primitives.dll
+E:\wamp64\www\web-player\Server\Server\bin\Microsoft.Threading.Tasks.xml
+E:\wamp64\www\web-player\Server\Server\bin\Microsoft.Threading.Tasks.Extensions.xml
+E:\wamp64\www\web-player\Server\Server\bin\Microsoft.Threading.Tasks.Extensions.Desktop.xml
+E:\wamp64\www\web-player\Server\Server\bin\System.Net.Http.Extensions.xml
+E:\wamp64\www\web-player\Server\Server\bin\System.Net.Http.Primitives.xml
+E:\wamp64\www\web-player\Server\Server\obj\Debug\Server.csproj.App.config

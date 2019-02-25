@@ -423,5 +423,8 @@ button {
     .login-form-content {
         min-height: 580px;
     }
+    .button-form {
+        margin: 1em 0;
+    }
 }
 </style>

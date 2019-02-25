@@ -1,21 +1,37 @@
 <template>
-<div v-bind:class="{ 'sidebar-active': isActiveSidebar }" class="page">
-      <div v-bind:class="{hidden : !isLoading}" class="holder">
-  <div class="preloader">
-    <div></div>
-  <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-</div>
-  <div v-if="notifications.length > 0" class="notification-bar">
-  <div :key="item.call" v-for="(item) in notifications" class="notification-bar-item">
-    <div class="notification-bar-status"><i class="fas" v-bind:class="{'fa-check-circle success':item.notificationStatus === 'success', 'fa-exclamation-circle error': item.notificationStatus === 'error'}"></i></div>
-    <div class="notification-bar-title"><h6>{{ item.notificationMessage }}</h6></div>
+  <div v-bind:class="{ 'sidebar-active': isActiveSidebar }" class="page">
+    <div v-bind:class="{hidden : !isLoading}" class="holder">
+      <div class="preloader">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <div v-if="notifications.length > 0" class="notification-bar">
+      <div :key="item.call" v-for="(item) in notifications" class="notification-bar-item">
+        <div class="notification-bar-status">
+          <i
+            class="fas"
+            v-bind:class="{'fa-check-circle success':item.notificationStatus === 'success', 'fa-exclamation-circle error': item.notificationStatus === 'error'}"
+          ></i>
+        </div>
+        <div class="notification-bar-title">
+          <h6>{{ item.notificationMessage }}</h6>
+        </div>
+      </div>
+    </div>
+    <Login v-if="!isLoggedIn"/>
+    <Sidebar v-if="isLoggedIn"/>
+    <Player v-if="isLoggedIn"/>
+    <Content v-if="isLoggedIn"/>
   </div>
-  </div>
-  <Login v-if="!isLoggedIn"/>
-  <Sidebar v-if="isLoggedIn"/>
-  <Player v-if="isLoggedIn"/>
-  <Content v-if="isLoggedIn"/>
-</div>
 </template>
 <script>
 import {mapGetters} from 'vuex'
@@ -34,26 +50,30 @@ export default {
       notificationCall: 0
     }
   },
-  mounted: function () {
-    if (window.innerWidth < 700) {
-      this.deactSidebar()
-    } else {
-      this.actSidebar()
-    }
-  },
   beforeMount () {
     this.$root.$on('actLoadingRoot', this.actLoading)
+    this.$root.$on('checkScreenWidth', this.checkScreenWidth)
     this.$root.$on('deactLoadingRoot', this.deactLoading)
     this.$root.$on('notificate', this.notificate)
     this.$root.$on('errorHandler', this.errorHandler)
   },
   beforeDestroy () {
     this.$root.$off('actLoadingRoot', this.actLoading)
+    this.$root.$off('checkScreenWidth', this.checkScreenWidth)
     this.$root.$off('deactLoadingRoot', this.deactLoading)
     this.$root.$off('notificate', this.notificate)
     this.$root.$off('errorHandler', this.errorHandler)
   },
   methods: {
+    checkScreenWidth() {
+      if (window.innerWidth < 700) {
+        this.$main.isMobile = true
+        this.deactSidebar()
+      } else {
+        this.actSidebar()
+        this.$main.isMobile = false
+      }
+    },
     actSidebar () {
       this.$store.dispatch('activateSidebar')
     },
@@ -79,6 +99,14 @@ export default {
           }).then(function () {
             that.$root.$emit('pauseSongRoot')
             that.$store.dispatch('logOut')
+          })
+          break
+        }
+        case 400 : {
+          swal({
+            titleText: 'Oops',
+            text: 'Incorrect user data.',
+            icon: 'error'
           })
           break
         }
@@ -121,29 +149,29 @@ export default {
 <style>
 @import url(https://fonts.googleapis.com/css?family=Montserrat);
 body {
-  font-family: 'Montserrat', 'Helevtica', sans-serif;
+  font-family: "Montserrat", "Helevtica", sans-serif;
   color: #3a3654;
 }
 .hidden {
   display: none !important;
 }
 .notification-bar {
-    position: fixed;
-    z-index: 9999999;
-    top: 30px;
-    right: 30px;
-    width: 200px;
-    height: 70px;
+  position: fixed;
+  z-index: 9999999;
+  top: 30px;
+  right: 30px;
+  width: 200px;
+  height: 70px;
 }
 .notification-bar-item {
-    background: #fff;
-    width: 200px;
-    height: 70px;
-    box-shadow: 0 0 20px 11px #a09f9f1a;
-    margin-bottom: 35px;
-    display: flex;
-    align-items: center;
-    animation: slideFromRight 0.2s;
+  background: #fff;
+  width: 200px;
+  height: 70px;
+  box-shadow: 0 0 20px 11px #a09f9f1a;
+  margin-bottom: 35px;
+  display: flex;
+  align-items: center;
+  animation: slideFromRight 0.2s;
 }
 .notification-bar-item .notification-bar-status {
   font-size: 25px;
@@ -153,42 +181,42 @@ body {
   color: #f7776b;
 }
 .notification-bar-status .success {
-  color: #6bb049;;
+  color: #6bb049;
 }
 .notification-bar-item .notification-bar-title {
   margin-left: 10px;
 }
 .page {
-    position: absolute;
-    display: block;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    top: 0;
+  position: absolute;
+  display: block;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  top: 0;
 }
 .holder {
-    position: fixed;
-    left: 0px;
-    top: 0px;
-    z-index: 3;
-    bottom: 0px;
-    right: 0px;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: #ffffff;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  z-index: 3;
+  bottom: 0px;
+  right: 0px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #ffffff;
 }
 .sidebar-active .holder {
   left: 220px;
 }
 .centered {
- text-align: center;
+  text-align: center;
 }
 .preloader {
   /* size */
   width: 100px;
   height: 100px;
-  position: absolute;
+  position: fixed;
   left: 50%;
   top: 50%;
   transform: translateX(-50%) translateY(-50%);
@@ -474,10 +502,10 @@ body {
 }
 @keyframes slideFromRight {
   0% {
-    transform: translateX(250px)
+    transform: translateX(250px);
   }
   100% {
-    transform: translateX(0)
+    transform: translateX(0);
   }
 }
 </style>

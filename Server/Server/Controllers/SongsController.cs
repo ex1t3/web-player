@@ -16,20 +16,21 @@ namespace Server.Controllers
   [RoutePrefix("api/Songs")]
   public class SongsController : ApiController
   {
-    private readonly SongService _songService;
-    private readonly UserService _userService;
+    private readonly SongService _songService; // SongService object made to connect to song's contexts 
+    private readonly UserService _userService; // UserService object made to connect to account management contexts
 
-    public SongsController()
+    public SongsController() // Main SongsCOntroller constructor
     {
       this._songService = new SongService();
       this._userService = new UserService();
     }
     [HttpPost]
     [Route("UploadSong")]
-    public async Task<IHttpActionResult> UploadSong()
+    public async Task<IHttpActionResult> UploadSong() // Method used for uploading user's songs and store them on the server
     {
+      var userId = _userService.GetUserByName(User.Identity.Name).Id;
       var file = HttpContext.Current.Request.Files["NewSong"];
-      if (file != null) 
+      if (file != null)
       {
         var rand = new Random();
         var newFileName = DateTime.Now.ToString("yy-MM-dd") + "_" + rand.Next(1, 1000000) + "_audio_web" + Path.GetExtension(file.FileName);
@@ -47,17 +48,16 @@ namespace Server.Controllers
           {
             Name = tags.Title,
             Artist = artists,
-            Album = tags.Album,
+            Album = tags.Album ?? "",
             Activity = 0,
             Duration = null,
-            Genre = genres,
+            Genre = genres ?? "",
             AlbumCover = image,
             Source = newFileName,
             Year = tags.Year.ToString()
           };
-          var flag = await _songService.AddSong(song);
-          if (!flag) File.Delete(newPath);
-          return Json(true);
+          var result = await _songService.AddSong(song, userId, newPath);
+          if (result != null) return Json(result);
         }
         return Json(false);
       }
@@ -66,7 +66,7 @@ namespace Server.Controllers
     }
     [HttpPost]
     [Route("IncreaseActivity")]
-    public async Task<IHttpActionResult> IncreaseActivity([FromBody]int songId)
+    public async Task<IHttpActionResult> IncreaseActivity([FromBody]int songId) // Method used for increasing song's rate
     {
       if (songId <= 0) return Json("false");
       await _songService.IncreaseActivity(songId);
@@ -75,7 +75,7 @@ namespace Server.Controllers
     }
     [HttpPost]
     [Route("AddSongToPlaylist")]
-    public async Task<IHttpActionResult> AddSongToPlaylist(PlaylistSong song)
+    public async Task<IHttpActionResult> AddSongToPlaylist(PlaylistSong song) // Method used for adding a song to chosen playlist
     {
       if (song == null) return Json("false");
       var flag = await _songService.AddSongToPLaylist(song);
@@ -85,7 +85,7 @@ namespace Server.Controllers
 
     [HttpPost]
     [Route("AddFavoriteSong")]
-    public async Task<IHttpActionResult> AddFavoriteSong([FromBody]int songId)
+    public async Task<IHttpActionResult> AddFavoriteSong([FromBody]int songId) // Method user for adding a song to favorites
     {
       var user = _userService.GetUserByName(User.Identity.Name);
       if (songId <= 0 || user == null) return Json("false");
@@ -105,7 +105,7 @@ namespace Server.Controllers
 
     [HttpPost]
     [Route("DeleteFavoriteSong")]
-    public async Task<IHttpActionResult> DeleteFavoriteSong([FromBody]int songId)
+    public async Task<IHttpActionResult> DeleteFavoriteSong([FromBody]int songId) // Method used for removing a song from favorites
     {
       var user = _userService.GetUserByName(User.Identity.Name);
       if (songId <= 0 || user == null) return Json("false");
@@ -115,7 +115,7 @@ namespace Server.Controllers
 
     [HttpGet]
     [Route("GetFavoriteSongs")]
-    public async Task<IHttpActionResult> GetFavoriteSongs()
+    public async Task<IHttpActionResult> GetFavoriteSongs() // Method used for yielding a list of user's favorite songs
     {
       var user = _userService.GetUserByName(User.Identity.Name);
       if (user == null) return Json(false);
@@ -125,7 +125,7 @@ namespace Server.Controllers
 
     [HttpGet]
     [Route("GetPlaylists")]
-    public async Task<IHttpActionResult> GetPlaylists()
+    public async Task<IHttpActionResult> GetPlaylists() // Method used for yielding a list of user's playlists
     {
       var user = _userService.GetUserByName(User.Identity.Name);
       if (user == null) return Json(false);
@@ -135,17 +135,25 @@ namespace Server.Controllers
 
     [HttpPost]
     [Route("GetPlaylistSongs")]
-    public async Task<IHttpActionResult> GetPlaylistSongs([FromBody]int playlistId)
+    public async Task<IHttpActionResult> GetPlaylistSongs([FromBody]int playlistId) // Method used for yielding a list of user's chosen playlist's songs
     {
       if (playlistId <= 0) return Json(false);
       var songs = await _songService.GetPlaylistSongs(playlistId);
       return Json(songs);
+    }
 
+    [HttpGet]
+    [Route("GetUploadedSongs")]
+    public async Task<IHttpActionResult> GetUploadedSongs() // Method used for yielding a list of user's uploaded songs
+    {
+      var userId = _userService.GetUserByName(User.Identity.Name).Id;
+      var songs = await _songService.GetUploadedSongs(userId);
+      return Json(songs);
     }
 
     [HttpPost]
     [Route("CreatePlaylist")]
-    public async Task<IHttpActionResult> CreatePlaylist(Playlist playlist)
+    public async Task<IHttpActionResult> CreatePlaylist(Playlist playlist) // Method used for creating a new user's playlist
     {
       var user = _userService.GetUserByName(User.Identity.Name);
       if (user == null) return Json(false);
@@ -157,23 +165,8 @@ namespace Server.Controllers
     }
 
     [HttpGet]
-    [Route("GetFavoriteSongsIndexes")]
-    public async Task<IHttpActionResult> GetFavoriteSongsIndexes()
-    {
-      var user = _userService.GetUserByName(User.Identity.Name);
-      if (user == null) return Json(false);
-      var songs = await _songService.GetUserFavoriteSongs(user.Id);
-      var indexes = new int[songs.Capacity];
-      foreach (var song in songs.Select((value, i) => new { i, value }))
-      {
-        indexes[song.i] = song.value.Id;
-      }
-      return Json(indexes);
-    }
-
-    [HttpGet]
     [Route("GetSongs")]
-    public async Task<IHttpActionResult> GetSongs()
+    public async Task<IHttpActionResult> GetSongs() // Method used for yielding all the songs out of the database
     {
       var songs = await _songService.GetAllSongs();
       return Json(songs);

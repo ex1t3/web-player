@@ -77,6 +77,7 @@ var rootData = new Vue({
     currentIndex: 0,
     isPaused: true,
     playlists: [],
+    isMobile: false,
     favoriteSongs: []
   }
 })
@@ -461,9 +462,11 @@ export default {
       this.progressWidth = 0
       this.audio.volume = this.isVolumeOff ? 0 : this.volume
       let index = this.lookUpper(this.$main.currentIndex)
-      this.audio.src = 'https://localhost:44304/Songs/' + this.songs[index]['Source']
-      this.currentPoster = this.songs[index]['AlbumCover']
-      this.title = this.songs[index]['Name'] + ' · ' + this.songs[index]['Artist']
+      if (index != -1) {
+        this.audio.src = 'https://localhost:44304/Songs/' + this.songs[index]['Source']
+        this.currentPoster = this.songs[index]['AlbumCover']
+        this.title = this.songs[index]['Name'] + ' · ' + this.songs[index]['Artist']
+      }
     },
     setDuration () {
       this.duration = this.formatTime(this.audio.duration)

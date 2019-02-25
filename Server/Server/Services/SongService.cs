@@ -1,17 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using DevOne.Security.Cryptography.BCrypt;
 using Server.DAL;
 using Server.Models;
+using Server.REST;
+using System.Threading;
 namespace Server.Services
 {
   public class SongService
   {
     private readonly WebPlayerDbContext _db;
     private readonly IDbRepository<Song> _dbSong;
+    private readonly IDbRepository<UploadedSong> _dbUploadedSong;
     private readonly IDbRepository<Playlist> _dbPlaylist;
     private readonly IDbRepository<PlaylistSong> _dbPlaylistSongs;
     private readonly IDbRepository<FavoriteSong> _dbFavoriteSong;
@@ -20,16 +24,61 @@ namespace Server.Services
     {
       _db = new WebPlayerDbContext();
       _dbSong = new DbRepository<Song>(new DefaultDbFactory());
+      _dbUploadedSong = new DbRepository<UploadedSong>(new DefaultDbFactory());
       _dbPlaylist = new DbRepository<Playlist>(new DefaultDbFactory());
       _dbPlaylistSongs = new DbRepository<PlaylistSong>(new DefaultDbFactory());
       _dbFavoriteSong = new DbRepository<FavoriteSong>(new DefaultDbFactory());
     }
-    public async Task<bool> AddSong(Song song)
+    public async Task<Song> AddSong(Song song, int userId, string path)
     {
-      if (string.IsNullOrEmpty(song.Name) || string.IsNullOrEmpty(song.Artist)) return false;
-      if (_dbSong.Get(x => x.Name == song.Name && x.Artist == song.Artist) != null) return false;
-      _dbSong.Add(song);
-      return true;
+      if (string.IsNullOrEmpty(song.Name) || string.IsNullOrEmpty(song.Artist)) return null;
+      song = CheckForTrashTitles(song);
+      var lookUpper = new SongSearchAPI();
+      var data = await lookUpper.Search(song.Name, song.Artist);
+      if (data != null) {
+        //song.Name = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(data.track_name.ToLower()) ?? song.Name;
+        song.Album = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(data.album_name.ToLower()) ?? song.Album;
+        // song.Artist = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(data.artist_name.ToLower()) ?? song.Artist;
+        if (data.primary_genres.music_genre.Count > 0) song.Genre = data.primary_genres.music_genre[0].music_genre_name ?? song.Genre;
+      }
+      var songToUpload = _dbSong.Get(x => x.Name == song.Name && x.Artist == song.Artist);
+      if (songToUpload == null)
+      {
+        _dbSong.Add(song);
+        _dbUploadedSong.Add(new UploadedSong() { SongId = song.Id, UserId = userId });
+        return song;
+      }
+        File.Delete(path);
+      if (_dbUploadedSong.Get(x => x.SongId == songToUpload.Id && x.UserId == userId) != null) return songToUpload;
+      _dbUploadedSong.Add(new UploadedSong() { SongId = songToUpload.Id, UserId = userId });
+      File.Delete(path);
+      return songToUpload;
+    }
+
+    public Song CheckForTrashTitles(Song song)
+    {
+      var domains = new string[] {".me", ".org", ".com", ".net", ".fm"};
+      foreach (var domain in domains)
+      {
+        if (song.Name.Contains(domain))
+        {
+          song.Name = song.Name.Split('(')[0];
+        }
+        if (song.Album.Contains(domain))
+        {
+          song.Album = song.Album.Split('(')[0];
+        }
+        if (song.Artist.Contains(domain))
+        {
+         song.Artist = song.Artist.Split('(')[0];
+        }
+        if (song.Genre.Contains(domain))
+        {
+         song.Artist = song.Artist.Split('(')[0];
+        }
+      }
+
+      return song;
     }
     public async Task<string> AddFavoriteSong(FavoriteSong song)
     {
@@ -87,7 +136,17 @@ namespace Server.Services
       var songs = new List<Song>();
       foreach (var item in playlistSongs)
       {
-        songs.Add(_dbSong.Get(x=>x.Id==item.SongId));
+        songs.Add(_dbSong.Get(x => x.Id == item.SongId));
+      }
+      return songs;
+    }
+    public async Task<List<Song>> GetUploadedSongs(int userId)
+    {
+      var uploadedSongs = _dbUploadedSong.GetMany(x => x.UserId == userId).ToList();
+      var songs = new List<Song>();
+      foreach (var item in uploadedSongs)
+      {
+        songs.Add(_dbSong.Get(x => x.Id == item.SongId));
       }
       return songs;
     }

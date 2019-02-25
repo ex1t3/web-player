@@ -1,103 +1,115 @@
 <template>
-<div class="absolute-items">
-  <div class="profiler-round">
-  <div class="profile-menu">
-      <ul class="profile-link-list">
-        <li>Profile</li>
-        <li>Settings</li>
-        <li @click="logOut()">Logout</li>
-      </ul>
+  <div class="absolute-items">
+    <div class="profiler-round">
+      <div class="profile-menu">      
+        <ul class="profile-link-list">
+          <li><i class="fas profile-item-icon fa-user"></i>Profile</li>
+          <li><i class="fas profile-item-icon fa-cog"></i>Settings</li>
+          <li @click="logOut()"><i class="fas profile-item-icon fa-sign-out-alt"></i>Logout</li>
+        </ul>
+      </div>
     </div>
-  </div>
-  <div class="sidebar">
-    <div v-bind:class="{ 'burger-active': isActiveSidebar }" @click="toggleSidebar()" class="sidebar-burger">
-      <span class="burger-inner"></span>
+    <div class="sidebar">
+      <div
+        v-bind:class="{ 'burger-active': isActiveSidebar }"
+        @click="toggleSidebar()"
+        class="sidebar-burger"
+      >
+        <span class="burger-inner"></span>
+      </div>
+      <div class="sidebar-body">
+        <div class="sidebar-legend">
+          <a>AUDIO</a>
+        </div>
+        <ul>
+          <li>
+            <a @click="openTemplate('setHomePage')">Home</a>
+          </li>
+          <li>
+            <a @click="openTemplate('setMusicPage')">My music</a>
+          </li>
+          <li>
+            <a @click="openTemplate('setSearchPage')">Search</a>
+          </li>
+        </ul>
+      </div>
     </div>
-    <div class="sidebar-body">
-      <div class="sidebar-legend">
-        <a>AUDIO</a>
-     </div>
-     <ul>
-        <li><a @click="openTemplate('setHomePage')">Home</a></li>
-        <li><a @click="openTemplate('setMusicPage')">My music</a></li>
-        <li><a @click="openTemplate('setSearchPage')">Search</a></li>
-      </ul>
-    </div>
-  </div>
   </div>
 </template>
 <script>
-import store from '../store'
-import axios from 'axios'
-import { mapGetters } from 'vuex'
+import store from "../store";
+import axios from "axios";
+import { mapGetters } from "vuex";
 export default {
   store,
-  data () {
+  data() {
     return {
-      message: 'dgdgdg'
-    }
+      message: "dgdgdg"
+    };
   },
   methods: {
-    openTemplate (template) {
-      this.$store.dispatch(template)
+    openTemplate(template) {
+      this.$store.dispatch(template);
     },
-    toggleSidebar () {
+    toggleSidebar() {
       if (this.isActiveSidebar) {
-        this.$store.dispatch('deactivateSidebar')
+        this.$store.dispatch("deactivateSidebar");
       } else {
-        this.$store.dispatch('activateSidebar')
+        this.$store.dispatch("activateSidebar");
       }
     },
-    logOut () {
-      var that = this
-      let token = sessionStorage.getItem('access_token')
-      that.$root.$emit('pauseSongRoot')
+    logOut() {
+      var that = this;
+      let token = sessionStorage.getItem("access_token");
+      that.$root.$emit("pauseSongRoot");
       if (token == null) {
-        that.$store.dispatch('logOut')
+        that.$store.dispatch("logOut");
       } else {
         // sessionStorage.removeItem('access_token')
         axios({
-          method: 'POST',
-          url: 'https://localhost:44304/api/Account/Logout',
+          method: "POST",
+          url: "https://localhost:44304/api/Account/Logout",
           headers: {
-            Authorization: 'Bearer ' + token
+            Authorization: "Bearer " + token
           }
         })
-          .then(function (e) {
-            // that.$store.dispatch('logOut')
+          .then(function(e) {
+            that.$store.dispatch('logOut')
           })
-          .catch(function (e) {
-          })
+          .catch(function(e) {});
       }
     }
   },
   computed: mapGetters({
-    isActiveSidebar: 'isActiveSidebar'
+    isActiveSidebar: "isActiveSidebar"
   })
-}
+};
 </script>
 <style>
 .profile-link-list {
-    margin-top: 20px;
-    margin-left: -45px;
-    position: relative;
+    margin-top: 10px;
+    right: 0;
+    position: absolute;
     background: #fff;
     text-align: left;
     padding: 10px;
     width: 100px;
     animation: fade-in 0.5s;
-    box-shadow: 3px 2px 20px rgba(0, 0, 0, 0.14901960784313725);
+  box-shadow: 3px 2px 20px rgba(0, 0, 0, 0.14901960784313725);
 }
 .profile-link-list::before {
-    left: 63px;
-    width: 0;
-    border-style: solid;
-    border-width: 0 11px 7px;
-    content: "";
-    position: absolute;
-    height: auto;
-    top: -7px;
-    border-color: transparent transparent #fff;
+  right: 20px;
+  width: 0;
+  border-style: solid;
+  border-width: 0 11px 7px;
+  content: "";
+  position: absolute;
+  height: auto;
+  top: -7px;
+  border-color: transparent transparent #fff;
+}
+.profile-item-icon {
+  margin-right: 7px;
 }
 .profile-link-list li:not(:first-of-type) {
   cursor: pointer;
@@ -111,17 +123,17 @@ export default {
   display: block;
 }
 .profiler-round {
-    position: absolute;
-    right: 20px;
-    top: 17px;
-    width: 60px;
-    height: 60px;
-    align-items: center;
-    text-align: center;
-    background: #3a36547a;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 2;
+  position: absolute;
+  right: 20px;
+  top: 17px;
+  width: 60px;
+  height: 60px;
+  align-items: center;
+  text-align: center;
+  background: #3a36547a;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2;
 }
 .sidebar-active {
   left: 220px;
@@ -192,11 +204,16 @@ ul {
   width: 40px;
   height: 40px;
 }
+@media (max-width: 700px) {
+  .sidebar-burger {
+  background: rgba(255, 255, 255, 0.7098039215686275); 
+  }
+}
 .burger-inner {
   top: 50%;
   margin-top: -2px;
-  transition-timing-function: cubic-bezier(.55,.055,.675,.19);
-  transition-duration: .22s;
+  transition-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  transition-duration: 0.22s;
 }
 .sidebar-burger span,
 .sidebar-burger span::before,
@@ -207,14 +224,14 @@ ul {
   width: 40px;
   height: 4px;
   transition-timing-function: ease;
-  transition-duration: .15s;
+  transition-duration: 0.15s;
   transition-property: transform;
   border-radius: 4px;
   background-color: #f39d93;
 }
 .burger-inner:after,
 .burger-inner:before {
-    content: "";
+  content: "";
 }
 .burger-inner:before {
   top: -10px;
@@ -223,26 +240,27 @@ ul {
   bottom: -10px;
 }
 .sidebar-burger.burger-active span {
-  transition-delay: .12s;
-  transition-timing-function: cubic-bezier(.215,.61,.355,1);
+  transition-delay: 0.12s;
+  transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
   transform: rotate(225deg);
 }
 .sidebar-burger.burger-active span:before {
   top: 0;
-  transition: top .1s ease-out,opacity .1s ease-out .12s;
+  transition: top 0.1s ease-out, opacity 0.1s ease-out 0.12s;
   opacity: 0;
 }
 .sidebar-burger.burger-active span:after {
   bottom: 0;
-  transition: bottom .1s ease-out,transform .22s cubic-bezier(.215,.61,.355,1) .12s;
+  transition: bottom 0.1s ease-out,
+    transform 0.22s cubic-bezier(0.215, 0.61, 0.355, 1) 0.12s;
   transform: rotate(-90deg);
 }
 .sidebar li a {
   font-size: 30px;
-  font-family: 'Niramit', sans-serif;
+  font-family: "Niramit", sans-serif;
   cursor: pointer;
   color: #3a3654;
-  transition: .3s ease-in;
+  transition: 0.3s ease-in;
 }
 .sidebar li a::after {
   content: "";
@@ -253,7 +271,7 @@ ul {
   margin-top: 28px;
   height: 2px;
   background: rgba(58, 54, 84, 0.4);
-  transition: .3s ease-in;
+  transition: 0.3s ease-in;
 }
 .sidebar li a:hover,
 .sidebar li a:active,
@@ -273,7 +291,7 @@ ul {
   padding: 25px;
   cursor: pointer;
 }
-.sidebar-legend:hover a:before{
+.sidebar-legend:hover a:before {
   width: 110px;
   left: 50px;
 }
@@ -281,7 +299,7 @@ ul {
   font-size: 40px;
   cursor: pointer;
   letter-spacing: 10px;
-  font-family: 'Nova Round', sans-serif;
+  font-family: "Nova Round", sans-serif;
   color: #ffffff;
   text-shadow: 4px 1px 0 #ffa79c;
 }
@@ -293,7 +311,7 @@ ul {
   left: 65px;
   height: 1px;
   background: #fdfdfd;
-  transition: .3s ease-in;
+  transition: 0.3s ease-in;
 }
 .sidebar-legend a:after {
   content: "web";
@@ -301,33 +319,57 @@ ul {
   position: absolute;
   color: #fff;
   font-size: 10px;
-  font-family: Round Nova,sans-serif;
+  font-family: Round Nova, sans-serif;
   text-shadow: none;
   left: 85px;
 }
 @keyframes slide-in {
-  from {transform: translateX(-300px);}
-    to {transform: translateX(0px);}
+  from {
+    transform: translateX(-300px);
+  }
+  to {
+    transform: translateX(0px);
+  }
 }
 @keyframes slide-out-body {
-  10% {transform: translateX(50px);}
-  100% {transform: translateX(0px);}
+  10% {
+    transform: translateX(50px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
 }
 @keyframes slide-out {
-  from {transform: translateX(0px);}
-    to {transform: translateX(-220px);}
+  from {
+    transform: translateX(0px);
+  }
+  to {
+    transform: translateX(-220px);
+  }
 }
 @keyframes roll-in {
-from {transform: translateX(-0px) rotate(-360deg);}
-to {transform: translateX(0px) rotate(0);}
+  from {
+    transform: translateX(-0px) rotate(-360deg);
+  }
+  to {
+    transform: translateX(0px) rotate(0);
+  }
 }
 @keyframes roll-out {
-from {transform: translateX(0px) rotate(360deg);}
-to {transform: translateX(-0px) rotate(0);}
+  from {
+    transform: translateX(0px) rotate(360deg);
+  }
+  to {
+    transform: translateX(-0px) rotate(0);
+  }
 }
 @keyframes slide-up {
-  from {transform: translateY(900px);}
-    to {transform: translateY(0px);}
+  from {
+    transform: translateY(900px);
+  }
+  to {
+    transform: translateY(0px);
+  }
 }
 @media (max-width: 700px) {
   .profiler-round {
