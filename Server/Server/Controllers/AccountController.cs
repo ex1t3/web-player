@@ -180,8 +180,6 @@ namespace Server.Controllers
         url = "https://" + Request.RequestUri.Authority + "#access_token=" + token;
         return Redirect(url);
       }
-
-      return Ok();
     }
 
     [HttpGet]

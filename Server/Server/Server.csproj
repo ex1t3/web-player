@@ -328,6 +328,7 @@
     <Compile Include="Models\FavoriteSong.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlaylistSong.cs" />
+    <Compile Include="Models\SearchingViewModel.cs" />
     <Compile Include="Models\UploadedSong.cs" />
     <Compile Include="Models\UserViewModels.cs" />
     <Compile Include="Models\Song.cs" />

@@ -29,7 +29,6 @@ const state = {
   isSettingsPage: false,
   isProfilePage: false,
   isMusicPage: false,
-  is: false,
   isActiveSidebar: false
 
 }

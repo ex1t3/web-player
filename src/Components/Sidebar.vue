@@ -87,7 +87,7 @@ export default {
 </script>
 <style>
 .profile-link-list {
-    margin-top: 10px;
+    margin-top: 1px;
     right: 0;
     position: absolute;
     background: #fff;

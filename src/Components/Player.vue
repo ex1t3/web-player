@@ -87,7 +87,6 @@ rootData.install = function () {
   })
 }
 Vue.use(rootData)
-// import { mapGetters } from 'vuex'
 export default {
   store,
   data () {
@@ -135,6 +134,7 @@ export default {
     this.$root.$on('playDefinedSongRoot', this.playDefinedSong)
     this.$root.$on('pauseSongRoot', this.pauseSong)
     this.$root.$on('playSongRoot', this.playSong)
+    this.$root.$on('lookUpper', this.lookUpper)
   },
   beforeDestroy () {
     this.$root.$off('loadSongsRoot', this.loadDefinedSongs)
@@ -142,6 +142,7 @@ export default {
     this.$root.$off('playDefinedSongRoot', this.playDefinedSong)
     this.$root.$off('pauseSongRoot', this.pauseSong)
     this.$root.$off('playSongRoot', this.playSong)
+    this.$root.$off('lookUpper', this.lookUpper)
     this.removeListeners()
   },
   methods: {
@@ -574,14 +575,15 @@ export default {
 }
 .queue-closer {
     position: absolute;
-    right: 20px;
-    top: 20px;
-    top: -50px;
+    right: 5px;
+    padding: 0px 5px 0px 5px;
+    top: -40px;
+    background: #e3e3e76e;
     cursor: pointer;
     width: auto;
     height: auto;
     font-size: 25px;
-    color: #908d9e;
+    color: #f39d93;
 }
 .queue-list {
   width: 100%;
@@ -643,14 +645,12 @@ export default {
 .main-player-poster {
     width: 70px;
     height: 70px;
-    border-radius: 5px;
     position: relative;
     margin-left: auto
 }
 .main-player-poster img {
     width: 100%;
     height: 100%;
-    border-radius: 5px
 }
 .player-trackline {
     top: 15px;
@@ -894,6 +894,9 @@ export default {
     top: 30px;
     z-index: 2;
     right: 0
+  }
+  .player-trackline .title {
+    font-size: 14px;
   }
   .player-settings i.fa-volume-up {
     display: none;

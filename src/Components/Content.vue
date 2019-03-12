@@ -1,6 +1,6 @@
 <template>
     <div class="content-wrapper">
-        <div v-if="isHomePage">Home</div>
+        <Home v-if="isHomePage"/>
         <Music v-if="isMusicPage"/>
         <Search v-if="isSearchPage"/>
         <div v-if="isSettingsPage">Settings</div>
@@ -11,6 +11,7 @@
 import store from '../store'
 import Music from '../Components/Music'
 import Search from '../Components/Search'
+import Home from '../Components/Home'
 import {mapGetters} from 'vuex'
 
 export default {
@@ -28,7 +29,8 @@ export default {
   }),
   components: {
     Music,
-    Search
+    Search,
+    Home
   }
 }
 </script>
@@ -43,7 +45,7 @@ export default {
     transition: .3s;
     margin-top: 70px;
     padding-bottom: 140px;
-    overflow: auto;
+    overflow: hidden;
     width: 100%;
 }
 @media (max-width: 700px) {

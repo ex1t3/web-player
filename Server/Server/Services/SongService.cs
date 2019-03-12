@@ -57,7 +57,7 @@ namespace Server.Services
 
     public Song CheckForTrashTitles(Song song)
     {
-      var domains = new string[] {".me", ".org", ".com", ".net", ".fm"};
+      var domains = new string[] {".me", ".org", ".com", ".net", ".fm", ".top"};
       foreach (var domain in domains)
       {
         if (song.Name.Contains(domain))
@@ -94,21 +94,14 @@ namespace Server.Services
       return song.Id > 0;
 
     }
-    public async Task<bool> UpdatePlaylist(int playlistId)
-    {
-      return true;
-    }
     public async Task<bool> UpdatePlaylist(PlaylistSong song)
     {
       var songCover = _dbSong.Get(x => x.Id == song.SongId).AlbumCover;
       var playlist = _dbPlaylist.Get(x => x.Id == song.PlaylistId);
-      if (playlist != null && songCover != null)
-      {
-        playlist.Cover = songCover;
-        _dbPlaylist.Update(playlist);
-        return true;
-      }
-      return false;
+      if (playlist == null || songCover == null) return false;
+      playlist.Cover = songCover;
+      _dbPlaylist.Update(playlist);
+      return true;
     }
     public async Task<List<Song>> GetAllSongs()
     {
@@ -121,9 +114,40 @@ namespace Server.Services
       if (favorites.Capacity <= 0) return songs;
       foreach (var fav in favorites)
       {
-        songs.Add(GetSongById(fav.SongId));
+        songs.Add(await GetSongById(fav.SongId));
       }
       return songs;
+    }
+    public async Task<List<Song>> GetSearchedSongs(string[] keyWords)
+    {
+      var songsStartedWithTypedText = new List<Song>();
+      var songsContainedTypedText = new List<Song>();
+      var songsEndedWithTypedText = new List<Song>();
+      foreach (var typedtext in keyWords)
+      {
+        songsStartedWithTypedText = songsStartedWithTypedText.Union(_dbSong.GetMany(x => x.Name.StartsWith(typedtext)).ToList()).ToList();
+        songsContainedTypedText = songsContainedTypedText.Union(_dbSong.GetMany(x => x.Name.Contains(typedtext)).ToList()).ToList();
+        songsEndedWithTypedText = songsEndedWithTypedText.Union(_dbSong.GetMany(x => x.Name.EndsWith(typedtext)).ToList()).ToList();
+      }
+      var songsToReturn = songsStartedWithTypedText.Union(songsContainedTypedText).Union(songsEndedWithTypedText)
+        .ToList();
+      return songsToReturn;
+    }
+    public async Task<string[]> GetSearchedArtists(string[] keyWords)
+    {
+      var artistsStartedWithTypedText = new string[] {};
+      var artistsContainedTypedText = new string[] {};
+      var artistsEndedWithTypedText = new string[] {};
+      foreach (var typedtext in keyWords)
+      {
+        artistsStartedWithTypedText = artistsStartedWithTypedText.Union(_dbSong.GetMany(x => x.Artist.StartsWith(typedtext)).Select(x=>x.Artist).ToArray()).ToArray();
+        artistsContainedTypedText = artistsContainedTypedText.Union(_dbSong.GetMany(x => x.Artist.Contains(typedtext)).Select(x => x.Artist).ToArray()).ToArray();
+        artistsEndedWithTypedText = artistsEndedWithTypedText.Union(_dbSong.GetMany(x => x.Artist.EndsWith(typedtext)).Select(x => x.Artist).ToArray()).ToArray();
+      }
+
+      var artistsToReturn = artistsEndedWithTypedText.Union(artistsContainedTypedText).Union(artistsEndedWithTypedText)
+        .ToArray();
+      return artistsToReturn;
     }
     public async Task<List<Playlist>> GetUserPlaylists(int userId)
     {
@@ -174,7 +198,7 @@ namespace Server.Services
       _dbFavoriteSong.Delete(x => x.SongId == songId && x.UserId == userId);
       return true;
     }
-    public Song GetSongById(int id)
+    public async Task<Song> GetSongById(int id)
     {
       return _dbSong.Get(x => x.Id == id);
     }

@@ -1,566 +1,95 @@
 <template>
   <div class="tabs">
-    <div
-      v-if="isPlaylistOpened && !isFavoriteTracksPageOpened || isUploadsOpened && !isFavoriteTracksPageOpened "
-      @click="isPlaylistOpened = false, playListSongsLoaded = false, isUploadsOpened = false"
-      class="return-block"
-    >
-      <i class="fas fa-arrow-left"></i>
-      <div>Back to playlists</div>
-    </div>
     <input type="radio" id="tab1" name="tab-control" checked>
     <input type="radio" id="tab2" name="tab-control">
-    <ul>
-      <li
-        @click="isFavoriteTracksPageOpened = false"
-        v-bind:title="{'My playlists' : !isPlaylistOpened || !isUploadsOpened, currentPlaylistName: isPlaylistOpened || isUploadsOpened}"
-      >
-        <label for="tab1" role="button">
-          <svg
-            version="1.1"
-            id="Capa_1"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            x="0px"
-            y="0px"
-            viewBox="0 0 448.138 448.138"
-            style="enable-background:new 0 0 448.138 448.138;"
-            xml:space="preserve"
-          >
-            <path
-              d="M436.768,151.845c-13.152-26.976-35.744-42.08-57.6-56.704C362.88,84.229,347.52,73.925,336.64,59.173l-2.016-2.72c-6.4-8.608-13.696-18.368-14.816-26.56c-1.12-8.288-7.648-14.048-16.928-13.792C294.496,16.677,288,23.653,288,32.069v285.12c-13.408-8.128-29.92-13.12-48-13.12c-44.096,0-80,28.704-80,64s35.904,64,80,64c44.128,0,80-28.704,80-64V181.573c24.032,9.184,63.36,32.576,74.176,87.2c-2.016,2.976-3.936,6.208-6.176,8.736c-5.856,6.624-5.184,16.736,1.44,22.56c6.592,5.888,16.704,5.184,22.56-1.44c20.032-22.752,33.824-58.784,35.968-94.016C449.024,187.237,445.152,168.997,436.768,151.845zs"
-            ></path>
-            <path
-              d="M16,48.069h192c8.832,0,16-7.168,16-16s-7.168-16-16-16H16c-8.832,0-16,7.168-16,16S7.168,48.069,16,48.069z"
-            ></path>
-            <path
-              d="M16,144.069h192c8.832,0,16-7.168,16-16s-7.168-16-16-16H16c-8.832,0-16,7.168-16,16S7.168,144.069,16,144.069z"
-            ></path>
-            <path
-              d="M112,208.069H16c-8.832,0-16,7.168-16,16s7.168,16,16,16h96c8.832,0,16-7.168,16-16S120.832,208.069,112,208.069z"
-            ></path>
-            <path
-              d="M112,304.069H16c-8.832,0-16,7.168-16,16s7.168,16,16,16h96c8.832,0,16-7.168,16-16S120.832,304.069,112,304.069z"
-            ></path>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-            <g></g>
-          </svg>
-          <br>
-          <span>{{ isPlaylistOpened || isUploadsOpened ? currentPlaylistName : 'My Playlists' }}</span>
-        </label>
-      </li>
-      <li @click="isFavoriteTracksPageOpened = true" title="Favorite Tracks">
-        <label for="tab2" role="button">
-          <svg
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 43.995 43.995"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            enable-background="new 0 0 43.995 43.995"
-          >
-            <g>
-              <g>
-                <path
-                  d="m42.07,24.111c-2.566-2.557-6.369-2.913-8.936-0.356l-2.145,2.137-2.144-2.137c-2.566-2.557-6.369-2.2-8.935,0.356-2.566,2.557-2.566,6.701 0,9.258l.357,.356 10.008,9.97c0.395,0.394 1.035,0.394 1.43,0l10.365-10.326c2.567-2.557 2.567-6.701 0-9.258zm-1.429,7.834l-1.072,1.067-8.578,8.547-9.65-9.614c-1.776-1.771-1.776-4.64 0-6.41 1.654-1.647 4.202-2.223 6.076-0.355l3.574,3.561 3.574-3.561c1.964-1.956 4.422-1.292 6.076,0.355 1.776,1.771 1.776,4.64 7.10543e-15,6.41z"
-                ></path>
-              </g>
-            </g>
-            <g>
-              <g>
-                <path
-                  fill-rule="evenodd"
-                  d="m1,2.005h28c0.552,0 1-0.447 1-1s-0.448-1-1-1h-28c-0.552,0-1,0.447-1,1s0.448,1 1,1zm17,18h-17c-0.552,0-1,0.447-1,1s0.448,1 1,1h17c0.552,0 1-0.447 1-1s-0.448-1-1-1zm11-10h-28c-0.552,0-1,0.447-1,1s0.448,1 1,1h28c0.552,0 1-0.447 1-1s-0.448-1-1-1zm-14,20h-14c-0.552-3.55271e-15-1,0.447-1,1s0.448,1 1,1h14c0.552,0 1-0.447 1-1s-0.448-1-1-1z"
-                ></path>
-              </g>
-            </g>
-          </svg>
-          <br>
-          <span>Favorite Tracks</span>
-        </label>
-      </li>
-    </ul>
-    <div class="slider">
-      <div class="indicator"></div>
-    </div>
+    <MusicsPageHeader :currentPlaylistName="currentPlaylist" :isFavoriteTracksPageOpened="isFavorites" :isUploadsOpened="isUploads" :isPlaylistOpened="isPlaylist"/>   
     <div class="content">
-      <!-- PLAYLISTS -->
-      <section>
-        <h2>{{ isPlaylistOpened || isUploadsOpened ? currentPlaylistName : 'My Playlists' }}</h2>
-        <div v-bind:class="{hidden: isPlaylistOpened || isUploadsOpened}" class="playlists-block">
-          <div @click="createDialogVisible = true" class="playlist-block create-playlist">
-            <div class="playlist-poster">
-              <img src="../img/plus.svg">
-            </div>
-            <div class="playlist-content">
-              <p class="playlist-title">Create playlist</p>
-            </div>
-          </div>
-          <!-- UPLOADS BANNER -->
-          <div @click="openUploads" class="playlist-block uploads-playlist">
-            <div class="playlist-poster">
-              <img src="../img/uploads.svg">
-            </div>
-            <div class="playlist-content">
-              <p class="playlist-title">My Uploads</p>
-            </div>
-          </div>  
-          <!-- PLAYLISTS BANNER --> 
-          <div
-            @click="openPlaylist(playlist.Id, playlist.Name)"
-            :key="playlist.Id"
-            v-for="playlist in $main.playlists"
-            class="playlist-block"
-          >
-            <div class="playlist-poster">
-              <img v-bind:src="playlist.Cover">
-            </div>
-            <div class="playlist-content">
-              <p class="playlist-title">{{ playlist.Name }}</p>
-            </div>
-          </div>
-        </div>
-        <!-- UPLOADS BLOCK -->
-        <div v-bind:class="{hidden: !isUploadsOpened || isPlaylistOpened}">
-          <div class="empty-uploads-archive-block" v-if="uploadedSongs.length == 0">
-            <img class="empty-box" src="../img/empty-box.svg"/>
-            <h3>You haven't uploaded any song yet, 
-            <br> but it is never too late to do this</h3>
-            <button class="button-form button-google"><i class="fas fa-cloud-upload-alt"></i> UPLOAD SONGS
-             <input id="songUploader" class="file-uploader" type="file" accept="audio/*" multiple @change="loadFiles($event)"/>
-             </button>
-          </div>
-          <div v-if="uploadedSongs.length > 0" class="songs-block">
-            <div class="uploader">
-             <button class="button-form button-google"><i class="fas fa-cloud-upload-alt"></i> UPLOAD SONGS
-             <input id="songUploader" class="file-uploader" type="file" accept="audio/*" multiple @change="loadFiles($event)"/>
-             </button>
-            </div>
-            <div class="songs-body">
-              <div v-if="!$main.isMobile" class="songs-header">
-                <div class="songs-header-number">#</div>
-                <div class="songs-header-name">Name</div>
-                <div class="songs-header-artist">Artist</div>
-              </div>
-              <div
-                @click="playSong(item['Id'])"
-                v-bind:class="{'current-song': $main.currentIndex===item['Id']}"
-                class="songs-item"
-                :key="index"
-                v-for="(item, index) in uploadedSongs "
-              >
-                <div v-if="$main.isMobile" class="song-cover">
-                  <img v-bind:src="item.AlbumCover" class="song-cover-image">
-                </div>
-                <div v-if="!$main.isMobile" class="song-number">
-                  <div class="song-number-hidden">{{ index + 1}}</div>
-                  <button class="player-button-icon">
-                    <i
-                      class="fas"
-                      v-bind:class="{'fa-pause': $main.currentIndex===item['Id'] && !$main.isPaused, 'fa-play' : $main.isPaused || ($main.currentIndex!==item['Id'] && !$main.isPaused)}"
-                    ></i>
-                  </button>
-                </div>
-                <div class="song-name">{{ item.Name }}</div>
-                <div class="song-artist">{{ item.Artist }}</div>
-                <div class="mobile-song-title" v-if="$main.isMobile">
-                  <div class="mobile-song-name">{{ item.Name }}</div>
-                  <div class="mobile-song-artist">{{ item.Artist }}</div>
-                </div>
-                <div class="song-remove-icon"><i @click="removeSong($event, index, item.Id, 0)" class="far fa-trash-alt"></i></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- PLAYLIST BLOCK -->
-        <div v-bind:class="{hidden: !isPlaylistOpened || isUploadsOpened}">
-          <div v-if="playlistSongs.length == 0">This playlist is empty</div>
-          <div v-if="playlistSongs.length > 0" class="songs-block">
-            <div class="songs-body">
-              <div v-if="!$main.isMobile" class="songs-header">
-                <div class="songs-header-number">#</div>
-                <div class="songs-header-name">Name</div>
-                <div class="songs-header-artist">Artist</div>
-              </div>
-              <div
-                @click="playSong(item['Id'])"
-                v-bind:class="{'current-song': $main.currentIndex===item['Id']}"
-                class="songs-item"
-                :key="index"
-                v-for="(item, index) in playlistSongs"
-              >
-                <div v-if="$main.isMobile" class="song-cover">
-                  <img v-bind:src="item.AlbumCover" class="song-cover-image">
-                </div>
-                <div v-if="!$main.isMobile" class="song-number">
-                  <div class="song-number-hidden">{{ index + 1}}</div>
-                  <button class="player-button-icon">
-                    <i
-                      class="fas"
-                      v-bind:class="{'fa-pause': $main.currentIndex===item['Id'] && !$main.isPaused, 'fa-play' : $main.isPaused || ($main.currentIndex!==item['Id'] && !$main.isPaused)}"
-                    ></i>
-                  </button>
-                </div>
-                <div class="song-name">{{ item.Name }}</div>
-                <div class="song-artist">{{ item.Artist }}</div>
-                <div class="mobile-song-title" v-if="$main.isMobile">
-                  <div class="mobile-song-name">{{ item.Name }}</div>
-                  <div class="mobile-song-artist">{{ item.Artist }}</div>
-                </div>
-                <div class="song-remove-icon"><i @click="removeSong($event, index, item.Id, 1)" class="far fa-trash-alt"></i></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- FAVORITE TRACKS -->
-      <section> 
-        <h2>Favorite Tracks</h2>
-        <div v-if="$main.favoriteSongs.length == 0">You don't have any favorite songs</div>
-        <div v-if="$main.favoriteSongs.length > 0" class="songs-block">
-          <div class="songs-body">
-            <div v-if="!$main.isMobile" class="songs-header">
-              <div class="songs-header-number">#</div>
-              <div class="songs-header-name">Name</div>
-              <div class="songs-header-artist">Artist</div>
-            </div>
-            <div
-              @click="playSong(item['Id'])"
-              v-bind:class="{'current-song': $main.currentIndex===item['Id']}"
-              class="songs-item"
-              :key="index"
-              v-for="(item, index) in $main.favoriteSongs"
-            >
-              <div v-if="$main.isMobile" class="song-cover">
-                <img v-bind:src="item.AlbumCover" class="song-cover-image">
-              </div>
-              <div v-if="!$main.isMobile" class="song-number">
-                <div class="song-number-hidden">{{ index + 1}}</div>
-                <button class="player-button-icon">
-                  <i
-                    class="fas"
-                    v-bind:class="{'fa-pause': $main.currentIndex===item['Id'] && !$main.isPaused, 'fa-play' : $main.isPaused || ($main.currentIndex!==item['Id'] && !$main.isPaused)}"
-                  ></i>
-                </button>
-              </div>
-              <div class="song-name">{{ item['Name'] }}</div>
-              <div class="song-artist">{{ item['Artist'] }}</div>
-              <div class="mobile-song-title" v-if="$main.isMobile">
-                <div class="mobile-song-name">{{ item.Name }}</div>
-                <div class="mobile-song-artist">{{ item.Artist }}</div>
-              </div>
-              <div class="song-remove-icon"><i @click="removeSong($event, index, item.Id, 2)" class="far fa-trash-alt"></i></div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Playlists :pageType="currentPageType" :isUploadsOpened="isUploads" :isPlaylistOpened="isPlaylist"/>
+      <Favorites :pageType="currentPageType" />
     </div>
-    <!-- modal -->
-    <div v-bind:class="{active: createDialogVisible}" class="modal-overlay">
-      <div v-bind:class="{active: createDialogVisible}" class="modal">
-        <a @click="createDialogVisible = false" class="close-modal">
-          <svg viewBox="0 0 20 20">
-            <path
-              fill="#000000"
-              d="M15.898,4.045c-0.271-0.272-0.713-0.272-0.986,0l-4.71,4.711L5.493,4.045c-0.272-0.272-0.714-0.272-0.986,0s-0.272,0.714,0,0.986l4.709,4.711l-4.71,4.711c-0.272,0.271-0.272,0.713,0,0.986c0.136,0.136,0.314,0.203,0.492,0.203c0.179,0,0.357-0.067,0.493-0.203l4.711-4.711l4.71,4.711c0.137,0.136,0.314,0.203,0.494,0.203c0.178,0,0.355-0.067,0.492-0.203c0.273-0.273,0.273-0.715,0-0.986l-4.711-4.711l4.711-4.711C16.172,4.759,16.172,4.317,15.898,4.045z"
-            ></path>
-          </svg>
-        </a>
-        <!-- close modal -->
-        <div class="modal-content">
-          <h2 class="centered">Name your new playlist</h2>
-          <div class="input-group">
-            <input
-              v-model="playlistName"
-              ref="playlistName"
-              name="playlistName"
-              placeholder="Playlist"
-              class="input-field"
-              type="text"
-              required
-            >
-          </div>
-          <div class="input-group centered">
-            <button
-              @click="createPlaylist"
-              class="button-form button-gradient"
-              type="submit"
-            >CREATE</button>
-          </div>
-        </div>
-        <!-- content -->
-      </div>
-      <!-- modal -->
-    </div>
-    <!-- overlay -->
   </div>
 </template>
 <script>
+import {mapGetters} from 'vuex'
+import Playlists from './Playlists'
+import MusicsPageHeader from './MusicsPageHeader'
+import Favorites from './Favorites'
 import universalParse from "id3-parser/lib/universal"
-import axios from "axios"
-import swal from "sweetalert"
 export default {
   data() {
     return {
-      playlistSongs: [],
-      uploadedSongs: [],
-      isPlaylistOpened: false,
-      isUploadsOpened: false,
-      favoriteSongsLoaded: false,
-      playListSongsLoaded: false,
-      uploadSongsLoaded: false,
-      createDialogVisible: false,
-      playlistName: "",
-      isFavoriteTracksPageOpened: false,
-      currentPlaylist: 0,
-      currentPlaylistName: ""
-    };
+      isUploads: false,
+      isPlaylist: false,
+      isFavorites: false,
+      currentPageType: -1,
+      currentPlaylist: 'My Playlists'
+    }
+  },
+  components: {
+    MusicsPageHeader,
+    Playlists,
+    Favorites
   },
   mounted() {
-    this.$root.$on("addSongToPlaylist", this.addSongToPlaylist)
     window.addEventListener("resize", this.checkScreenWidth)
   },
   beforeMount() {
     this.checkScreenWidth()
+    this.$root.$on("openInstance", this.openInstance)
   },
   beforeDestroy() {
     this.$root.$off("addSongToPlaylist", this.addSongToPlaylist)
+    this.$root.$off("openInstance", this.openInstance)
+    window.removeEventListener("resize", this.checkScreenWidth)
   },
   methods: {
     checkScreenWidth() {
       this.$root.$emit('checkScreenWidth')
     },
-    addSongToPlaylist(song, playlistId) {
-      if (this.currentPlaylist == playlistId) {
-        this.playlistSongs.push(song)
+    openInstance(type, name) {
+      switch (type) {
+        // Uploads page
+        case 0: {
+          this.isUploads = true
+          this.isFavorites = false
+          this.isPlaylist = false
+          this.currentPageType = 0
+          this.currentPlaylist = name
+        }
+        break
+        // Playlist page
+        case 1: {
+          this.isUploads = false
+          this.isFavorites = false
+          this.isPlaylist = true
+          this.currentPageType = 1
+          this.currentPlaylist = name
+        }
+        break
+        // Favorites page
+        case 2: {
+          this.currentPageType = 2
+          this.isFavorites = true
+        }
+        break
+        // Exit playlists
+        case 3: {
+          this.isUploads = false
+          this.isFavorites = false
+          this.isPlaylist = false
+          this.currentPageType = -1
+          this.currentPlaylist = 'My Playlists'
+        }
+        // Back to playlists || uploads
+        default:
+        {
+          this.isFavorites = false
+        }
+          break
       }
-      this.$main.playlists[
-        this.$main.playlists
-          .map(function(e) {
-            return e.Id;
-          })
-          .indexOf(playlistId)
-      ].Cover = song.AlbumCover
-    },
-    userActionsHandler(flag, successfulMessage, errorMessage) {
-      if (flag) {
-        swal("Yes!", successfulMessage, "success")
-      } else {
-        swal("Oops", errorMessage, "error")
-      }
-    },
-    createPlaylist() {
-      let that = this
-      let obj = { Name: this.playlistName }
-      if (this.playlistName !== "") {
-        let flag =
-          this.$main.playlists.find(el => el.Name === this.playlistName) !==
-          undefined;
-        if (flag) {
-          this.$root.$emit(
-            "notificate",
-            "error",
-            "Such playlist already exists",
-            3000
-          );
-          return 0;
-        }
-        axios({
-          method: "POST",
-          url: "https://localhost:44304/api/Songs/CreatePlaylist",
-          headers: {
-            "Content-Type": "application/json; charset=UTF-8",
-            Authorization: "Bearer " + sessionStorage.getItem("access_token")
-          },
-          data: obj
-        })
-          .then(function(e) {
-            that.createDialogVisible = false
-            that.$root.$emit(
-              "notificate",
-              "success",
-              "Playlist successfully created",
-              3000
-            );
-            if (e.data > 0) {
-              that.$main.playlists.push({
-                Id: e.data,
-                Name: obj.Name,
-                Cover:
-                  "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBoZWlnaHQ9IjUxMnB4IiB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgd2lkdGg9IjUxMnB4Ij48cGF0aCBkPSJtNTUuMTc1NzgxIDI1NmgtMTUuMTAxNTYyYzAtNTcuNjc1NzgxIDIyLjQ1NzAzMS0xMTEuODk4NDM4IDYzLjI0MjE4Ny0xNTIuNjgzNTk0czk1LjAwNzgxMy02My4yNDIxODcgMTUyLjY4MzU5NC02My4yNDIxODd2MTUuMTAxNTYyYy0xMTAuNzM0Mzc1IDAtMjAwLjgyNDIxOSA5MC4wODk4NDQtMjAwLjgyNDIxOSAyMDAuODI0MjE5em0wIDAiIGZpbGw9IiNkMWQxZDEiLz48cGF0aCBkPSJtMjU2IDQ3MS45MjU3ODF2LTE1LjEwMTU2MmMxMTAuNzM0Mzc1IDAgMjAwLjgyNDIxOS05MC4wODk4NDQgMjAwLjgyNDIxOS0yMDAuODI0MjE5aDE1LjEwNTQ2OWMwIDU3LjY3NTc4MS0yMi40NjA5MzggMTExLjg5ODQzOC02My4yNDYwOTQgMTUyLjY4MzU5NHMtOTUuMDA3ODEzIDYzLjI0MjE4Ny0xNTIuNjgzNTk0IDYzLjI0MjE4N3ptMCAwIiBmaWxsPSIjZDFkMWQxIi8+PHBhdGggZD0ibTQxLjkzMzU5NCAzNjYuNTg5ODQ0Yy0xNy44MDA3ODItMzQuMzg2NzE5LTI2LjgyODEyNS03MS41OTM3NS0yNi44MjgxMjUtMTEwLjU4OTg0NCAwLTY0LjM0Mzc1IDI1LjA1ODU5My0xMjQuODM1OTM4IDcwLjU1ODU5My0xNzAuMzM1OTM4czEwNS45OTIxODgtNzAuNTU4NTkzIDE3MC4zMzU5MzgtNzAuNTU4NTkzYzQ3LjE3MTg3NSAwIDkyLjg1MTU2MiAxMy42Mjg5MDYgMTMyLjA5NzY1NiAzOS40MTc5NjlsOC4yOTY4NzUtMTIuNjI1Yy00MS43MjI2NTYtMjcuNDEwMTU3LTkwLjI2OTUzMS00MS44OTg0MzgtMTQwLjM5NDUzMS00MS44OTg0MzgtNjguMzc1IDAtMTMyLjY2NDA2MiAyNi42Mjg5MDYtMTgxLjAxNTYyNSA3NC45ODQzNzUtNDguMzU1NDY5IDQ4LjM1MTU2My03NC45ODQzNzUgMTEyLjY0MDYyNS03NC45ODQzNzUgMTgxLjAxNTYyNSAwIDQwLjg1MTU2MiA5Ljg2MzI4MSA4MS40OTYwOTQgMjguNTE5NTMxIDExNy41MzUxNTYgMTguMDU0Njg4IDM0Ljg2NzE4OCA0NC4zNjMyODEgNjUuNjEzMjgyIDc2LjA4MjAzMSA4OC45MTQwNjNsOC45NDUzMTMtMTIuMTcxODc1Yy0yOS44NTkzNzUtMjEuOTMzNTk0LTU0LjYyMTA5NC01MC44NzEwOTQtNzEuNjEzMjgxLTgzLjY4NzV6bTAgMCIgZmlsbD0iI2QxZDFkMSIvPjxwYXRoIGQ9Im00MTguMDQyOTY5IDU3LjgwODU5NC05LjU2NjQwNyAxMS42ODc1YzU2LjE5MTQwNyA0NS45OTYwOTQgODguNDE3OTY5IDExMy45NzY1NjIgODguNDE3OTY5IDE4Ni41MDM5MDYgMCA2NC4zMzk4NDQtMjUuMDU4NTkzIDEyNC44MzU5MzgtNzAuNTU4NTkzIDE3MC4zMzU5MzhzLTEwNS45OTIxODggNzAuNTU4NTkzLTE3MC4zMzU5MzggNzAuNTU4NTkzYy00MS41NDI5NjkgMC04Mi40OTYwOTQtMTAuNzQ2MDkzLTExOC40MzM1OTQtMzEuMDc4MTI1bC03LjQzNzUgMTMuMTQ4NDM4YzM4LjIwMzEyNSAyMS42MDkzNzUgODEuNzI2NTYzIDMzLjAzNTE1NiAxMjUuODcxMDk0IDMzLjAzNTE1NiA2OC4zNzUgMCAxMzIuNjY0MDYyLTI2LjYyODkwNiAxODEuMDE1NjI1LTc0Ljk4NDM3NSA0OC4zNTU0NjktNDguMzUxNTYzIDc0Ljk4NDM3NS0xMTIuNjQwNjI1IDc0Ljk4NDM3NS0xODEuMDE1NjI1IDAtNzcuMDc0MjE5LTM0LjI0NjA5NC0xNDkuMzEyNS05My45NTcwMzEtMTk4LjE5MTQwNnptMCAwIiBmaWxsPSIjZDFkMWQxIi8+PHBhdGggZD0ibTMwNC4wODU5MzggMjMyLjQxNzk2OWMtMjYuMjU3ODEzIDAtNDcuNjI1IDIxLjM2MzI4MS00Ny42MjUgNDcuNjI1czIxLjM2NzE4NyA0Ny42MjUgNDcuNjI1IDQ3LjYyNWMyNi4yNjE3MTggMCA0Ny42MjUtMjEuMzYzMjgxIDQ3LjYyNS00Ny42MjV2LTE3OS40NTcwMzFsLTEzNS4zMjAzMTMgNTQuMTI4OTA2djE3MC43MjY1NjJjLTguNTE5NTMxLTcuOTc2NTYyLTE5Ljk1NzAzMS0xMi44Nzg5MDYtMzIuNTE5NTMxLTEyLjg3ODkwNi0yNi4yNjE3MTkgMC00Ny42MjUgMjEuMzYzMjgxLTQ3LjYyNSA0Ny42MjVzMjEuMzYzMjgxIDQ3LjYyNSA0Ny42MjUgNDcuNjI1YzI2LjI2MTcxOCAwIDQ3LjYyNS0yMS4zNjMyODEgNDcuNjI1LTQ3LjYyNXYtMTk1LjI0NjA5NGwxMDUuMTA5Mzc1LTQyLjA0Njg3NXYxMjIuNDAyMzQ0Yy04LjUxOTUzMS03Ljk4MDQ2OS0xOS45NTMxMjUtMTIuODc4OTA2LTMyLjUxOTUzMS0xMi44Nzg5MDZ6bS0xMjAuMjE0ODQ0IDE2MC4yODkwNjJjLTE3LjkzMzU5NCAwLTMyLjUxOTUzMi0xNC41ODk4NDMtMzIuNTE5NTMyLTMyLjUxOTUzMSAwLTE3LjkzMzU5NCAxNC41ODU5MzgtMzIuNTE5NTMxIDMyLjUxOTUzMi0zMi41MTk1MzEgMTcuOTI5Njg3IDAgMzIuNTE5NTMxIDE0LjU4NTkzNyAzMi41MTk1MzEgMzIuNTE5NTMxIDAgMTcuOTI5Njg4LTE0LjU4OTg0NCAzMi41MTk1MzEtMzIuNTE5NTMxIDMyLjUxOTUzMXptMTIwLjIxNDg0NC04MC4xNDQ1MzFjLTE3LjkyOTY4OCAwLTMyLjUxOTUzMi0xNC41ODU5MzgtMzIuNTE5NTMyLTMyLjUxOTUzMSAwLTE3LjkyOTY4OCAxNC41ODk4NDQtMzIuNTE5NTMxIDMyLjUxOTUzMi0zMi41MTk1MzEgMTcuOTMzNTkzIDAgMzIuNTE5NTMxIDE0LjU4OTg0MyAzMi41MTk1MzEgMzIuNTE5NTMxIDAgMTcuOTMzNTkzLTE0LjU4NTkzOCAzMi41MTk1MzEtMzIuNTE5NTMxIDMyLjUxOTUzMXptMCAwIiBmaWxsPSIjZDFkMWQxIi8+PHBhdGggZD0ibTM5LjYwOTM3NSAyNzIuNDkyMTg4aDE2LjAzMTI1djE1LjEwMTU2MmgtMTYuMDMxMjV6bTAgMCIgZmlsbD0iI2QxZDFkMSIvPjxwYXRoIGQ9Im00NTYuMzU5Mzc1IDIyNC40MDYyNWgxNi4wMzEyNXYxNS4xMDE1NjJoLTE2LjAzMTI1em0wIDAiIGZpbGw9IiNkMWQxZDEiLz48cGF0aCBkPSJtNDI0LjMwNDY4OCAyMjQuNDA2MjVoMTYuMDI3MzQzdjE1LjEwMTU2MmgtMTYuMDI3MzQzem0wIDAiIGZpbGw9IiNkMWQxZDEiLz48cGF0aCBkPSJtNzEuNjY3OTY5IDI3Mi40OTIxODhoMTYuMDI3MzQzdjE1LjEwMTU2MmgtMTYuMDI3MzQzem0wIDAiIGZpbGw9IiNkMWQxZDEiLz48L3N2Zz4K"
-              });
-            }
-          })
-          .catch(function(e) {
-            that.createDialogVisible = false;
-            that.$root.$emit("errorHandler", e.response.status)
-          });
-      } else {
-        this.$root.$emit(
-          "notificate",
-          "error",
-          "Playlist name is required",
-          3000
-        );
-      }
-    },
-    openUploads () {
-      let that = this
-      this.$root.$emit("actLoadingRoot");
-      axios({
-        method: "GET",
-        url: "https://localhost:44304/api/Songs/GetUploadedSongs",
-        headers: {
-          "Content-Type": "application/json; charset=UTF-8",
-          Authorization: "Bearer " + sessionStorage.getItem("access_token")
-        }
-      })
-        .then(function(e) {
-          that.currentPlaylistName = 'My Uploads'
-          that.uploadedSongs = e.data
-          that.isPlaylistOpened = false
-          that.isUploadsOpened = true
-          that.$root.$emit("deactLoadingRoot")
-        })
-        .catch(function(e) {
-          that.$root.$emit("deactLoadingRoot")
-          that.$root.$emit("errorHandler", e.response.status)
-        })
-    },
-    openPlaylist(id, name) {
-      let that = this
-      this.$root.$emit("actLoadingRoot");
-      axios({
-        method: "POST",
-        url: "https://localhost:44304/api/Songs/GetPlaylistSongs",
-        headers: {
-          "Content-Type": "application/json; charset=UTF-8",
-          Authorization: "Bearer " + sessionStorage.getItem("access_token")
-        },
-        data: id
-      })
-        .then(function(e) {
-          that.currentPlaylist = id
-          that.currentPlaylistName = name
-          that.playlistSongs = e.data
-          that.isPlaylistOpened = true
-          that.isUploadsOpened = false
-          that.$root.$emit("deactLoadingRoot")
-        })
-        .catch(function(e) {
-          that.$root.$emit("deactLoadingRoot")
-          that.$root.$emit("errorHandler", e.response.status)
-        });
-    },
-    removeSong(e, index, id, type) { // Removes song from a chosen data array
-      e.stopPropagation()
-      switch(type) {
-        // 0 - Uploaded songs
-        case 0 : {
-          this.uploadedSongs.splice(index, 1)
-          console.log(this.uploadedSongs)
-          break;
-        }
-        // 1 - Playlists songs
-        case 1 : {
-          this.playlistSongs.splice(index, 1)
-          break;
-        }
-        // 2 - Favorite songs
-        case 2 : {
-          this.$main.favoriteSongs.splice(index, 2)
-          break;
-        }
-        default : {
-          break;
-        }
-      }
-    },
-    loadFiles(event) {
-      let files = event.target.files;
-      let that = this;
-      for (var i = 0, f = Promise.resolve(); i < files.length; i++) {
-        let data = new FormData();
-        data.append("NewSong", files[i])
-        f = f.then(_ =>
-          axios({
-            method: "POST",
-            url: "https://localhost:44304/api/Songs/UploadSong",
-            data: data,
-            headers: {
-              "Content-Type": "application/json; charset=UTF-8",
-              Authorization: "Bearer " + sessionStorage.getItem("access_token")
-            }
-          })
-            .then(function(e) {
-              if (!e.data) return 0
-              let index = that.uploadedSongs.map(function(obj) { return obj.Id}).indexOf(e.data.Id)
-              if (index != -1) that.uploadedSongs.splice(index, 1)
-              that.uploadedSongs.push(e.data)
-            })
-            .catch(function(e) {})
-        );
-      }
-    },
-    playSong(index) {
-      switch (true) {
-        case index === this.$main.currentIndex && !this.$main.isPaused: {
-          this.$root.$emit("pauseSongRoot")
-          return 0;
-        }
-        case index === this.$main.currentIndex : {
-          this.$root.$emit("playSongRoot")
-          return 0;
-        }
-        case index !== this.$main.currentIndex : {
-          switch (true) {
-            case this.isFavoriteTracksPageOpened : {
-              if (!this.favoriteSongsLoaded) {
-                this.$root.$emit("loadSongsRoot", this.$main.favoriteSongs)
-                this.favoriteSongsLoaded = true
-                this.playListSongsLoaded = false
-              }
-              break
-            }
-            case this.isPlaylistOpened : {
-              if (!this.playListSongsLoaded) {
-                this.$root.$emit("loadSongsRoot", this.playlistSongs)
-                this.playListSongsLoaded = true
-                this.favoriteSongsLoaded = false
-              }
-              break
-            }
-            case this.isUploadsOpened : {
-              if (!this.playListSongsLoaded) {
-                this.$root.$emit("loadSongsRoot", this.uploadedSongs)
-                this.playListSongsLoaded = true
-                this.favoriteSongsLoaded = false
-              }
-              if (this.uploadedSongs.map(function (obj) { return obj.Id }).indexOf(index) == -1) {               
-                this.$root.$emit("loadSongsRoot", this.uploadedSongs)
-              }
-              break
-            }
-          }
-        }
-      }
-      this.$main.isPaused = true;
-      this.$root.$emit("playDefinedSongRoot", index)
     }
   }
-};
+}
 </script>
 <style>
 .uploader {
@@ -575,17 +104,7 @@ export default {
     color: #a2a2a2;
     text-align: center;
 }
-.song-remove-icon {
-  font-size: 18px;
-  position: absolute;
-  right: 0;
-  margin-right: 15px !important;
-  color: #929daf !important;
-  width: auto !important;
-}
-.song-remove-icon i {
-  float: right;
-}
+
 @media only screen and (min-width: 40em) {
   .modal-overlay {
     display: flex;
@@ -739,74 +258,7 @@ export default {
     top: 80px !important;
   }
 }
-.songs-item .player-button-icon,
-.songs-item .player-button-icon i {
-  background: none;
-  padding: 0;
-}
-.songs-item:hover {
-  cursor: pointer;
-  background: #f7f7f8;
-}
-.songs-item.current-song {
-  background: #f7f7f8;
-}
-.song-number .player-button-icon {
-  display: none;
-}
-.songs-item:hover .song-number .player-button-icon {
-  display: block;
-}
-.songs-item:hover .song-number .song-number-hidden {
-  display: none;
-}
-.songs-item.current-song .song-number .player-button-icon {
-  display: block;
-}
-.songs-item.current-song .song-number .song-number-hidden {
-  display: none;
-}
-.songs-item.current-song div,
-.songs-item.current-song button {
-  color: #6b687f;
-  font-weight: 600;
-}
-.songs-header {
-  display: flex;
-  margin: 10px;
-  align-items: center;
-}
-.songs-item {
-  display: flex;
-  align-items: center;
-  height: 50px;
-  position: relative;
-  padding: 10px 10px;
-  margin: 25px 0;
-  box-shadow: 0 0 20px #dddddd5e;
-}
 
-.songs-item::after {
-  content: "";
-  height: 1px;
-  background: #f4f4f4;
-  top: 0px;
-  width: calc(100% - 12px);
-  position: absolute;
-  left: 6px;
-  right: 6px;
-}
-.songs-block {
-  width: 100%;
-}
-.songs-header,
-.songs-item {
-  width: 100%;
-}
-.songs-header div,
-.songs-item div {
-  width: 20%;
-}
 .playlist-block {
   width: 200px;
   text-align: center;
@@ -1000,7 +452,8 @@ export default {
 }
 .tabs
   input[name="tab-control"]:nth-of-type(1):checked
-  ~ ul
+  ~ div
+  ul
   > li:nth-child(1)
   > label {
   cursor: default;
@@ -1008,7 +461,8 @@ export default {
 }
 .tabs
   input[name="tab-control"]:nth-of-type(1):checked
-  ~ ul
+  ~ div
+  ul
   > li:nth-child(1)
   > label
   svg {
@@ -1041,50 +495,18 @@ export default {
   .playlist-content {
     padding: 10px 0;
   }
-  .song-name,
-  .song-artist {
-    display: none;
-  }
-  .playlist-poster img {
-    width: 80%;
-  }
-  .songs-item {
-    padding: 25px 0;
-    margin: 15px 0;
-  }
-  .songs-item .mobile-song-name,
-  .songs-item .mobile-song-artist {
-    width: 100%;
-    padding: 3px 0;
-  }
-  .mobile-song-artist {
-    font-size: 12px;
-  }
-  .songs-item .song-cover {
-    width: 60px;
-    position: absolute;
-    left: 15px;
-  }
-  .songs-item .song-cover .song-cover-image {
-    width: 100%;
-    border-radius: 50%;
-  }
-  .mobile-song-title {
-    display: block;
-    margin-left: 100px;
-    width: calc(100% - 100px) !important;
-  }
 }
 @media (max-width: 600px) {
   .tabs
     input[name="tab-control"]:nth-of-type(1):checked
-    ~ ul
+    ~ div
+    ul
     > li:nth-child(1)
     > label {
     background: rgba(0, 0, 0, 0.08);
   }
 }
-.tabs input[name="tab-control"]:nth-of-type(1):checked ~ .slider {
+.tabs input[name="tab-control"]:nth-of-type(1):checked ~ div .slider {
   -webkit-transform: translateX(0%);
   transform: translateX(0%);
 }
@@ -1096,7 +518,8 @@ export default {
 }
 .tabs
   input[name="tab-control"]:nth-of-type(2):checked
-  ~ ul
+  ~ div
+  ul
   > li:nth-child(2)
   > label {
   cursor: default;
@@ -1104,7 +527,8 @@ export default {
 }
 .tabs
   input[name="tab-control"]:nth-of-type(2):checked
-  ~ ul
+  ~ div
+  ul
   > li:nth-child(2)
   > label
   svg {
@@ -1113,13 +537,14 @@ export default {
 @media (max-width: 600px) {
   .tabs
     input[name="tab-control"]:nth-of-type(2):checked
-    ~ ul
+    ~ div
+    ul
     > li:nth-child(2)
     > label {
     background: rgba(0, 0, 0, 0.08);
   }
 }
-.tabs input[name="tab-control"]:nth-of-type(2):checked ~ .slider {
+.tabs input[name="tab-control"]:nth-of-type(2):checked ~ div .slider {
   -webkit-transform: translateX(100%);
   transform: translateX(100%);
 }
@@ -1131,7 +556,8 @@ export default {
 }
 .tabs
   input[name="tab-control"]:nth-of-type(3):checked
-  ~ ul
+  ~ div
+  ul
   > li:nth-child(3)
   > label {
   cursor: default;
@@ -1139,7 +565,8 @@ export default {
 }
 .tabs
   input[name="tab-control"]:nth-of-type(3):checked
-  ~ ul
+  ~ div
+  ul
   > li:nth-child(3)
   > label
   svg {
@@ -1148,13 +575,14 @@ export default {
 @media (max-width: 600px) {
   .tabs
     input[name="tab-control"]:nth-of-type(3):checked
-    ~ ul
+    ~ div
+    ul
     > li:nth-child(3)
     > label {
     background: rgba(0, 0, 0, 0.08);
   }
 }
-.tabs input[name="tab-control"]:nth-of-type(3):checked ~ .slider {
+.tabs input[name="tab-control"]:nth-of-type(3):checked ~ div .slider {
   -webkit-transform: translateX(200%);
   transform: translateX(200%);
 }
@@ -1166,7 +594,8 @@ export default {
 }
 .tabs
   input[name="tab-control"]:nth-of-type(4):checked
-  ~ ul
+  ~ div
+  ul
   > li:nth-child(4)
   > label {
   cursor: default;
@@ -1174,7 +603,8 @@ export default {
 }
 .tabs
   input[name="tab-control"]:nth-of-type(4):checked
-  ~ ul
+  ~ div
+  ul
   > li:nth-child(4)
   > label
   svg {
@@ -1183,13 +613,14 @@ export default {
 @media (max-width: 600px) {
   .tabs
     input[name="tab-control"]:nth-of-type(4):checked
-    ~ ul
+    ~ div
+    ul
     > li:nth-child(4)
     > label {
     background: rgba(0, 0, 0, 0.08);
   }
 }
-.tabs input[name="tab-control"]:nth-of-type(4):checked ~ .slider {
+.tabs input[name="tab-control"]:nth-of-type(4):checked ~ div .slider {
   -webkit-transform: translateX(300%);
   transform: translateX(300%);
 }
