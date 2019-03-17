@@ -21,8 +21,7 @@ export default {
   data () {
     return {
       isNotificationActive: false,
-      isLoading: false,
-      notificationCall: 0
+      isLoading: false
     }
   },
   beforeMount () {

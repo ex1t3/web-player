@@ -85,6 +85,13 @@ namespace Server.Controllers
       };
       return Json(result);
     }
+    [HttpPost]
+    [Route("GetSongsOfArtist")]
+    public async Task<IHttpActionResult> GetSongsOfArtist([FromBody]string artist) // Method used for searching similiar songs or artists to user's typed text
+    {
+      var result = await _songService.GetSongsOfArtist(artist);
+      return Json(result);
+    }
 
     [HttpPost]
     [Route("AddSongToPlaylist")]
@@ -114,12 +121,12 @@ namespace Server.Controllers
     }
 
     [HttpPost]
-    [Route("DeleteFavoriteSong")]
-    public async Task<IHttpActionResult> DeleteFavoriteSong([FromBody]int songId) // Method used for removing a song from favorites
+    [Route("RemoveSongFromInstance")]
+    public async Task<IHttpActionResult> RemoveSongFromInstance(DeletedInstance instance) // Method used for removing a song from favorites
     {
       var user = _userService.GetUserByName(User.Identity.Name);
-      if (songId <= 0 || user == null) return Json("false");
-      var flag = await _songService.Delete(songId, user.Id);
+      if (user == null) return Json(false);
+      var flag = await _songService.DeleteSongFromInstance(instance.SongId, user.Id, instance.Type, instance.PlaylistId);
       return Json(flag);
     }
 

@@ -100,3 +100,24 @@ export default {
   props: ['isFavoriteTracksPageOpened', 'isPlaylistOpened', 'isUploadsOpened', 'currentPlaylistName']
 }
 </script>
+<style scoped>
+.return-block {
+  position: absolute;
+  top: 5px;
+  color: #f39d93;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  padding-left: 10px;
+  animation: fade-in 0.5s;
+}
+.return-block i {
+  margin-right: 10px;
+  transition: margin 0.3s;
+}
+.return-block:hover i {
+  margin-left: -5px;
+  margin-right: 15px;
+}
+
+</style>

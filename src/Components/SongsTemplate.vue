@@ -40,8 +40,9 @@
   </div>
 </template>
 <script>
+import axios from "axios"
 export default {
-  props: ["songs", "type"],
+  props: ["songs", "type", "playlistId"],
   data() {
     return {
       favoriteSongsLoaded: false,
@@ -51,6 +52,7 @@ export default {
     }
   },
   mounted() {
+    document.getElementsByClassName('page')[0].scrollTop = 0
     this.sliceFunction(this.defaultCountOfItemsToLoad)
     this.addListeners()
   },
@@ -121,24 +123,48 @@ export default {
           this.$root.$emit("playDefinedSongRoot", index)
       }
     },
-    removeSong(e, index, id, type) {
+    removeSong(e, index, songId, type) {
       // Removes song from a chosen data array
       e.stopPropagation()
+      let instance = JSON.stringify({SongId: songId, Type: type, PlaylistId: this.playlistId})
+      let that = this
+      axios({
+        method: "POST",
+        url: "https://localhost:44304/api/Songs/RemoveSongFromInstance",
+        data: instance,
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8",
+          Authorization: "Bearer " + sessionStorage.getItem("access_token")
+        }
+      }).then(function (e) {
+        that.removedSongHandler(type, index)
+      }).catch(function (e) {
+        console.log(e)
+        that.$root.$emit('errorHandler', e.response.status)
+      })
+    },
+    removedSongHandler(type, index) {
+      this.sliceFunction(this.defaultCountOfItemsToLoad * this.countOfScrollTimes)
       switch (type) {
-        // 0 - Uploaded & Playlist songs
-        case 0: 
+        // 0 - Uploaded songs
+        case 0: {
+          this.$root.$emit('notificate', 'success', 'Song deleted from uploaded', 3000)
+          return true
+        }
+        // 1 - Playlist songs
         case 1: {
           this.songs.splice(index, 1)
-          this.sliceFunction(this.defaultCountOfItemsToLoad * this.countOfScrollTimes)
-          break
+          this.$root.$emit('notificate', 'success', 'Song deleted from playlist', 3000)  
+          return true
         }
         // 2 - Favorite songs
         case 2: {
           this.$main.favoriteSongs.splice(index, 1)
-          break
+          this.$root.$emit('notificate', 'success', 'Song deleted from favorites', 3000)       
+          return true
         }
         default: {
-          break
+          return false
         }
       }
     }
@@ -201,7 +227,7 @@ export default {
 .songs-item {
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: 13px;
   height: 50px;
   position: relative;
   padding: 10px 10px;
@@ -228,7 +254,7 @@ export default {
 }
 .songs-header div,
 .songs-item div {
-  width: 20%;
+  width: 30%;
 }
 @media (max-width: 700px) {
   .song-name,

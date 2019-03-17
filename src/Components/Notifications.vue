@@ -17,7 +17,8 @@
 export default {
   data() {
     return {
-      notifications: []
+      notifications: [],
+      notificationCall: 0
     }
   },
   beforeMount() {

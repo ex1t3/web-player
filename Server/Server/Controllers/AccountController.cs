@@ -302,7 +302,7 @@ namespace Server.Controllers
       // does not support "revoke OAuth token" (logout) by design.
       this.Authentication.SignOut(DefaultAuthenticationTypes.ExternalBearer);
 
-      // Delete the user's session from the database (revoke its bearer token)
+      // DeleteSongFromInstance the user's session from the database (revoke its bearer token)
       var owinContext = this.Request.GetOwinContext();
       var userSessionManager = new UserSessionManager(owinContext, _userService);
       userSessionManager.InValidateUserSession();

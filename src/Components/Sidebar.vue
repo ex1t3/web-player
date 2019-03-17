@@ -39,7 +39,9 @@
 <script>
 import store from "../store";
 import axios from "axios";
-import { mapGetters } from "vuex";
+import {
+  mapGetters
+} from "vuex";
 export default {
   store,
   data() {
@@ -67,16 +69,18 @@ export default {
       } else {
         // sessionStorage.removeItem('access_token')
         axios({
-          method: "POST",
-          url: "https://localhost:44304/api/Account/Logout",
-          headers: {
-            Authorization: "Bearer " + token
-          }
-        })
-          .then(function(e) {
+            method: "POST",
+            url: "https://localhost:44304/api/Account/Logout",
+            headers: {
+              Authorization: "Bearer " + token
+            }
+          })
+          .then(function (e) {
             that.$store.dispatch('logOut')
           })
-          .catch(function(e) {});
+          .catch(function (e) {
+            that.$root.$emit("errorHandler", e.response.status)
+          })
       }
     }
   },

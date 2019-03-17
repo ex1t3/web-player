@@ -1,41 +1,60 @@
 <template>
-<div class="search-block">
-  <div class="search-panel">
-    <div class="title-container">
-      <h1 class="title">Type the song's name or artist...</h1>
+  <div class="search-block">
+    <div class="founded-item" v-if="isAllFoundedSongsShowed">
+      <div @click="isAllFoundedSongsShowed = false" class="return-block"><i class="fas fa-arrow-left"></i><div>Back to search</div></div>
+        <div class="songs">
+          <div class="songs-block">
+            <SongsTemplate :songs="foundedSongs" :type="3" />
+          </div>
+        </div>
     </div>
-    <fieldset class="player-search-container" v-bind:class="{'is-type': isTyping}">
-      <input
-        v-on:keyup="searching()"
-        type="text"
-        ref="search"
-        placeholder="Search..."
-        class="player-search"
-      >
-      <div class="icons-container">
-        <div class="icon-search"></div>
-        <div @click="stopSearch()" class="icon-close">
-          <div class="x-up"></div>
-          <div class="x-down"></div>
+    <div class="founded-item" v-if="isSongsOfFoundedArtistShowed">
+      <div @click="isSongsOfFoundedArtistShowed = false" class="return-block"><i class="fas fa-arrow-left"></i><div>Back to search</div></div>
+      <h3 class="centered">{{ selectedArtist }}</h3>
+        <div class="songs">
+          <div class="songs-block">
+            <SongsTemplate :songs="songsOfArtist" :type="3" />
+          </div>
+        </div>
+    </div>
+    <div v-if="!isAllFoundedSongsShowed && !isSongsOfFoundedArtistShowed">
+      <div class="search-panel">
+        <div class="title-container">
+          <h1 class="title">Type the song's name or artist...</h1>
+        </div>
+        <fieldset class="player-search-container" v-bind:class="{'is-type': isTyping}">
+          <input v-on:keyup="searching()" type="text" ref="search" placeholder="Search..." class="player-search">
+          <div class="icons-container">
+            <div class="icon-search"></div>
+            <div @click="stopSearch()" class="icon-close">
+              <div class="x-up"></div>
+              <div class="x-down"></div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div v-if="foundedSongs.length > 0 && !nothingWasFound" class="founded-item">
+        <h3>Songs</h3>
+        <div class="songs">
+          <div class="songs-block">
+            <SongsTemplate :songs="foundedSongs.slice(0,3)" :type="3" />
+          </div>
+        </div>
+        <div class="move-to-block">
+          <div @click="isAllFoundedSongsShowed = true">View all tracks</div><i class="fas fa-arrow-right"></i>
         </div>
       </div>
-    </fieldset>
-  </div>
-  <div  v-if="foundedSongs.length > 0 && !nothingWasFound" class="founded-item">
-      <h2>Songs</h2>
-      <div class="songs">
-        <div class="songs-block">
-          <SongsTemplate :songs="foundedSongs" :type="3" />
+      <div v-if="foundedArtists.length > 0 && !nothingWasFound" class="founded-item">
+        <h3>Artists</h3>
+        <div class="artists-block">
+          <div @click="viewSongsOfArtist(item)" class="artist-item" :key="index" v-for="(item, index) in foundedArtists">
+            {{ item }}
           </div>
+        </div>
       </div>
-      <div>View all tracks</div>
+      <div class="nothing-found-notification" v-if="nothingWasFound">Sorry, we couldn't found the song or artist you've
+        typed</div>
     </div>
-    <div v-if="foundedArtists.length > 0 && !nothingWasFound"  class="founded-item">
-      <h2>Artists</h2>
-        <div :key="index" v-for="(item, index) in foundedArtists"></div>
-      <div>View all artists</div>
-    </div>
-    <div class="nothing-found-notification" v-if="nothingWasFound">Sorry, we couldn't found the song or artist you've typed</div>
   </div>
 </template>
 <script>
@@ -46,19 +65,27 @@ export default {
   data() {
     return {
       searchVal: "",
+      isAllFoundedSongsShowed: false,
+      isSongsOfFoundedArtistShowed: false,
       foundedSongs: [],
       foundedArtists: [],
+      songsOfArtist: [],
+      selectedArtist: '',
       nothingWasFound: false,
       isTyping: false
     }
   },
   beforeMount() {
-    this.$root.$emit("checkScreenWidth")
+    this.checkScreenWidth()
   },
   mounted() {
+    window.addEventListener("resize", this.checkScreenWidth)
     this.$refs.search.focus()
   },
   methods: {
+    checkScreenWidth() {
+      this.$root.$emit("checkScreenWidth")
+    },
     searching(e) {
       this.isTyping = true
       this.searchVal = this.$refs.search.value
@@ -70,15 +97,15 @@ export default {
     doneTyping() {
       let that = this
       axios({
-        method: "POST",
-        url: "https://localhost:44304/api/Songs/SearchForSong",
-        data: JSON.stringify(that.searchVal),
-        headers: {
-          "Content-Type": "application/json charset=UTF-8",
-          Authorization: "Bearer " + sessionStorage.getItem("access_token")
-        }
-      })
-        .then(function(e) {
+          method: "POST",
+          url: "https://localhost:44304/api/Songs/SearchForSong",
+          data: JSON.stringify(that.searchVal),
+          headers: {
+            "Content-Type": "application/json charset=UTF-8",
+            Authorization: "Bearer " + sessionStorage.getItem("access_token")
+          }
+        })
+        .then(function (e) {
           that.foundedSongs = []
           if (e.data.Songs.length > 0) {
             that.foundedSongs = e.data.Songs
@@ -93,8 +120,7 @@ export default {
             that.nothingWasFound = true
           }
           that.isTyping = false
-        })
-        .catch(function(e) {
+        }).catch(function (e) {
           console.log(e)
           that.$root.$emit("errorHandler", e.response.status)
           that.isTyping = false
@@ -104,6 +130,28 @@ export default {
       clearTimeout(typingTimer)
       this.isTyping = false
       this.$refs.search.value = ""
+    },
+    viewSongsOfArtist(artist) {
+      this.selectedArtist = artist
+      let that = this
+      axios({
+        method: 'POST',
+        url: 'https://localhost:44304/api/Songs/GetSongsOfArtist',
+        data: JSON.stringify(artist),
+        headers: {
+          "Content-Type": "application/json charset=UTF-8",
+          Authorization: "Bearer " + sessionStorage.getItem("access_token")
+        }
+      }).then(function (e) {
+        if (e.data.length > 0) {
+          that.songsOfArtist = e.data
+        }
+        that.isSongsOfFoundedArtistShowed = true
+      }).catch(function (e) {
+        console.log(e)
+        that.$root.$emit("errorHandler", e.response.status)
+        that.isTyping = false
+      })
     }
   },
   components: {
@@ -111,7 +159,48 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
+.return-block, .move-to-block {
+  color: #f39d93;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  animation: fade-in 0.5s;
+}
+.return-block {
+  margin: 0px 0px 10px 0px;
+}
+.return-block i {
+  margin-right: 10px;
+  transition: margin 0.3s;
+}
+.return-block:hover i {
+  margin-left: -5px;
+  margin-right: 15px;
+}
+
+.artists-block {
+  display: inline-block;
+}
+.artist-item {
+    float: left;
+    font-size: 12px;
+    padding: 15px;
+    margin: 0px 15px 25px 0px;
+    background: #fff;
+    box-shadow: 0 0 20px #f2f2f2;
+    cursor: pointer;
+}
+.artist-item:hover {
+  background: #ddd;
+}
+.move-to-block i {
+  margin-left: 10px;
+  transition: margin 0.3s;
+}
+.move-to-block:hover i {
+   margin: 0px -5px 0px 15px;
+}
 .nothing-found-notification {
   display: block;
   text-align: center;

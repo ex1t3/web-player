@@ -68,14 +68,14 @@
             >
           </button>
         </div>
-        <SongsTemplate v-bind:songs="uploadedSongs" :type="pageType"/>
+        <SongsTemplate v-if="pageType === 0" :songs="uploadedSongs" :type="0"/>
       </div>
     </div>
     <!-- PLAYLIST BLOCK -->
-    <div v-bind:class="{hidden: !isPlaylistOpened || isUploadsOpened}">
+    <div :class="{hidden: !isPlaylistOpened || isUploadsOpened}">
       <div v-if="playlistSongs.length == 0">This playlist is empty</div>
       <div v-if="playlistSongs.length > 0" class="songs-block">
-        <SongsTemplate :songs="playlistSongs" :type="pageType"/>
+        <SongsTemplate v-if="pageType === 1" :playlistId="currentPlaylist" :songs="playlistSongs" :type="1"/>
       </div>
     </div>
         <!-- modal -->
@@ -136,7 +136,7 @@ export default {
   components: {
     SongsTemplate
   },
-  mounted() {
+  beforeMount() {
     this.$root.$on("addSongToPlaylist", this.addSongToPlaylist)
   },
   beforeDestroy() {
@@ -147,13 +147,6 @@ export default {
       if (this.currentPlaylist == playlistId) {
         this.playlistSongs.push(song)
       }
-      this.$main.playlists[
-        this.$main.playlists
-          .map(function(e) {
-            return e.Id
-          })
-          .indexOf(playlistId)
-      ].Cover = song.AlbumCover
     },
     userActionsHandler(flag, successfulMessage, errorMessage) {
       if (flag) {
@@ -267,6 +260,7 @@ export default {
     },
     loadFiles(event) {
       let files = event.target.files
+      let that = this
       for (var i = 0, f = Promise.resolve(); i < files.length; i++) {
         let data = new FormData()
         data.append("NewSong", files[i])
@@ -282,12 +276,10 @@ export default {
           })
             .then(function(e) {
               if (!e.data) return 0
-              let index = that.uploadedSongs
-                .map(function(obj) {
-                  return obj.Id
-                })
-                .indexOf(e.data.Id)
-              if (index != -1) that.uploadedSongs.splice(index, 1)
+              let index = that.uploadedSongs.map(function(obj) { return obj.Id }).indexOf(e.data.Id)
+              if (index != -1) { 
+                that.uploadedSongs.splice(index, 1)
+              }
               that.uploadedSongs.unshift(e.data)
             })
             .catch(function(e) {})
@@ -297,3 +289,246 @@ export default {
   }
 }
 </script>
+<style scoped>
+.uploader {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.empty-box {
+  width: 80px;
+}
+.empty-uploads-archive-block {
+    padding: 15px;
+    color: #a2a2a2;
+    text-align: center;
+}
+.file-uploader {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.playlist-block {
+  width: 200px;
+  text-align: center;
+  height: 200px;
+  display: flex;
+  margin: 60px 40px 20px 0px;
+  cursor: pointer;
+  position: relative;
+  transition: 0.3s;
+  align-items: center;
+  float: left;
+  box-shadow: 0px 5px 20px #d2d2d24a;
+  animation: fade-in 0.5s;
+}
+.playlist-block:hover {
+  transform: translateY(-5px);
+}
+.playlist-content {
+  width: 100%;
+  text-align: left;
+  padding: 15px 0;
+  z-index: 2;
+  position: absolute;
+  top: -45px;
+  background: #f39d93;
+}
+.playlist-content .playlist-title {
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+  padding-left: 10px;
+}
+.playlist-poster {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.playlist-poster img {
+  width: 100%;
+  border-radius: 50%;
+}
+.create-playlist,
+.uploads-playlist {
+  transform: none !important;
+}
+.create-playlist .playlist-content,
+.uploads-playlist .playlist-content {
+  background: #f6f5f5;
+  transition: 0.3s;
+}
+.create-playlist .playlist-poster,
+.uploads-playlist .playlist-poster {
+  width: 50%;
+  height: 50%;
+  transition: 0.3s;
+}
+.create-playlist:hover .playlist-poster,
+.uploads-playlist:hover .playlist-poster {
+  width: 60%;
+  height: 60%;
+}
+.create-playlist:hover .playlist-content,
+.uploads-playlist:hover .playlist-content {
+  background: #f39d93;
+}
+@media (max-width: 700px) {
+  .playlists-block {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    height: 220px;
+    width: 100%;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  .playlist-block {
+    float: none;
+    margin-right: 5px;
+    width: 120px;
+    margin-left: 0;
+    height: 110px;
+    display: inline-block;
+  }
+  .playlist-poster {
+    margin-top: 2px;
+  }
+  .playlist-block.uploads-playlist .playlist-poster,
+  .playlist-block.create-playlist .playlist-poster {
+    margin-top: 25px;
+  }
+  .playlist-content {
+    padding: 10px 0;
+  }
+}
+@media only screen and (min-width: 40em) {
+  .modal-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: -100px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    background-color: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transition: opacity 0.6s cubic-bezier(0.55, 0, 0.1, 1),
+      visibility 0.6s cubic-bezier(0.55, 0, 0.1, 1);
+  }
+  .modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+/**
+ * Modal
+ */
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 auto;
+  background-color: #fff;
+  width: 600px;
+  max-width: 75rem;
+  min-height: 20rem;
+  padding: 1rem;
+  border-radius: 3px;
+  opacity: 0;
+  overflow-y: auto;
+  visibility: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: scale(1.2);
+  transform: scale(1.2);
+  transition: all 0.6s cubic-bezier(0.55, 0, 0.1, 1);
+}
+.modal .close-modal {
+  position: absolute;
+  cursor: pointer;
+  top: 5px;
+  right: 15px;
+  opacity: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transition: opacity 0.6s cubic-bezier(0.55, 0, 0.1, 1),
+    -webkit-transform 0.6s cubic-bezier(0.55, 0, 0.1, 1);
+  transition: opacity 0.6s cubic-bezier(0.55, 0, 0.1, 1),
+    transform 0.6s cubic-bezier(0.55, 0, 0.1, 1);
+  transition: opacity 0.6s cubic-bezier(0.55, 0, 0.1, 1),
+    transform 0.6s cubic-bezier(0.55, 0, 0.1, 1),
+    -webkit-transform 0.6s cubic-bezier(0.55, 0, 0.1, 1);
+  transition-delay: 0.3s;
+}
+.modal .close-modal svg {
+  width: 1.75em;
+  height: 1.75em;
+}
+.modal .modal-content {
+  opacity: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transition: opacity 0.6s cubic-bezier(0.55, 0, 0.1, 1);
+  transition-delay: 0.3s;
+}
+.modal.active {
+  visibility: visible;
+  opacity: 1;
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}
+.modal.active .modal-content {
+  opacity: 1;
+}
+.modal.active .close-modal {
+  -webkit-transform: translateY(10px);
+  transform: translateY(10px);
+  opacity: 1;
+}
+.modal-content h2 {
+  padding: 10px 0;
+}
+.modal-content .input-group {
+  padding: 10px 0;
+  width: 100%;
+}
+/**
+ * Mobile styling
+ */
+@media only screen and (max-width: 39.9375em) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 0;
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+    padding: 0 !important;
+    z-index: 999;
+  }
+
+  .close-modal {
+    right: 20px !important;
+    top: 80px !important;
+  }
+}
+</style>

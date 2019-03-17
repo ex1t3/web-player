@@ -1,69 +1,76 @@
 <template>
   <div class="main-player-block">
-  <div v-bind:class="{hidden: !isAddMenuActive}" class="mobile-layer"></div>
-    <div class="main-player-poster"><img v-bind:src="currentPoster"/></div>
+    <div v-bind:class="{hidden: !isAddMenuActive}" class="mobile-layer"></div>
+    <div class="main-player-poster"><img v-bind:src="currentPoster" /></div>
     <div class="main-player-add-to">
       <div v-clickOutside="hideAddMenu" class="main-player-add-menu" v-bind:class="{hidden: !isAddMenuActive}">
         <h4>Add to playlist</h4>
         <div class="main-player-add-menu-playlists">
-        <div @click="addSongToPlaylist(item.Id)" class="main-player-add-menu-item" :key="item.Id" v-for="item in $main.playlists">
-          <div class="main-player-add-menu-item-cover"><img class="main-player-add-menu-item-cover-image" v-bind:src="item.Cover"/></div>
-          <div class="main-player-add-menu-item-title">{{ item.Name }}</div>
-        </div>
+          <div @click="addSongToPlaylist(item.Id)" class="main-player-add-menu-item" :key="item.Id" v-for="item in $main.playlists">
+            <div class="main-player-add-menu-item-cover"><img class="main-player-add-menu-item-cover-image" v-bind:src="item.Cover" /></div>
+            <div class="main-player-add-menu-item-title">{{ item.Name }}</div>
+          </div>
         </div>
       </div>
-      <i data-toggler="true" v-bind:class="{'active-icon': isAddMenuActive}" @click="isAddMenuActive = !isAddMenuActive" class="fas fa-plus"></i>
+      <i data-toggler="true" v-bind:class="{'active-icon': isAddMenuActive}" @click="isAddMenuActive = !isAddMenuActive"
+        class="fas fa-plus"></i>
       <i @click="favHandler($event)" class="fa-heart" v-bind:class="{fas: favLookUpper($main.currentIndex) > -1, far: favLookUpper($main.currentIndex) < 0}"></i>
     </div>
     <div class="main-player-body">
-    <div class="player-buttons">
-      <button class="player-button-icon" @click="playPrev()"><i class="fas fa-backward"></i></button>
-      <button class="player-button-icon" @click="playSong()" v-bind:class="{hidden : !$main.isPaused}" ><i class="fas fa-play"></i></button>
-      <button class="player-button-icon" @click="pauseSong()" v-bind:class="{hidden : $main.isPaused}" ><i class="fas fa-pause"></i></button>
-      <button class="player-button-icon" @click="playNext()"><i class="fas fa-forward"></i></button></div>
-    <div class="player-trackline">
-      <div class="title">{{ title }}</div>
-      <div class="timeline">
-      <span class="current-time">{{ currentTime }}</span>
-      <span class="total-time">{{ duration }}</span>
-      <div @click="onTimeChange($event)" class="slider">
-       <div class="progress" v-bind:style="{ width: progressWidth }">
-         <div @click="stopProp($event)" class="pin" v-bind:style="{ 'margin-left': progressWidth }"></div>
-      </div>
-      </div>
-     </div>
-     </div>
-    <div class="mobile-settings"><i class="fas fa-sliders-h"></i></div>
-    <div class="player-settings">
-      <i @click="muteSong($event)" v-bind:class="{hidden: isVolumeOff}" class="fas fa-volume-up">
-        <div @click="stopProp($event)" class="volume-raise-block">
-          <div @click="onVolumeChange($event)" class="slider">
-            <div class="progress" v-bind:style="{ width: progressVolumeWidth}">
-              <div @click="stopProp($event)" class="pin" v-bind:style="{'margin-left' : progressVolumeWidth}"></div>
+      <div class="player-buttons">
+        <button class="player-button-icon" @click="playPrev()"><i class="fas fa-backward"></i></button>
+        <button class="player-button-icon" @click="playSong()" v-bind:class="{hidden : !$main.isPaused}"><i class="fas fa-play"></i></button>
+        <button class="player-button-icon" @click="pauseSong()" v-bind:class="{hidden : $main.isPaused}"><i class="fas fa-pause"></i></button>
+        <button class="player-button-icon" @click="playNext()"><i class="fas fa-forward"></i></button></div>
+      <div class="player-trackline">
+        <div class="title">{{ title }}</div>
+        <div class="timeline">
+          <span class="current-time">{{ currentTime }}</span>
+          <span class="total-time">{{ duration }}</span>
+          <div @click="onTimeChange($event)" class="slider">
+            <div class="progress" v-bind:style="{ width: progressWidth }">
+              <div @click="stopProp($event)" class="pin" v-bind:style="{ 'margin-left': progressWidth }"></div>
             </div>
           </div>
         </div>
-      </i>
-      <i @click="unMuteSong()" v-bind:class="{hidden: !isVolumeOff, 'player-settings-active': isVolumeOff}" class="fas fa-volume-mute"></i>
-      <i @click="isActiveQueue = !isActiveQueue" class="fas fa-th-list"></i>
-      <i @click="shuffleSongs()" v-bind:class="{'player-settings-active': isShuffled}" class="fas fa-random"></i>
-      <i @click="isReplayed=!isReplayed" v-bind:class="{'player-settings-active': isReplayed}" class="fas fa-redo"></i>
+      </div>
+      <div class="mobile-settings"><i class="fas fa-sliders-h"></i></div>
+      <div class="player-settings">
+        <i @click="muteSong($event)" v-bind:class="{hidden: isVolumeOff}" class="fas fa-volume-up">
+          <div @click="stopProp($event)" class="volume-raise-block">
+            <div @click="onVolumeChange($event)" class="slider">
+              <div class="progress" v-bind:style="{ width: progressVolumeWidth}">
+                <div @click="stopProp($event)" class="pin" v-bind:style="{'margin-left' : progressVolumeWidth}"></div>
+              </div>
+            </div>
+          </div>
+        </i>
+        <i @click="unMuteSong()" v-bind:class="{hidden: !isVolumeOff, 'player-settings-active': isVolumeOff}" class="fas fa-volume-mute"></i>
+        <i @click="isActiveQueue = !isActiveQueue" class="fas fa-th-list"></i>
+        <i @click="shuffleSongs()" v-bind:class="{'player-settings-active': isShuffled}" class="fas fa-random"></i>
+        <i @click="isReplayed=!isReplayed" v-bind:class="{'player-settings-active': isReplayed}" class="fas fa-redo"></i>
+      </div>
     </div>
-  </div>
-  <div v-bind:class="{'queue-active': isActiveQueue}" class="music-queue-block">
-    <div @click="isActiveQueue = !isActiveQueue" class="queue-closer"><i class="fas fa-times"></i></div>
-    <div class="queue-body">
-      <div class="queue-list">
-        <div @click="playDefinedSong(item)" v-bind:class="{'current-song': $main.currentIndex===item}" class="queue-item" :key="item" v-for="(item) in shuffleIndexes">
-          <button class="player-button-icon">
-            <i class="fas" v-bind:class="{'fa-pause': $main.currentIndex===item && !$main.isPaused, 'fa-play' : $main.isPaused || ($main.currentIndex!==item && !$main.isPaused)}"></i>
-          </button>
-          <div class="queue-item-title">{{ songs[lookUpper(item)].Name }}</div>
-          <div class="queue-item-title">{{ songs[lookUpper(item)].Artist }}</div>
+    <div v-bind:class="{'queue-active': isActiveQueue}" class="music-queue-block">
+      <div @click="isActiveQueue = !isActiveQueue" class="queue-closer"><i class="fas fa-times"></i></div>
+      <div class="queue-body">
+        <div class="queue-list">
+          <div @click="playDefinedSong(item)" v-bind:class="{'current-song': $main.currentIndex===item}" class="queue-item"
+            :key="item" v-for="(item) in shuffleIndexes">
+            <button class="queue-item-play-button player-button-icon">
+              <i class="fas" :class="{'fa-pause': $main.currentIndex===item && !$main.isPaused, 'fa-play' : $main.isPaused || ($main.currentIndex!==item && !$main.isPaused)}"></i>
+            </button>
+            <div class="queue-item-cover-block">
+              <img :src="songs[lookUpper(item)].AlbumCover"/>
+            </div>
+            <div class="queue-item-title-block">
+              <div class="queue-item-title queue-item-name">{{ songs[lookUpper(item)].Name }}</div>
+              <div class="queue-item-title queue-item-artist">{{ songs[lookUpper(item)].Artist }}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
   </div>
 </template>
 <script>
@@ -96,7 +103,7 @@ export default {
       progressWidth: '0%',
       progressVolumeWidth: '100%',
       currentTime: '0:00',
-      title: ' · ',
+      title: ' Loading ... ',
       isDragged: false,
       songsLength: 0,
       isVolumeOff: false,
@@ -178,9 +185,12 @@ export default {
     favLookUpper (index) {
       return this.$main.favoriteSongs.map(function (x) { return x.Id }).indexOf(index)
     },
-    addSongToPlaylist (playlistId) {
+    addSongToPlaylist(playlistId) {
       let that = this
-      let obj = {PlaylistId: playlistId, SongId: this.$main.currentIndex}
+      let obj = {
+        PlaylistId: playlistId,
+        SongId: this.$main.currentIndex
+      }
       axios({
         method: 'POST',
         url: 'https://localhost:44304/api/Songs/AddSongToPlaylist',
@@ -193,6 +203,13 @@ export default {
         that.$root.$emit('notificate', 'success', 'Song successfully added to playlist', 3000)
         let index = that.lookUpper(obj.SongId)
         let song = that.songs[index]
+        that.$main.playlists[
+          that.$main.playlists
+          .map(function (e) {
+            return e.Id
+          })
+          .indexOf(playlistId)
+        ].Cover = song.AlbumCover
         that.$root.$emit('addSongToPlaylist', song, obj.PlaylistId)
       }).catch(function (e) {
         that.$root.$emit('errorHandler', e.response.status)
@@ -214,16 +231,17 @@ export default {
         }).then(function (e) {
           let song = that.songs[that.lookUpper(currentIndex)]
           that.$main.favoriteSongs.push(song)
-          that.$root.$emit('notificate', 'success', 'Song is now in your favorites', 3000)
+          that.$root.$emit('notificate', 'success', 'Song added to favorites', 3000)
         }).catch(function (e) {
           console.log(e)
           that.$root.$emit('errorHandler', e.response.status)
         })
       } else {
+        let instance = JSON.stringify({SongId: currentIndex, Type: 2})
         axios({
           method: 'POST',
-          url: 'https://localhost:44304/api/Songs/DeleteFavoriteSong',
-          data: currentIndex,
+          url: 'https://localhost:44304/api/Songs/RemoveSongFromInstance',
+          data: instance,
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
@@ -233,7 +251,7 @@ export default {
           if (index > -1) {
             that.$main.favoriteSongs.splice(index, 1)
           }
-          that.$root.$emit('notificate', 'success', 'Song deleted from your favorites', 3000)
+          that.$root.$emit('notificate', 'success', 'Song deleted from favorites', 3000)
         }).catch(function (e) {
           console.log(e)
           that.$root.$emit('errorHandler', e.response.status)
@@ -307,6 +325,14 @@ export default {
             this.pauseSong()
           }
         }
+      }
+    },
+    scrollToNextSongInQueue() {
+      let currentSong = document.getElementsByClassName('current-song')
+      let scrolledBlock = document.getElementsByClassName('queue-body')[0]
+      if (currentSong.length > 0) {
+        const elementPos = currentSong[0].offsetTop
+        scrolledBlock.scrollTop = elementPos
       }
     },
     muteSong (e) {
@@ -467,6 +493,7 @@ export default {
         this.audio.src = 'https://localhost:44304/Songs/' + this.songs[index]['Source']
         this.currentPoster = this.songs[index]['AlbumCover']
         this.title = this.songs[index]['Name'] + ' · ' + this.songs[index]['Artist']
+        this.scrollToNextSongInQueue()
       }
     },
     setDuration () {
@@ -479,7 +506,29 @@ export default {
 }
 </script>
 <style>
-.main-player-add-to {
+
+ .queue-item.current-song .queue-item-play-button {
+   display: block;
+ }
+
+ .queue-item.current-song .queue-item-cover-block {
+   display: none;
+ }
+
+ .queue-item-play-button {
+   display: none;
+   margin: 0 6.5px;
+ }
+
+ .queue-item:hover .queue-item-play-button {
+   display: block;
+ }
+
+ .queue-item:hover .queue-item-cover-block {
+   display: none;
+ }
+
+ .main-player-add-to {
   position: relative;
   margin-left: auto;
   font-size: 20px;
@@ -487,50 +536,58 @@ export default {
   cursor: pointer;
   display: grid;
 }
+
 .main-player-add-to i {
   padding: 10px;
 }
+
 .main-player-add-menu {
-    position: absolute;
-    height: 350px;
-    width: 300px;
-    background: #fff;
-    display: block;
-    box-shadow: 1px -1px 20px 1px rgba(0, 0, 0, 0.14901960784313725);
-    bottom: 90px;
-    font-size: 14px;
-    text-align: center;
-    padding: 10px;
-    padding-bottom: 0;
-    cursor: default;
-    left: -3px;
-    border-radius: 4px;
-    animation: fade-in 0.5s;
+  position: absolute;
+  height: 350px;
+  width: 300px;
+  background: #fff;
+  display: block;
+  box-shadow: 1px -1px 20px 1px rgba(0, 0, 0, 0.14901960784313725);
+  bottom: 90px;
+  font-size: 14px;
+  text-align: center;
+  padding: 10px;
+  padding-bottom: 0;
+  cursor: default;
+  left: -3px;
+  border-radius: 4px;
+  animation: fade-in 0.5s;
 }
-.main-player-add-menu::before, .main-player-add-menu::after {
-    left: 10px;
-    width: 0;
-    border-style: solid;
-    border-width: 0 11px 8px;
-    content: "";
-    transform: rotateX(180deg);
-    position: absolute;
-    height: auto;
-}
-.main-player-add-menu::before {
-    top: 359px;
-    z-index: 1;
-    border-color: transparent transparent #fff;
-}
+
+.main-player-add-menu::before,
 .main-player-add-menu::after {
-    top: 360px;
-    border-color: transparent transparent #cecece;
+  left: 10px;
+  width: 0;
+  border-style: solid;
+  border-width: 0 11px 8px;
+  content: "";
+  transform: rotateX(180deg);
+  position: absolute;
+  height: auto;
 }
+
+.main-player-add-menu::before {
+  top: 359px;
+  z-index: 1;
+  border-color: transparent transparent #fff;
+}
+
+.main-player-add-menu::after {
+  top: 360px;
+  border-color: transparent transparent #cecece;
+}
+
 .main-player-add-menu-playlists {
   display: block;
   overflow: auto;
   height: 290px;
 }
+
 .main-player-add-menu-item {
   display: flex;
   align-items: center;
@@ -538,255 +595,323 @@ export default {
   cursor: pointer;
   margin: 5px 0;
 }
+
 .main-player-add-menu-item:hover {
   background: #f6f6f7;
 }
+
 .main-player-add-menu-item-title {
   margin-left: 10px;
 }
+
 .main-player-add-menu-item-cover {
   height: 40px;
   width: 40px;
 }
+
 .main-player-add-menu-item-cover-image {
   width: 100%;
 }
+
 .music-queue-block {
-    position: absolute;
-    transform: translateY(500px);
-    transition: .5s;
-    bottom: 0;
-    z-index: 999;
-    width: 100%;
-    background: #ffffff;
-    box-shadow: 0 5px 20px 0px #00000040;
+  position: absolute;
+  transform: translateY(500px);
+  transition: .5s;
+  bottom: 0;
+  z-index: 999;
+  width: 100%;
+  background: #ffffff;
+  box-shadow: 0 5px 20px 0px #00000040;
 }
+
+.queue-item-cover-block {
+  max-width: 30px;
+  margin: 0 10px;
+}
+
+.queue-item-cover-block img {
+  width: 100%;
+}
+
+.queue-item-title-block {
+  display: block;
+  margin-left: 5px;
+}
+
 .queue-body {
   max-height: 500px;
+  min-height: 200px;
   overflow-y: auto;
 }
+
 .queue-active.music-queue-block {
   transform: translateY(0px);
 }
-.music-queue-block:not(.queue-active) .queue-closer{
+
+.music-queue-block:not(.queue-active) .queue-closer {
   transform: rotate(360deg);
   transition: .5s;
   top: 0;
 }
+
 .queue-closer {
-    position: absolute;
-    right: 5px;
-    padding: 0px 5px 0px 5px;
-    top: -40px;
-    background: #e3e3e76e;
-    cursor: pointer;
-    width: auto;
-    height: auto;
-    font-size: 25px;
-    color: #f39d93;
+  position: absolute;
+  right: 5px;
+  padding: 0px 5px 0px 5px;
+  top: -40px;
+  background: #e3e3e76e;
+  cursor: pointer;
+  width: auto;
+  height: auto;
+  font-size: 25px;
+  color: #f39d93;
 }
+
 .queue-list {
   width: 100%;
   margin: 0 auto;
 }
 .queue-item {
-    padding: 10px 15px;
-    cursor: pointer;
-    color: #3a3654;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #ebeaee;
+  padding: 10px 5px 10px 5px;
+  cursor: pointer;
+  color: #3a3654;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ebeaee;
 }
+
 .queue-item-title {
-  margin-left: 10px;
+  margin: 5px 0;
 }
+
+.queue-item-name {
+  font-size: 12px;
+}
+
+.queue-item-artist {
+  font-size: 10px;
+}
+
 .queue-item.current-song {
   background: rgba(160, 158, 173, 0.2901960784313726)
 }
+
 .queue-item:hover {
   background: rgba(160, 158, 173, 0.2901960784313726);
   transition: .5s
 }
+
 .queue-item .player-button-icon {
   padding: 0 !important;
 }
+
 .main-player-block {
-    position: fixed;
-    -webkit-align-items: center;
-    align-items: center;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    bottom: 0;
-    animation: fade-in 0.5s;
-    height: 100px;
-    width: 100%;
-    left: 0;
-    right: 0;
-    background: #fff;
-    z-index: 999999;
-    box-shadow: 0 -3px 15px 0px rgba(51, 51, 51, 0.1)
+  position: fixed;
+  -webkit-align-items: center;
+  align-items: center;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  bottom: 0;
+  animation: fade-in 0.5s;
+  height: 100px;
+  width: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  z-index: 999999;
+  box-shadow: 0 -3px 15px 0px rgba(51, 51, 51, 0.1)
 }
+
 .player-button-icon {
-    background: none;
-    border: none;
-    border-radius: 50%;
-    padding: 10px;
-    font-size: 20px;
-    color: #3a3654;
-    cursor: pointer
+  background: none;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  font-size: 15px;
+  color: #3a3654;
+  cursor: pointer;
 }
+
 .main-player-body {
   width: 80%;
   position: relative;
   margin: 0 auto;
   margin-top: 10px;
 }
+
 .main-player-poster {
-    width: 70px;
-    height: 70px;
-    position: relative;
-    margin-left: auto
+  width: 70px;
+  height: 70px;
+  position: relative;
+  margin-left: auto
 }
+
 .main-player-poster img {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
+
 .player-trackline {
-    top: 15px;
-    padding: 0;
-    width: 100%;
-    position: absolute;
-    margin: 0 auto;
-    left: 0;
-    right: 0
+  top: 15px;
+  padding: 0;
+  width: 100%;
+  position: absolute;
+  margin: 0 auto;
+  left: 0;
+  right: 0
 }
+
 .timeline {
   position: relative;
   display: flex;
   align-items: center
 }
+
 .player-settings {
   position: absolute;
   top: 30px;
   right: 0
 }
+
 .mobile-settings {
   display: none;
 }
-.player-settings i, .mobile-settings i {
+
+.player-settings i,
+.mobile-settings i {
   cursor: pointer;
   color: rgba(58, 54, 84, 0.56);
   padding: 6px;
   border-radius: 50%;
   position: relative;
 }
+
 .main-player-add-to i:hover {
   background: #ebeaed;
   border-radius: 50%;
 }
+
 .main-player-add-to .active-icon {
   background: #ebeaed;
   border-radius: 50%;
 }
+
 .main-player-add-to .fa-plus {
   margin-left: 2px;
 }
+
 .main-player-add-to .fa-heart {
   margin-bottom: -2px;
 }
+
 .player-buttons .player-button-icon:hover i {
-    background: rgba(58, 54, 84, 0.1);
+  background: rgba(58, 54, 84, 0.1);
 }
+
 .player-buttons .player-button-icon i {
-    vertical-align: middle;
-    border-radius: 50%;
-    text-align: center;
-    padding: 15px;
+  vertical-align: middle;
+  border-radius: 50%;
+  text-align: center;
+  padding: 15px;
 }
+
 .player-button-icon:nth-child(1) i,
 .player-button-icon:nth-child(4) i {
-    width: 17px;
-    height: 17px;
-    line-height: 17px;
-    padding: 10px;
+  width: 17px;
+  height: 17px;
+  line-height: 17px;
+  padding: 10px;
 }
-.player-button-icon:nth-child(1) i{
-    width: 17px;
-    height: 17px;
-    line-height: 17px;
-    padding: 10px;
-    padding-right: 12px;
-    padding-left: 8px;
+
+.player-button-icon:nth-child(1) i {
+  width: 17px;
+  height: 17px;
+  line-height: 17px;
+  padding: 10px;
+  padding-right: 12px;
+  padding-left: 8px;
 }
+
 .player-button-icon:nth-child(2) i {
-    width: 22px;
-    height: 22px;
-    line-height: 22px;
-    /* background: rgba(58, 54, 84, 0.1); */
-    padding: 15px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  /* background: rgba(58, 54, 84, 0.1); */
+  padding: 15px;
 }
+
 .player-button-icon:nth-child(3) i {
-    width: 22px;
-    height: 22px;
-    line-height: 22px;
-    background: rgba(58, 54, 84, 0.1);
-    padding: 15px;
-    padding-left: 13px;
-    padding-right: 17px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  background: rgba(58, 54, 84, 0.1);
+  padding: 15px;
+  padding-left: 13px;
+  padding-right: 17px;
 }
+
 .player-buttons {
-    width: 190px;
-    padding: 0;
-    margin: 0 auto;
-    margin-top: 25px;
-    -webkit-align-items: center;
-    align-items: center;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
+  width: 190px;
+  padding: 0;
+  margin: 0 auto;
+  margin-top: 25px;
+  -webkit-align-items: center;
+  align-items: center;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
 }
+
 .player-buttons button:nth-child(2),
 .player-buttons button:nth-child(3) {
   font-size: 30px;
 }
+
 .current-time {
-    left: 0;
+  left: 0;
 }
-.current-time, .total-time {
-    position: relative;
-    top: -12px;
-    font-size: 12px;
-    cursor: initial;
-    color: #3a3654;
-    width: 20px;
-    font-family: 'Niramit', sans-serif
-}
+
+.current-time,
 .total-time {
-    margin-left: calc(100% - 45px);
+  position: relative;
+  top: -12px;
+  font-size: 11px;
+  cursor: initial;
+  color: #3a3654;
+  width: 20px;
+  font-family: 'Niramit', sans-serif
 }
+
+.total-time {
+  margin-left: calc(100% - 45px);
+}
+
 .main-player-block .pin {
-    background-color: #3a3654;
-    border-radius: 8px;
-    height: 8px;
-    position: absolute;
-    pointer-events: all;
-    top: -3px;
-    width: 8px;
-    -webkit-box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.32);
-    -moz-box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.32);
-    box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.32);
-    -webkit-transition: transform 0.25s ease;
-    -moz-transition: transform 0.25s ease;
-    -ms-transition: transform 0.25s ease;
-    -o-transition: transform 0.25s ease;
-    transition: transform 0.25s ease
+  background-color: #3a3654;
+  border-radius: 8px;
+  height: 8px;
+  position: absolute;
+  pointer-events: all;
+  top: -3px;
+  width: 8px;
+  -webkit-box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.32);
+  -moz-box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.32);
+  box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.32);
+  -webkit-transition: transform 0.25s ease;
+  -moz-transition: transform 0.25s ease;
+  -ms-transition: transform 0.25s ease;
+  -o-transition: transform 0.25s ease;
+  transition: transform 0.25s ease
 }
+
 .player-trackline .title {
   position: absolute;
   top: 55%;
   font-family: 'Niramit', sans-serif;
+  font-size: 14px;
 }
+
 .main-player-block .slider {
   width: 100%;
   cursor: pointer;
@@ -799,81 +924,95 @@ export default {
   background: #3a3654;
   height: 100%
 }
+
 .main-player-block .slider:hover {
   height: 5px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
+
 .main-player-block .slider:hover .progress {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
 }
+
 .main-player-block .slider:hover .pin {
   height: 11px;
   width: 11px
 }
+
 .main-player-block .pin:active,
 .main-player-block .pin:focus {
-    -moz-transform: scale(1.5);
-    -o-transform: scale(1.5);
-    -ms-transform: scale(1.5);
-    -webkit-transform: scale(1.5);
-    transform: scale(1.5)
+  -moz-transform: scale(1.5);
+  -o-transform: scale(1.5);
+  -ms-transform: scale(1.5);
+  -webkit-transform: scale(1.5);
+  transform: scale(1.5)
 }
+
 .player-settings-active {
   color: #3a3654 !important;
   background: #ebeaed;
 }
+
 .player-settings i:hover {
   background: #ebeaed;
 }
+
 .volume-raise-block {
-    position: absolute;
-    height: 50px;
-    background: #ffffff;
-    width: 170px;
-    border-radius: 50px;
-    bottom: 40px;
-    right: 0;
-    margin-left: -71px;
-    left: 0;
-    display: flex;
-    visibility: hidden;
-    align-items: center;
-    box-shadow: 0px 5px 20px #00000026;
-    transition: visibility 0.2s;
+  position: absolute;
+  height: 50px;
+  background: #ffffff;
+  width: 170px;
+  border-radius: 50px;
+  bottom: 40px;
+  right: 0;
+  margin-left: -71px;
+  left: 0;
+  display: flex;
+  visibility: hidden;
+  align-items: center;
+  box-shadow: 0px 5px 20px #00000026;
+  transition: visibility 0.2s;
 }
+
 .volume-raise-block::before {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #fff transparent transparent transparent;
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #fff transparent transparent transparent;
 }
+
 .player-settings i:nth-child(1):hover .volume-raise-block {
   visibility: visible;
 }
-.volume-raise-block .slider{
+
+.volume-raise-block .slider {
   width: 90%;
   margin: 0 auto;
   left: 0;
   right: 0;
   position: absolute;
 }
+
 :focus {
   outline: none
 }
+
 @media (min-width: 1000px) {
   .main-player-poster {
     margin-left: auto;
   }
+
   .main-player-body {
     margin: 0 auto;
   }
 }
+
 @media (max-width: 700px) {
   .player-settings {
     display: none;
@@ -885,9 +1024,11 @@ export default {
     padding: 5px;
     padding-bottom: 36px;
   }
+
   .player-settings i:not(:nth-child(3)) {
     margin-top: 5px;
   }
+
   .mobile-settings {
     display: block;
     position: absolute;
@@ -895,40 +1036,51 @@ export default {
     z-index: 2;
     right: 0
   }
+
   .player-trackline .title {
-    font-size: 14px;
+    font-size: 12px;
   }
+
   .player-settings i.fa-volume-up {
     display: none;
   }
-  .mobile-settings:hover + .player-settings,
+
+  .mobile-settings:hover+.player-settings,
   .player-settings:hover {
     display: grid;
   }
+
   .main-player-block {
     height: 120px;
   }
+
   .main-player-body {
     margin-top: 0;
   }
+
   .player-buttons {
     margin-top: 45px;
   }
+
   .main-player-poster {
     width: 45px;
     height: 45px;
   }
+
   .sidebar ul {
     margin-top: 40px;
   }
 }
+
 @media (max-width: 500px) {
   .main-player-poster {
     display: none;
   }
+
   .main-player-body {
     width: 95%;
   }
+
   .mobile-layer {
     position: fixed;
     left: 0px;
@@ -940,6 +1092,7 @@ export default {
     height: 100%;
     background-color: #9494944a;
   }
+
   .main-player-add-to {
     position: absolute;
     display: block;
@@ -950,21 +1103,27 @@ export default {
     height: 0;
     z-index: 3;
   }
+
   .main-player-add-to i {
     position: absolute;
     padding: 4px;
   }
+
   .main-player-add-to i:nth-child(2) {
     right: 0px;
   }
+
   .main-player-add-menu {
     right: 50%;
     transform: translate(50%, -10%);
     height: 400px;
     left: auto;
-}
-.main-player-add-menu::before, .main-player-add-menu::after{
+  }
+
+  .main-player-add-menu::before,
+  .main-player-add-menu::after {
     display: none;
+  }
 }
-}
+
 </style>

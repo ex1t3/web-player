@@ -325,6 +325,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\DeletedInstance.cs" />
     <Compile Include="Models\FavoriteSong.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlaylistSong.cs" />
