@@ -1,0 +1,14 @@
+E:\repositories\AudioWeb\DAL\bin\Debug\DAL.dll.config
+E:\repositories\AudioWeb\DAL\bin\Debug\DAL.dll
+E:\repositories\AudioWeb\DAL\bin\Debug\DAL.pdb
+E:\repositories\AudioWeb\DAL\bin\Debug\EntityFramework.dll
+E:\repositories\AudioWeb\DAL\bin\Debug\EntityFramework.SqlServer.dll
+E:\repositories\AudioWeb\DAL\bin\Debug\Model.dll
+E:\repositories\AudioWeb\DAL\bin\Debug\Model.pdb
+E:\repositories\AudioWeb\DAL\bin\Debug\EntityFramework.xml
+E:\repositories\AudioWeb\DAL\bin\Debug\EntityFramework.SqlServer.xml
+E:\repositories\AudioWeb\DAL\obj\Debug\DAL.csprojResolveAssemblyReference.cache
+E:\repositories\AudioWeb\DAL\obj\Debug\DAL.csproj.CoreCompileInputs.cache
+E:\repositories\AudioWeb\DAL\obj\Debug\DAL.csproj.CopyComplete
+E:\repositories\AudioWeb\DAL\obj\Debug\DAL.dll
+E:\repositories\AudioWeb\DAL\obj\Debug\DAL.pdb

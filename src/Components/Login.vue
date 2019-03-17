@@ -80,7 +80,7 @@ export default {
         let that = this
         axios({
           method: 'POST',
-          url: 'https://localhost:44304/api/Account/Login',
+          url: 'https://localhost:44343/api/Account/Login',
           data: loginData,
           headers: {
             'Content-Type': 'application/json; charset=UTF-8'
@@ -103,7 +103,7 @@ export default {
       this.$root.$emit('actLoadingRoot')
       axios({
         type: 'GET',
-        url: 'https://localhost:44304/api/Account/ExternalLogins?returnUrl=%2F&generateState=true'
+        url: 'https://localhost:44343/api/Account/ExternalLogins?returnUrl=%2F&generateState=true'
       })
         .then(function (e) {
           window.location = 'https://localhost:44304' + e.data[provider].url
@@ -131,7 +131,7 @@ export default {
       }
       axios({
         method: 'POST',
-        url: 'https://localhost:44304/api/Account/Register',
+        url: 'https://localhost:44343/api/Account/Register',
         data: data,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8'
@@ -181,7 +181,7 @@ export default {
     if (token !== null) {
       axios({
         method: 'GET',
-        url: 'https://localhost:44304/api/Account/CheckToken',
+        url: 'https://localhost:44343/api/Account/CheckToken',
         headers: {
           Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
         }

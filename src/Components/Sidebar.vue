@@ -70,7 +70,7 @@ export default {
         // sessionStorage.removeItem('access_token')
         axios({
             method: "POST",
-            url: "https://localhost:44304/api/Account/Logout",
+            url: "https://localhost:44343/api/Account/Logout",
             headers: {
               Authorization: "Bearer " + token
             }

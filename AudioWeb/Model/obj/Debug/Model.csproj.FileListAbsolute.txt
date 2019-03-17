@@ -1,0 +1,7 @@
+E:\repositories\AudioWeb\Model\bin\Debug\Model.dll
+E:\repositories\AudioWeb\Model\bin\Debug\Model.pdb
+E:\repositories\AudioWeb\Model\bin\Debug\System.ComponentModel.Annotations.dll
+E:\repositories\AudioWeb\Model\obj\Debug\Model.csproj.CoreCompileInputs.cache
+E:\repositories\AudioWeb\Model\obj\Debug\Model.csproj.CopyComplete
+E:\repositories\AudioWeb\Model\obj\Debug\Model.dll
+E:\repositories\AudioWeb\Model\obj\Debug\Model.pdb

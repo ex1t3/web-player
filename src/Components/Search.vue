@@ -98,7 +98,7 @@ export default {
       let that = this
       axios({
           method: "POST",
-          url: "https://localhost:44304/api/Songs/SearchForSong",
+          url: "https://localhost:44343/api/Songs/SearchForSong",
           data: JSON.stringify(that.searchVal),
           headers: {
             "Content-Type": "application/json charset=UTF-8",
@@ -136,7 +136,7 @@ export default {
       let that = this
       axios({
         method: 'POST',
-        url: 'https://localhost:44304/api/Songs/GetSongsOfArtist',
+        url: 'https://localhost:44343/api/Songs/GetSongsOfArtist',
         data: JSON.stringify(artist),
         headers: {
           "Content-Type": "application/json charset=UTF-8",
@@ -210,7 +210,26 @@ export default {
   width: 90%;
   margin: 0 auto;
   padding: 10px;
+  animation: fade-in .5s;
 }
+
+@-webkit-keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 @-webkit-keyframes spin {
   0% {
     -webkit-transform: rotate(0deg);

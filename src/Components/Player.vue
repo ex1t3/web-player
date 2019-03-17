@@ -167,7 +167,7 @@ export default {
       let that = this
       axios({
         method: 'GET',
-        url: 'https://localhost:44304/api/Songs/GetPlaylists',
+        url: 'https://localhost:44343/api/Songs/GetPlaylists',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
@@ -193,7 +193,7 @@ export default {
       }
       axios({
         method: 'POST',
-        url: 'https://localhost:44304/api/Songs/AddSongToPlaylist',
+        url: 'https://localhost:44343/api/Songs/AddSongToPlaylist',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
@@ -222,7 +222,7 @@ export default {
       if (flag) {
         axios({
           method: 'POST',
-          url: 'https://localhost:44304/api/Songs/AddFavoriteSong',
+          url: 'https://localhost:44343/api/Songs/AddFavoriteSong',
           data: currentIndex,
           headers: {
             'Content-Type': 'application/json',
@@ -240,7 +240,7 @@ export default {
         let instance = JSON.stringify({SongId: currentIndex, Type: 2})
         axios({
           method: 'POST',
-          url: 'https://localhost:44304/api/Songs/RemoveSongFromInstance',
+          url: 'https://localhost:44343/api/Songs/RemoveSongFromInstance',
           data: instance,
           headers: {
             'Content-Type': 'application/json',
@@ -276,7 +276,7 @@ export default {
       let that = this
       axios({
         method: 'GET',
-        url: 'https://localhost:44304/api/Songs/GetSongs',
+        url: 'https://localhost:44343/api/Songs/GetSongs',
         headers: {
           Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
         }
@@ -295,7 +295,7 @@ export default {
       })
       axios({
         method: 'GET',
-        url: 'https://localhost:44304/api/Songs/GetFavoriteSongs',
+        url: 'https://localhost:44343/api/Songs/GetFavoriteSongs',
         headers: {
           Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
         }
@@ -456,7 +456,7 @@ export default {
         this.playSong()
         axios({
           method: 'POST',
-          url: 'https://localhost:44304/api/Songs/IncreaseActivity',
+          url: 'https://localhost:44343/api/Songs/IncreaseActivity',
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
@@ -490,7 +490,7 @@ export default {
       this.audio.volume = this.isVolumeOff ? 0 : this.volume
       let index = this.lookUpper(this.$main.currentIndex)
       if (index != -1) {
-        this.audio.src = 'https://localhost:44304/Songs/' + this.songs[index]['Source']
+        this.audio.src = 'https://localhost:44343/Songs/' + this.songs[index]['Source']
         this.currentPoster = this.songs[index]['AlbumCover']
         this.title = this.songs[index]['Name'] + ' · ' + this.songs[index]['Artist']
         this.scrollToNextSongInQueue()

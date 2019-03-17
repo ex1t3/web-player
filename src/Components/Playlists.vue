@@ -173,7 +173,7 @@ export default {
         }
         axios({
           method: "POST",
-          url: "https://localhost:44304/api/Songs/CreatePlaylist",
+          url: "https://localhost:44343/api/Songs/CreatePlaylist",
           headers: {
             "Content-Type": "application/json; charset=UTF-8",
             Authorization: "Bearer " + sessionStorage.getItem("access_token")
@@ -216,7 +216,7 @@ export default {
       this.$root.$emit("actLoadingRoot")
       axios({
         method: "GET",
-        url: "https://localhost:44304/api/Songs/GetUploadedSongs",
+        url: "https://localhost:44343/api/Songs/GetUploadedSongs",
         headers: {
           "Content-Type": "application/json; charset=UTF-8",
           Authorization: "Bearer " + sessionStorage.getItem("access_token")
@@ -239,7 +239,7 @@ export default {
       this.$root.$emit("actLoadingRoot")
       axios({
         method: "POST",
-        url: "https://localhost:44304/api/Songs/GetPlaylistSongs",
+        url: "https://localhost:44343/api/Songs/GetPlaylistSongs",
         headers: {
           "Content-Type": "application/json; charset=UTF-8",
           Authorization: "Bearer " + sessionStorage.getItem("access_token")
@@ -267,7 +267,7 @@ export default {
         f = f.then(_ =>
           axios({
             method: "POST",
-            url: "https://localhost:44304/api/Songs/UploadSong",
+            url: "https://localhost:44343/api/Songs/UploadSong",
             data: data,
             headers: {
               "Content-Type": "application/json; charset=UTF-8",
