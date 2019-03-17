@@ -106,7 +106,7 @@ export default {
         url: 'https://localhost:44343/api/Account/ExternalLogins?returnUrl=%2F&generateState=true'
       })
         .then(function (e) {
-          window.location = 'https://localhost:44304' + e.data[provider].url
+          window.location = 'https://localhost:44343' + e.data[provider].url
         })
       this.$root.$emit('deactLoadingRoot')
     },
