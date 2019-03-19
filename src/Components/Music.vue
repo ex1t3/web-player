@@ -15,6 +15,8 @@ import Playlists from './Playlists'
 import MusicsPageHeader from './MusicsPageHeader'
 import Favorites from './Favorites'
 import universalParse from "id3-parser/lib/universal"
+
+// Exporting data for current template
 export default {
   data() {
     return {

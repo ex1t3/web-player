@@ -10,6 +10,8 @@
 </template>
 <script>
 import SongsTemplate from './SongsTemplate.vue'
+
+// Exporting data for current template
 export default {
     props: ['pageType'],
     components: {

@@ -60,7 +60,11 @@ export default {
     },
     errorHandler (data) {
       let that = this
-      switch (data) {
+      if (Object.keys(data).indexOf('response') == -1) {
+        this.$root.$emit('notificate', 'error', 'Some unknown error happened', 3000)
+        return 0
+      }
+      switch (data.response.status) {
         case 401 : {
           swal({
             titleText: 'Oops',

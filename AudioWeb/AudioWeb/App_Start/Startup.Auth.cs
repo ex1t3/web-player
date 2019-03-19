@@ -34,7 +34,7 @@ namespace AudioWeb
         AuthorizeEndpointPath = new PathString("/api/Account/SocialLogin"),
         Provider = new AppOAuthProvider(PublicClientId),
         AccessTokenExpireTimeSpan = TimeSpan.FromDays(365),
-        AllowInsecureHttp = true //Remove after development mode
+        AllowInsecureHttp = true // Remove after development mode
       };
     }
 

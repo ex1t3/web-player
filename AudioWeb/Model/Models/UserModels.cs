@@ -22,6 +22,8 @@ namespace Model.Models
     public bool EmailConfirmed { get; set; }
     public IEnumerable<UserExternalLogin> UserExternalLogins { get; set; }
     public IEnumerable<UserSession> UserSessions { get; set; }
+
+    public static int LastPlayedSongLimit = 5;
   }
 
   public class UserSession

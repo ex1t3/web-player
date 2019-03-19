@@ -14,6 +14,7 @@ import Search from '../Components/Search'
 import Home from '../Components/Home'
 import {mapGetters} from 'vuex'
 
+// Exporting data for current template
 export default {
   store,
   data () {

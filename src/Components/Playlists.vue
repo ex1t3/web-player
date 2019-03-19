@@ -91,7 +91,7 @@
         </a>
         <!-- close modal -->
         <div class="modal-content">
-          <h2 class="centered">Name your new playlist</h2>
+          <h4 class="centered">Name your new playlist</h4>
           <div class="input-group">
             <input
               v-model="playlistName"
@@ -122,6 +122,8 @@
 import SongsTemplate from "./SongsTemplate"
 import axios from "axios"
 import swal from "sweetalert"
+
+// Exporting data for current template
 export default {
   props: ['isPlaylistOpened', 'isUploadsOpened', 'currentPlaylistName', 'pageType'],
   data() {
@@ -199,7 +201,7 @@ export default {
           })
           .catch(function(e) {
             that.createDialogVisible = false
-            that.$root.$emit("errorHandler", e.response.status)
+            that.$root.$emit("errorHandler", e)
           })
       } else {
         this.$root.$emit(
@@ -230,7 +232,7 @@ export default {
         })
         .catch(function(e) {
           that.$root.$emit("deactLoadingRoot")
-          that.$root.$emit("errorHandler", e.response.status)
+          that.$root.$emit("errorHandler", e)
         })
     },
     openPlaylist(id, name) {
@@ -255,7 +257,7 @@ export default {
         })
         .catch(function(e) {
           that.$root.$emit("deactLoadingRoot")
-          that.$root.$emit("errorHandler", e.response.status)
+          that.$root.$emit("errorHandler", e)
         })
     },
     loadFiles(event) {

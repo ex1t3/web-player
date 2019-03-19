@@ -96,6 +96,8 @@
   </div>
 </template>
 <script>
+
+// Exporting data for current template
 export default {
   props: ['isFavoriteTracksPageOpened', 'isPlaylistOpened', 'isUploadsOpened', 'currentPlaylistName']
 }

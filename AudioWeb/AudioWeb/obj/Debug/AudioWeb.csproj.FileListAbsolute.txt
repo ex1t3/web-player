@@ -342,3 +342,5 @@ E:\wamp64\www\web-player\AudioWeb\AudioWeb\obj\Debug\AudioWeb.csproj.CoreCompile
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\obj\Debug\AudioWeb.csproj.CopyComplete
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\obj\Debug\AudioWeb.dll
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\obj\Debug\AudioWeb.pdb
+E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\WebPlayerDb.mdf
+E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\WebPlayerDb_log.ldf

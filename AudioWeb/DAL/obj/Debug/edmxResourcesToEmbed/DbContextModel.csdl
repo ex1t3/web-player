@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="WebPlayerDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="C__MigrationHistory">
+    <Key>
+      <PropertyRef Name="MigrationId" />
+      <PropertyRef Name="ContextKey" />
+    </Key>
+    <Property Name="MigrationId" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="ContextKey" Type="String" MaxLength="300" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Model" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
+    <Property Name="ProductVersion" Type="String" MaxLength="32" FixedLength="false" Unicode="true" Nullable="false" />
+  </EntityType>
+  <EntityType Name="FavoriteSong">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SongId" Type="Int32" Nullable="false" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Song" Relationship="Self.SongId" FromRole="FavoriteSongs" ToRole="Songs" />
+    <NavigationProperty Name="User" Relationship="Self.UserId" FromRole="FavoriteSongs" ToRole="Users" />
+  </EntityType>
+  <EntityType Name="IdentityUserLogin">
+    <Key>
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="LoginProvider" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ProviderKey" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="User_Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="LastPlayedSong">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SongId" Type="Int32" Nullable="false" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <Property Name="PlayedDateTime" Type="DateTime" Nullable="false" Precision="3" />
+  </EntityType>
+  <EntityType Name="Playlist">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Cover" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+    <NavigationProperty Name="PlaylistSongs" Relationship="Self.FK_dbo_Playlists" FromRole="Playlists" ToRole="PlaylistSongs" />
+    <NavigationProperty Name="User" Relationship="Self.FK_dbo_Users" FromRole="Playlists" ToRole="Users" />
+  </EntityType>
+  <EntityType Name="PlaylistSong">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PlaylistId" Type="Int32" Nullable="false" />
+    <Property Name="SongId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Playlist" Relationship="Self.FK_dbo_Playlists" FromRole="PlaylistSongs" ToRole="Playlists" />
+    <NavigationProperty Name="Song" Relationship="Self.FK_dbo_Songs" FromRole="PlaylistSongs" ToRole="Songs" />
+  </EntityType>
+  <EntityType Name="Song">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Artist" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Duration" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="AlbumCover" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Album" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Year" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Genre" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Source" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Activity" Type="Double" Nullable="false" />
+    <NavigationProperty Name="FavoriteSongs" Relationship="Self.SongId" FromRole="Songs" ToRole="FavoriteSongs" />
+    <NavigationProperty Name="PlaylistSongs" Relationship="Self.FK_dbo_Songs" FromRole="Songs" ToRole="PlaylistSongs" />
+    <NavigationProperty Name="UploadedSongs" Relationship="Self.FK_SongId" FromRole="Songs" ToRole="UploadedSongs" />
+  </EntityType>
+  <EntityType Name="UploadedSong">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SongId" Type="Int32" Nullable="false" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Song" Relationship="Self.FK_SongId" FromRole="UploadedSongs" ToRole="Songs" />
+    <NavigationProperty Name="User" Relationship="Self.FK_UserId" FromRole="UploadedSongs" ToRole="Users" />
+  </EntityType>
+  <EntityType Name="UserExternalLogin">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <Property Name="LoginProvider" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ProviderKey" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="User" Relationship="Self.FK_dbo_UserExternalLogins" FromRole="UserExternalLogins" ToRole="Users" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Username" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
+    <Property Name="IsExtraLogged" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="FavoriteSongs" Relationship="Self.UserId" FromRole="Users" ToRole="FavoriteSongs" />
+    <NavigationProperty Name="Playlists" Relationship="Self.FK_dbo_Users" FromRole="Users" ToRole="Playlists" />
+    <NavigationProperty Name="UploadedSongs" Relationship="Self.FK_UserId" FromRole="Users" ToRole="UploadedSongs" />
+    <NavigationProperty Name="UserExternalLogins" Relationship="Self.FK_dbo_UserExternalLogins" FromRole="Users" ToRole="UserExternalLogins" />
+    <NavigationProperty Name="UserSessions" Relationship="Self.FK_dbo_UserSessions" FromRole="Users" ToRole="UserSessions" />
+  </EntityType>
+  <EntityType Name="UserSession">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="OwnerUserId" Type="Int32" Nullable="false" />
+    <Property Name="AuthToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ExpirationDateTime" Type="DateTime" Nullable="false" Precision="3" />
+    <NavigationProperty Name="User" Relationship="Self.FK_dbo_UserSessions" FromRole="UserSessions" ToRole="Users" />
+  </EntityType>
+  <Association Name="SongId">
+    <End Role="Songs" Type="Self.Song" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="FavoriteSongs" Type="Self.FavoriteSong" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Songs">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="FavoriteSongs">
+        <PropertyRef Name="SongId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="UserId">
+    <End Role="Users" Type="Self.User" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="FavoriteSongs" Type="Self.FavoriteSong" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="FavoriteSongs">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_dbo_Playlists">
+    <End Role="Playlists" Type="Self.Playlist" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="PlaylistSongs" Type="Self.PlaylistSong" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Playlists">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PlaylistSongs">
+        <PropertyRef Name="PlaylistId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_dbo_Users">
+    <End Role="Users" Type="Self.User" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Playlists" Type="Self.Playlist" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Playlists">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_dbo_Songs">
+    <End Role="Songs" Type="Self.Song" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="PlaylistSongs" Type="Self.PlaylistSong" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Songs">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PlaylistSongs">
+        <PropertyRef Name="SongId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SongId">
+    <End Role="Songs" Type="Self.Song" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="UploadedSongs" Type="Self.UploadedSong" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Songs">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UploadedSongs">
+        <PropertyRef Name="SongId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UserId">
+    <End Role="Users" Type="Self.User" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="UploadedSongs" Type="Self.UploadedSong" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UploadedSongs">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_dbo_UserExternalLogins">
+    <End Role="Users" Type="Self.User" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="UserExternalLogins" Type="Self.UserExternalLogin" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserExternalLogins">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_dbo_UserSessions">
+    <End Role="Users" Type="Self.User" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="UserSessions" Type="Self.UserSession" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserSessions">
+        <PropertyRef Name="OwnerUserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
+    <EntitySet Name="FavoriteSongs" EntityType="Self.FavoriteSong" />
+    <EntitySet Name="IdentityUserLogins" EntityType="Self.IdentityUserLogin" />
+    <EntitySet Name="LastPlayedSongs" EntityType="Self.LastPlayedSong" />
+    <EntitySet Name="Playlists" EntityType="Self.Playlist" />
+    <EntitySet Name="PlaylistSongs" EntityType="Self.PlaylistSong" />
+    <EntitySet Name="Songs" EntityType="Self.Song" />
+    <EntitySet Name="UploadedSongs" EntityType="Self.UploadedSong" />
+    <EntitySet Name="UserExternalLogins" EntityType="Self.UserExternalLogin" />
+    <EntitySet Name="Users" EntityType="Self.User" />
+    <EntitySet Name="UserSessions" EntityType="Self.UserSession" />
+    <AssociationSet Name="SongId" Association="Self.SongId">
+      <End Role="Songs" EntitySet="Songs" />
+      <End Role="FavoriteSongs" EntitySet="FavoriteSongs" />
+    </AssociationSet>
+    <AssociationSet Name="UserId" Association="Self.UserId">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="FavoriteSongs" EntitySet="FavoriteSongs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_dbo_Playlists" Association="Self.FK_dbo_Playlists">
+      <End Role="Playlists" EntitySet="Playlists" />
+      <End Role="PlaylistSongs" EntitySet="PlaylistSongs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_dbo_Users" Association="Self.FK_dbo_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Playlists" EntitySet="Playlists" />
+    </AssociationSet>
+    <AssociationSet Name="FK_dbo_Songs" Association="Self.FK_dbo_Songs">
+      <End Role="Songs" EntitySet="Songs" />
+      <End Role="PlaylistSongs" EntitySet="PlaylistSongs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SongId" Association="Self.FK_SongId">
+      <End Role="Songs" EntitySet="Songs" />
+      <End Role="UploadedSongs" EntitySet="UploadedSongs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UserId" Association="Self.FK_UserId">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="UploadedSongs" EntitySet="UploadedSongs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_dbo_UserExternalLogins" Association="Self.FK_dbo_UserExternalLogins">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="UserExternalLogins" EntitySet="UserExternalLogins" />
+    </AssociationSet>
+    <AssociationSet Name="FK_dbo_UserSessions" Association="Self.FK_dbo_UserSessions">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="UserSessions" EntitySet="UserSessions" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

@@ -1,5 +1,5 @@
 <template>
-  <div class="main-player-block">
+  <div class="main-player-block" :class="{hidden: songs.length === 0}">
     <div v-bind:class="{hidden: !isAddMenuActive}" class="mobile-layer"></div>
     <div class="main-player-poster"><img v-bind:src="currentPoster" /></div>
     <div class="main-player-add-to">
@@ -74,11 +74,13 @@
   </div>
 </template>
 <script>
+import {mapGetters} from 'vuex'
 import store from '../store'
 import Vue from 'vue'
 import axios from 'axios'
 import swal from 'sweetalert'
 
+// Initializing rootData
 var rootData = new Vue({
   data: {
     currentIndex: 0,
@@ -88,12 +90,16 @@ var rootData = new Vue({
     favoriteSongs: []
   }
 })
+
+// Installing $main player variable for storing reactive data
 rootData.install = function () {
   Object.defineProperty(Vue.prototype, '$main', {
     get () { return rootData }
   })
 }
 Vue.use(rootData)
+
+// Exporting data for current template
 export default {
   store,
   data () {
@@ -117,6 +123,13 @@ export default {
       audio: new Audio()
     }
   },
+
+  // loading computed properties from Vuex store
+  computed: mapGetters({
+    lastPlayedSongs: 'lastPlayedSongs'
+  }),
+
+  // Initializing directives for binding outside the target elements
   directives: {
     clickOutside: {
       bind: function (el, binding, vnode) {
@@ -135,8 +148,8 @@ export default {
   mounted () {
     this.loadSongs()   
     this.loadPlaylists()   
-    this.$root.$on('loadPlaylistsRoot', this.loadPlaylists)
     this.addListeners()
+    this.$root.$on('loadPlaylistsRoot', this.loadPlaylists)
     this.$root.$on('loadSongsRoot', this.loadDefinedSongs)
     this.$root.$on('playDefinedSongRoot', this.playDefinedSong)
     this.$root.$on('pauseSongRoot', this.pauseSong)
@@ -153,16 +166,13 @@ export default {
     this.removeListeners()
   },
   methods: {
+
+    // Hiding add to playlist menu
     hideAddMenu () {
       this.isAddMenuActive = false
     },
-    userActionsHandler (flag, successfulMessage, errorMessage) {
-      if (flag) {
-        swal('Yes!', successfulMessage, 'success')
-      } else {
-        swal('Oops', errorMessage, 'error')
-      }
-    },
+
+    // Loading playlists from server
     loadPlaylists () {
       let that = this
       axios({
@@ -176,15 +186,21 @@ export default {
         that.$main.playlists = e.data
       }).catch(function (e) {
         that.$root.$emit('deactLoadingRoot')
-        that.$root.$emit('errorHandler', e.response.status)
+        that.$root.$emit('errorHandler', e)
       })
     },
+
+    // Method that returns an index depending on song's ID
     lookUpper (index) {
       return this.songs.map(function (x) { return x.Id }).indexOf(index)
     },
+
+    // Method that returns an index depending on favorite song's ID
     favLookUpper (index) {
       return this.$main.favoriteSongs.map(function (x) { return x.Id }).indexOf(index)
     },
+
+    // Adding some song to chosen playlist
     addSongToPlaylist(playlistId) {
       let that = this
       let obj = {
@@ -212,9 +228,11 @@ export default {
         ].Cover = song.AlbumCover
         that.$root.$emit('addSongToPlaylist', song, obj.PlaylistId)
       }).catch(function (e) {
-        that.$root.$emit('errorHandler', e.response.status)
+        that.$root.$emit('errorHandler', e)
       })
     },
+
+    // Handling adding/removing from favorite songs
     favHandler (e) {
       let flag = e.target.className === 'fa-heart far'
       let currentIndex = this.$main.currentIndex
@@ -234,7 +252,7 @@ export default {
           that.$root.$emit('notificate', 'success', 'Song added to favorites', 3000)
         }).catch(function (e) {
           console.log(e)
-          that.$root.$emit('errorHandler', e.response.status)
+          that.$root.$emit('errorHandler', e)
         })
       } else {
         let instance = JSON.stringify({SongId: currentIndex, Type: 2})
@@ -254,16 +272,18 @@ export default {
           that.$root.$emit('notificate', 'success', 'Song deleted from favorites', 3000)
         }).catch(function (e) {
           console.log(e)
-          that.$root.$emit('errorHandler', e.response.status)
+          that.$root.$emit('errorHandler', e)
         })
       }
     },
+
+    // Pushes the passsing songs to player instance
     loadDefinedSongs (songs) {
       let that = this
       let temporarySongs = JSON.parse(JSON.stringify(songs));
       if (temporarySongs.length > 0) {
         that.songs = temporarySongs
-        that.$main.currentIndex = that.songs[0]['Id']
+        // that.$main.currentIndex = that.songs[0]['Id']
         that.songsLength = that.songs.length
         that.shuffleIndexes = []
         for (let i = 0; i < that.songsLength; i++) {
@@ -272,27 +292,35 @@ export default {
         that.preloadSong()
       }
     },
-    loadSongs () {
+
+    // Loads from server different types of songs
+    loadSongs() {
       let that = this
+      this.audio.preload = 'metadata'
+      this.audio.onloadedmetadata = function () {
+        that.setDuration()
+      }
+      this.audio.ontimeupdate = function () {
+        that.updateTime()
+      }
+
+      // Load last played songs
       axios({
-        method: 'GET',
-        url: 'https://localhost:44343/api/Songs/GetSongs',
+        method: "GET",
+        url: "https://localhost:44343/api/Songs/GetLastPlayedSongs",
         headers: {
-          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+          "Content-Type": "application/json charset=UTF-8",
+          Authorization: "Bearer " + sessionStorage.getItem("access_token")
         }
       }).then(function (e) {
-        that.songs = e.data
-        that.$main.currentIndex = that.songs[0]['Id']
-        that.songsLength = that.songs.length
-        that.preloadSong()
-        that.shuffleIndexes = []
-        for (let i = 0; i < that.songsLength; i++) {
-          that.shuffleIndexes.push(that.songs[i]['Id'])
-        }
+        that.$store.dispatch('loadLastPlayedSongs', e.data)
+        that.loadDefinedSongs(that.lastPlayedSongs)
+        that.$root.$emit('deactLoadingRoot')
       }).catch(function (e) {
-        console.log(e)
-        that.$root.$emit('errorHandler', e.response.status)
+        that.$root.$emit('errorHandler', e)
       })
+
+      // Load favorites
       axios({
         method: 'GET',
         url: 'https://localhost:44343/api/Songs/GetFavoriteSongs',
@@ -303,16 +331,11 @@ export default {
         that.$main.favoriteSongs = e.data
       }).catch(function (e) {
         console.log(e)
-        that.$root.$emit('errorHandler', e.response.status)
+        that.$root.$emit('errorHandler', e)
       })
-      this.audio.preload = 'metadata'
-      this.audio.onloadedmetadata = function () {
-        that.setDuration()
-      }
-      this.audio.ontimeupdate = function () {
-        that.updateTime()
-      }
     },
+
+    // Handles the space click to pause/play song
     handleSpaceClick (e) {
       if (e.target.className === 'player-button-icon') {
         e.preventDefault()
@@ -327,6 +350,8 @@ export default {
         }
       }
     },
+
+    // Scrolles to currently playing song in queue block
     scrollToNextSongInQueue() {
       let currentSong = document.getElementsByClassName('current-song')
       let scrolledBlock = document.getElementsByClassName('queue-body')[0]
@@ -335,15 +360,21 @@ export default {
         scrolledBlock.scrollTop = elementPos
       }
     },
+
+    // Mutting song
     muteSong (e) {
       e.stopPropagation()
       this.isVolumeOff = !this.isVolumeOff
       this.audio.volume = 0
     },
+
+    // Unmutting song
     unMuteSong () {
       this.isVolumeOff = !this.isVolumeOff
       this.audio.volume = this.volume
     },
+
+    // Shuffles the array of indexes of currently chosen songs
     shuffleSongs () {
       this.isShuffled = !this.isShuffled
       if (this.isShuffled) {
@@ -356,36 +387,52 @@ export default {
         this.$main.currentIndex = this.shuffleIndexes[this.shuffleIndexes.indexOf(this.$main.currentIndex)]
       } else this.unShuffleSongs()
     },
+
+    // Returns to previous view of songs before they were shuffled
     unShuffleSongs () {
       this.$main.currentIndex = this.shuffleIndexes[this.shuffleIndexes.indexOf(this.$main.currentIndex)]
       for (let i = 0; i < this.songsLength; i++) {
         this.shuffleIndexes[i] = this.songs[i]['Id']
       }
     },
+
+    // Formatting passed time to minutes and seconds
     formatTime (time) {
       var min = Math.floor(time / 60)
       var sec = Math.floor(time % 60)
       return min + ':' + ((sec < 10) ? ('0' + sec) : sec)
     },
+
+    // Formatting time from position of cursor to seconds
     formatBackTime (time) {
       return this.audio.duration * time
     },
+
+    // Formatting volume from position of cursor to 
     formatBackVolume (volume) {
       return volume / 150
     },
+
+    // Moving progress position depending of current song duration
     formatProgress (time) {
       return (time / this.audio.duration) * 100 + '%'
     },
+
+    // Starting/Playing again the song
     playSong () {
       this.$main.isPaused = false
       if (this.audio.paused) {
         this.audio.play()
       }
     },
+
+    // Pausing the song
     pauseSong () {
       this.$main.isPaused = true
       this.audio.pause()
     },
+
+    // Switching $main.currentIndex to the index of the next song
     playNext () {
       if (this.$main.currentIndex === this.shuffleIndexes[this.songsLength - 1]) {
         this.$main.currentIndex = this.shuffleIndexes[0]
@@ -395,6 +442,8 @@ export default {
       this.preloadSong()
       this.playSong()
     },
+
+    // Switching $main.currentIndex to the index of the previous song
     playPrev () {
       if (this.$main.currentIndex === this.shuffleIndexes[0]) {
         this.$main.currentIndex = this.shuffleIndexes[this.songsLength - 1]
@@ -404,6 +453,8 @@ export default {
       this.preloadSong()
       this.playSong()
     },
+
+    // Updating current song time depending on current duration
     updateTime () {
       var current = this.audio.currentTime
       this.progressWidth = this.formatProgress(current)
@@ -413,23 +464,33 @@ export default {
         else this.playSong()
       }
     },
+
+    // Adding listeners to a page
     addListeners () {
       document.getElementsByClassName('pin')[0].addEventListener('mousedown', this.mouseDown, false)
       window.addEventListener('mouseup', this.mouseUp, false)
       document.addEventListener('keydown', this.handleSpaceClick, false)
     },
+
+    // Removing listeners on destroy
     removeListeners () {
       document.removeEventListener('keydown', this.handleSpaceClick, false)
       window.removeEventListener('mouseup', this.mouseUp, false)
     },
+
+    // Removing listener when mouse up
     mouseUp () {
       window.removeEventListener('mousemove', this.onMoveTimeChange, true)
       this.isDragged = false
     },
+
+    // Adding listener when mouse is down
     mouseDown (e) {
       window.addEventListener('mousemove', this.onMoveTimeChange, true)
       this.isDragged = true
     },
+
+    // Forcing to change current duration on move
     onMoveTimeChange (e) {
       if (this.isDragged) {
         var x = e.clientX
@@ -439,6 +500,8 @@ export default {
         this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
       }
     },
+
+    // Forcing to change current duration on click
     onTimeChange (e) {
       var x = e.clientX
       var timeline = document.getElementsByClassName('main-player-body')[0]
@@ -446,14 +509,17 @@ export default {
       this.progressWidth = offset + 'px'
       this.audio.currentTime = this.formatBackTime(offset / timeline.clientWidth)
     },
+
+    // Playing defined song
     playDefinedSong (index) {
       if (index === this.$main.currentIndex) {
         if (this.$main.isPaused) this.playSong()
         else this.pauseSong()
       } else {
         this.$main.currentIndex = index
-        this.preloadSong()
+        let id = this.preloadSong()
         this.playSong()
+        this.$store.dispatch('updateLastPlayedSongs', this.songs[id])
         axios({
           method: 'POST',
           url: 'https://localhost:44343/api/Songs/IncreaseActivity',
@@ -462,14 +528,11 @@ export default {
             Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
           },
           data: index
-        }).then(function (e) {
-          console.log(e)
-        }).catch(function (e) {
-          console.log(e)
-          that.$root.$emit('errorHandler', e.response.status)
         })
       }
     },
+
+    // Forcing to change current volume on click
     onVolumeChange (e) {
       var x = e.clientX
       var timeline = document.getElementsByClassName('player-settings')[0]
@@ -485,6 +548,8 @@ export default {
       }
       this.volume = this.audio.volume
     },
+
+    // Preloads info about the song to play
     preloadSong () {
       this.progressWidth = 0
       this.audio.volume = this.isVolumeOff ? 0 : this.volume
@@ -494,11 +559,16 @@ export default {
         this.currentPoster = this.songs[index]['AlbumCover']
         this.title = this.songs[index]['Name'] + ' · ' + this.songs[index]['Artist']
         this.scrollToNextSongInQueue()
+        return index
       }
     },
+
+    // Setting duration of the song
     setDuration () {
       this.duration = this.formatTime(this.audio.duration)
     },
+
+    // Stopping propaganation
     stopProp (e) {
       e.stopPropagation()
     }

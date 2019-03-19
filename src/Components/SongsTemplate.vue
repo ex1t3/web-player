@@ -41,11 +41,12 @@
 </template>
 <script>
 import axios from "axios"
+
+// Exporting data for current template
 export default {
   props: ["songs", "type", "playlistId"],
   data() {
     return {
-      favoriteSongsLoaded: false,
       slicedArrayOfSongs: [],
       countOfScrollTimes: 1,
       defaultCountOfItemsToLoad: 10
@@ -99,28 +100,12 @@ export default {
           this.$root.$emit("playSongRoot")
           return 0
         }
-        case index !== this.$main.currentIndex:
-          {
-            switch (this.type) {
-              // Favorite songs
-              case 2: {
-                if (!this.favoriteSongsLoaded) {
-                  this.$root.$emit("loadSongsRoot", this.$main.favoriteSongs)
-                  this.favoriteSongsLoaded = true
-                }
-                break
-              }
-              // Playlist, Uploaded & Founded songs
-              case 0: 
-              case 1: 
-              case 3: {
-                this.$root.$emit("loadSongsRoot", this.songs)
-                break
-              }
-            }
-          }
+        case index !== this.$main.currentIndex: {
+          this.$root.$emit("loadSongsRoot", this.songs)
           this.$main.isPaused = true
           this.$root.$emit("playDefinedSongRoot", index)
+          break
+        } 
       }
     },
     removeSong(e, index, songId, type) {
@@ -140,7 +125,7 @@ export default {
         that.removedSongHandler(type, index)
       }).catch(function (e) {
         console.log(e)
-        that.$root.$emit('errorHandler', e.response.status)
+        that.$root.$emit('errorHandler', e)
       })
     },
     removedSongHandler(type, index) {

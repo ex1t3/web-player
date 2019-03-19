@@ -61,6 +61,8 @@ import {mapGetters} from 'vuex'
 import store from '../store'
 import axios from 'axios'
 import swal from 'sweetalert'
+
+// Exporting data for current template
 export default {
   store,
   data () {
@@ -88,11 +90,10 @@ export default {
         }).then(function (response) {
           that.$root.$emit('deactLoadingRoot')
           sessionStorage.setItem('access_token', response.data.access_token)
-          that.$main.isPaused = true
           that.$store.dispatch('logIn')
         }).catch(function (e) {
           that.$root.$emit('deactLoadingRoot')
-          that.$root.$emit('errorHandler', e.response.status)
+          that.$root.$emit('errorHandler', e)
         })
       } else {
         swal('Oops', 'Username and Password cannot be empty', 'warning')
@@ -143,14 +144,14 @@ export default {
       }).catch(function (e) {
         that.$root.$emit('deactLoadingRoot')
         console.log(e)
-        that.$root.$emit('errorHandler', e.response.status)
+        that.$root.$emit('errorHandler', e)
       })
     }
   },
-  beforeMount () {
-    this.$root.$emit('actLoadingRoot')
-    let that = this
+  beforeMount() {
     if (window.location.hash) {
+      this.$root.$emit('actLoadingRoot')
+      let that = this
       var url = window.location.hash.substring(1)
       history.replaceState(null, null, ' ')
       const params = new URLSearchParams(url)
@@ -161,31 +162,36 @@ export default {
       var keyNames = Object.keys(paramObj)
       switch (keyNames[0]) {
         case 'access_token':
-        {
-          that.$root.$emit('deactLoadingRoot')
-          sessionStorage.setItem('access_token', paramObj.access_token)
-          break
-        }
+          {
+            that.$root.$emit('deactLoadingRoot')
+            sessionStorage.setItem('access_token', paramObj.access_token)
+            break
+          }
         case 'error_login':
-        {
-          that.$root.$emit('deactLoadingRoot')
-          let arr = paramObj.error_login.replace(/_/g, ' ')
-          swal('Error', arr, 'error')
-          break
-        }
+          {
+            that.$root.$emit('deactLoadingRoot')
+            let arr = paramObj.error_login.replace(/_/g, ' ')
+            swal('Error', arr, 'error')
+            break
+          }
 
-        default: this.$root.$emit('deactLoadingRoot')
+        default:
+          this.$root.$emit('deactLoadingRoot')
       }
     }
+  },
+  mounted() {
+    let that = this
+    this.$root.$emit('actLoadingRoot')
     let token = sessionStorage.getItem('access_token')
     if (token !== null) {
       axios({
-        method: 'GET',
-        url: 'https://localhost:44343/api/Account/CheckToken',
-        headers: {
-          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
-        }
-      })
+          method: 'GET',
+          url: 'https://localhost:44343/api/Account/CheckToken',
+          headers: {
+            Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+          }
+        })
         .then(function (e) {
           that.$root.$emit('deactLoadingRoot')
           if (e.data) {
@@ -195,6 +201,7 @@ export default {
         })
         .catch(function (e) {
           that.$root.$emit('deactLoadingRoot')
+          that.$root.$emit('errorHandler', e)
         })
     } else {
       that.$root.$emit('deactLoadingRoot')
@@ -312,6 +319,12 @@ export default {
 .input-group .button-gradient:hover {
     background: linear-gradient(335deg, #9670e7 0%, #f57f52 100%);
     box-shadow: 0px 11px 8em rgba(167, 151, 255, 0.63);
+}
+.input-group .button-gradient:focus,
+.input-group .button-gradient:active {
+    background: #fff;
+    color: #000;
+    box-shadow: 0px 11px 8em rgba(167, 151, 255, 0.63)
 }
 .input-group .button-gradient {
     color: white;

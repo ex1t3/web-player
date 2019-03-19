@@ -61,6 +61,8 @@
 let typingTimer
 import axios from "axios"
 import SongsTemplate from './SongsTemplate'
+
+// Exporting data for current template
 export default {
   data() {
     return {
@@ -122,7 +124,7 @@ export default {
           that.isTyping = false
         }).catch(function (e) {
           console.log(e)
-          that.$root.$emit("errorHandler", e.response.status)
+          that.$root.$emit("errorHandler", e)
           that.isTyping = false
         })
     },
@@ -149,7 +151,7 @@ export default {
         that.isSongsOfFoundedArtistShowed = true
       }).catch(function (e) {
         console.log(e)
-        that.$root.$emit("errorHandler", e.response.status)
+        that.$root.$emit("errorHandler", e)
         that.isTyping = false
       })
     }
@@ -494,7 +496,6 @@ export default {
 
 .search-panel {
   padding-left: 20px;
-  padding-top: 20px;
 }
 @media (max-width: 700px) {
   .search-panel .title {

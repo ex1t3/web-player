@@ -42,6 +42,8 @@ import axios from "axios";
 import {
   mapGetters
 } from "vuex";
+
+// Exporting data for current template
 export default {
   store,
   data() {
@@ -67,7 +69,7 @@ export default {
       if (token == null) {
         that.$store.dispatch("logOut");
       } else {
-        // sessionStorage.removeItem('access_token')
+        sessionStorage.removeItem('access_token')
         axios({
             method: "POST",
             url: "https://localhost:44343/api/Account/Logout",
@@ -79,7 +81,7 @@ export default {
             that.$store.dispatch('logOut')
           })
           .catch(function (e) {
-            that.$root.$emit("errorHandler", e.response.status)
+            that.$root.$emit("errorHandler", e)
           })
       }
     }

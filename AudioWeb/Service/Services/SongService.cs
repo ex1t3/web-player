@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Service.Services
     private readonly IDbRepository<Playlist> _dbPlaylist;
     private readonly IDbRepository<PlaylistSong> _dbPlaylistSongs;
     private readonly IDbRepository<FavoriteSong> _dbFavoriteSong;
+    private readonly IDbRepository<LastPlayedSong> _dbLastPlayedSong;
 
     public SongService()
     {
@@ -28,6 +30,7 @@ namespace Service.Services
       _dbPlaylist = new DbRepository<Playlist>(new DefaultDbFactory());
       _dbPlaylistSongs = new DbRepository<PlaylistSong>(new DefaultDbFactory());
       _dbFavoriteSong = new DbRepository<FavoriteSong>(new DefaultDbFactory());
+      _dbLastPlayedSong = new DbRepository<LastPlayedSong>(new DefaultDbFactory());
     }
     public async Task<Song> AddSong(Song song, int userId, string path)
     {
@@ -119,11 +122,13 @@ namespace Service.Services
       if (song.Name.Trim() == "" || song.Artist.Trim() == "") return null;
       return song;
     }
+
     public async Task<string> AddFavoriteSong(FavoriteSong song)
     {
       _dbFavoriteSong.Add(song);
       return song.Id.ToString();
     }
+
     public async Task<bool> AddSongToPLaylist(PlaylistSong song)
     {
       var flag = _db.PlaylistSongs.Any(x => x.PlaylistId == song.PlaylistId && x.SongId == song.SongId);
@@ -133,6 +138,7 @@ namespace Service.Services
       return song.Id > 0;
 
     }
+
     public async Task<bool> UpdatePlaylist(PlaylistSong song)
     {
       var songCover = _dbSong.Get(x => x.Id == song.SongId).AlbumCover;
@@ -142,10 +148,23 @@ namespace Service.Services
       _dbPlaylist.Update(playlist);
       return true;
     }
+
     public async Task<List<Song>> GetAllSongs()
     {
       return _dbSong.GetAll().ToList();
     }
+
+    public async Task<List<Song>> GetLastPlayedSongs(int userId)
+    {
+      var lastPlayedSongs  = _dbLastPlayedSong.GetMany(x => x.UserId == userId).OrderByDescending(x=>x.PlayedDateTime).Select(x=>x.SongId).ToList();
+      var songs = new List<Song>();
+      foreach (var item in lastPlayedSongs)
+      {
+        songs.Add(_dbSong.Get(x=>x.Id==item));
+      }
+      return songs;
+    }
+
     public async Task<List<Song>> GetUserFavoriteSongs(int userId)
     {
       var favorites = _dbFavoriteSong.GetMany(x => x.UserId == userId).ToList();
@@ -157,6 +176,7 @@ namespace Service.Services
       }
       return songs;
     }
+
     public async Task<List<Song>> GetSearchedSongs(string[] keyWords)
     {
       var songsStartedWithTypedText = new List<Song>();
@@ -172,6 +192,7 @@ namespace Service.Services
         .ToList();
       return songsToReturn;
     }
+
     public async Task<string[]> GetSearchedArtists(string[] keyWords)
     {
       var artistsStartedWithTypedText = new string[] { };
@@ -183,11 +204,12 @@ namespace Service.Services
         artistsContainedTypedText = artistsContainedTypedText.Union(_dbSong.GetMany(x => x.Artist.Contains(typedtext)).Select(x => x.Artist).ToArray()).ToArray();
         artistsEndedWithTypedText = artistsEndedWithTypedText.Union(_dbSong.GetMany(x => x.Artist.EndsWith(typedtext)).Select(x => x.Artist).ToArray()).ToArray();
       }
-
       var artistsToReturn = artistsEndedWithTypedText.Union(artistsContainedTypedText).Union(artistsEndedWithTypedText)
         .ToArray();
+      Array.Sort(artistsToReturn, StringComparer.InvariantCulture);
       return artistsToReturn;
     }
+
     public async Task<List<Playlist>> GetUserPlaylists(int userId)
     {
       var playlists = _dbPlaylist.GetMany(x => x.UserId == userId).ToList();
@@ -203,6 +225,7 @@ namespace Service.Services
       }
       return songs;
     }
+
     public async Task<List<Song>> GetUploadedSongs(int userId)
     {
       var uploadedSongs = _dbUploadedSong.GetMany(x => x.UserId == userId).ToList();
@@ -222,6 +245,35 @@ namespace Service.Services
       return true;
     }
 
+    public async Task<bool> UpdateLastPlayedSongs(int songId, int userId)
+    {
+      var songs = _dbLastPlayedSong.GetMany(x => x.UserId == userId).ToList();
+
+      if (songs.Any(x => x.SongId == songId))
+      {
+        var songToUpdate = songs.First(x => x.SongId == songId);
+        songToUpdate.PlayedDateTime = DateTime.Now;
+        _dbLastPlayedSong.Update(songToUpdate);
+        return true;
+      }
+
+      if (songs.Count() == User.LastPlayedSongLimit)
+      {
+        var oldestSongsDate = songs.OrderBy(z => z.PlayedDateTime).First();
+        _db.Entry(oldestSongsDate).State = EntityState.Deleted;
+        _db.SaveChanges();
+      }
+
+      var newSong = new LastPlayedSong()
+      {
+        SongId = songId,
+        UserId = userId,
+        PlayedDateTime = DateTime.Now
+      };
+      _dbLastPlayedSong.Add(newSong);
+      return true;
+    }
+
     public async Task<int> CreatePlaylist(Playlist playlist)
     {
       _dbPlaylist.Add(playlist);
@@ -237,6 +289,7 @@ namespace Service.Services
     {
       return _db.FavoriteSongs.Any(x => x.SongId == songId && x.UserId == userId);
     }
+
     public async Task<bool> DeleteSongFromInstance(int songId, int userId, int type, int playlistId)
     {
       switch (type)

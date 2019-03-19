@@ -98,3 +98,5 @@ E:\wamp64\www\web-player\AudioWeb\Service\obj\Debug\Service.csproj.CoreCompileIn
 E:\wamp64\www\web-player\AudioWeb\Service\obj\Debug\Service.csproj.CopyComplete
 E:\wamp64\www\web-player\AudioWeb\Service\obj\Debug\Service.dll
 E:\wamp64\www\web-player\AudioWeb\Service\obj\Debug\Service.pdb
+E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\WebPlayerDb.mdf
+E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\WebPlayerDb_log.ldf

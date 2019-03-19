@@ -60,10 +60,12 @@ namespace AudioWeb.Controllers
 
     [HttpPost]
     [Route("IncreaseActivity")]
-    public async Task<IHttpActionResult> IncreaseActivity([FromBody]int songId) // Method used for increasing song's rate
+    public async Task<IHttpActionResult> IncreaseActivity([FromBody]int songId) // Method used for increasing song's rate and updating last user's played song
     {
       if (songId <= 0) return Json("false");
+      var user = _userService.GetUserByName(User.Identity.Name);
       await _songService.IncreaseActivity(songId);
+      await _songService.UpdateLastPlayedSongs(songId, user.Id);
       return Json("true");
 
     }
@@ -82,6 +84,16 @@ namespace AudioWeb.Controllers
       };
       return Json(result);
     }
+
+    [HttpGet]
+    [Route("GetLastPlayedSongs")]
+    public async Task<IHttpActionResult> GetLastPlayedSongs() // Method used for retrieving user's last played songs
+    {
+      var user = _userService.GetUserByName(User.Identity.Name);
+      var result = await _songService.GetLastPlayedSongs(user.Id);
+      return Json(result);
+    }
+
     [HttpPost]
     [Route("GetSongsOfArtist")]
     public async Task<IHttpActionResult> GetSongsOfArtist([FromBody]string artist) // Method used for searching similiar songs or artists to user's typed text

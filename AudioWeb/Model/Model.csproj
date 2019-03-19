@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Models\DeletedInstance.cs" />
     <Compile Include="Models\FavoriteSong.cs" />
+    <Compile Include="Models\LastPlayedSong.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlaylistSong.cs" />
     <Compile Include="Models\SearchingViewModel.cs" />

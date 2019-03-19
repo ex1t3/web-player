@@ -12,7 +12,6 @@ import {
   DEACTIVE_SIDEBAR
 } from './mutation-types'
 import Vue from 'vue'
-// import axios from 'axios'
 import Vuex from 'vuex'
 import createLogger from 'vuex/dist/logger'
 const debug = process.env.NODE_ENV !== 'production'
@@ -29,7 +28,8 @@ const state = {
   isSettingsPage: false,
   isProfilePage: false,
   isMusicPage: false,
-  isActiveSidebar: false
+  isActiveSidebar: false,
+  lastPlayedSongs: []
 
 }
 
@@ -42,7 +42,8 @@ const getters = {
   isSettingsPage: state => state.isSettingsPage,
   isProfilePage: state => state.isProfilePage,
   isMusicPage: state => state.isMusicPage,
-  isSearchPage: state => state.isSearchPage
+  isSearchPage: state => state.isSearchPage,
+  lastPlayedSongs: state => state.lastPlayedSongs
 }
 // initialize store actions
 const actions = {
@@ -78,8 +79,16 @@ const actions = {
   },
   deactivateSidebar ({commit}, data) {
     commit(DEACTIVE_SIDEBAR, data)
+  },
+  loadLastPlayedSongs ({commit}, data) {
+    commit('setLastPlayedSongs', data)
+  },
+  updateLastPlayedSongs ({commit}, data) {
+    commit('setNewlastPlayedSong', data)
   }
 }
+
+// initialize store mutations
 const mutations = {
   [START_LOADING] (state) {
     state.LoadingVisability = true
@@ -133,6 +142,18 @@ const mutations = {
     state.isSettingsPage = false
     state.isMusicPage = false
     state.isSearchPage = true
+  },
+  setLastPlayedSongs (state, data) {
+    state.lastPlayedSongs = data
+  },
+  setNewlastPlayedSong (state, data) {
+    if (state.lastPlayedSongs.some(e => e.Id === data.Id)) {
+      let index = state.lastPlayedSongs.map((e) => { return e.Id }).indexOf(data.Id)
+      state.lastPlayedSongs.splice(index, 1)
+    } else {
+      state.lastPlayedSongs.length = state.lastPlayedSongs.length - 1
+    }
+    state.lastPlayedSongs.unshift(data)
   }
 }
 // instantiate vuex store

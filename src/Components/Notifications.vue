@@ -14,6 +14,8 @@
   </div>
 </template>
 <script>
+
+// Exporting data for current template
 export default {
   data() {
     return {
