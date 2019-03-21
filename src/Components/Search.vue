@@ -40,7 +40,7 @@
             <SongsTemplate :songs="foundedSongs.slice(0,3)" :type="3" />
           </div>
         </div>
-        <div class="move-to-block">
+        <div v-if="foundedSongs.length > 3" class="move-to-block">
           <div @click="isAllFoundedSongsShowed = true">View all tracks</div><i class="fas fa-arrow-right"></i>
         </div>
       </div>
@@ -180,7 +180,13 @@ export default {
   margin-left: -5px;
   margin-right: 15px;
 }
-
+.move-to-block i {
+  margin-left: 10px;
+  transition: margin 0.3s;
+}
+.move-to-block:hover i {
+   margin: 0px -5px 0px 15px;
+}
 .artists-block {
   display: inline-block;
 }
@@ -195,13 +201,6 @@ export default {
 }
 .artist-item:hover {
   background: #ddd;
-}
-.move-to-block i {
-  margin-left: 10px;
-  transition: margin 0.3s;
-}
-.move-to-block:hover i {
-   margin: 0px -5px 0px 15px;
 }
 .nothing-found-notification {
   display: block;

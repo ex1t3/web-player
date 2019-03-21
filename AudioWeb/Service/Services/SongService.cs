@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using DAL;
 using Model.Models;
@@ -163,6 +164,10 @@ namespace Service.Services
         songs.Add(_dbSong.Get(x=>x.Id==item));
       }
       return songs;
+    }
+    public async Task<List<Song>> GetTopListenedSongs()
+    {
+      return _dbSong.GetAll().OrderByDescending(x => x.Activity).Take(100).ToList();
     }
 
     public async Task<List<Song>> GetUserFavoriteSongs(int userId)

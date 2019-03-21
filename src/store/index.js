@@ -29,7 +29,8 @@ const state = {
   isProfilePage: false,
   isMusicPage: false,
   isActiveSidebar: false,
-  lastPlayedSongs: []
+  lastPlayedSongs: [],
+  topListenedSongs: []
 
 }
 
@@ -43,7 +44,8 @@ const getters = {
   isProfilePage: state => state.isProfilePage,
   isMusicPage: state => state.isMusicPage,
   isSearchPage: state => state.isSearchPage,
-  lastPlayedSongs: state => state.lastPlayedSongs
+  lastPlayedSongs: state => state.lastPlayedSongs,
+  topListenedSongs: state => state.topListenedSongs
 }
 // initialize store actions
 const actions = {
@@ -82,6 +84,9 @@ const actions = {
   },
   loadLastPlayedSongs ({commit}, data) {
     commit('setLastPlayedSongs', data)
+  },
+  loadTopListenedSongs ({commit}, data) {
+    commit('setTopListenedSongs', data)
   },
   updateLastPlayedSongs ({commit}, data) {
     commit('setNewlastPlayedSong', data)
@@ -145,6 +150,9 @@ const mutations = {
   },
   setLastPlayedSongs (state, data) {
     state.lastPlayedSongs = data
+  },
+  setTopListenedSongs (state, data) {
+    state.topListenedSongs = data
   },
   setNewlastPlayedSong (state, data) {
     if (state.lastPlayedSongs.some(e => e.Id === data.Id)) {

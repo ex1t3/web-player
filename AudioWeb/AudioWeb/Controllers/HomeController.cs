@@ -13,10 +13,5 @@ namespace AudioWeb.Controllers
 
             return View();
         }
-        public ActionResult VueIndex()
-        {
-
-            return View();
-        }
     }
 }

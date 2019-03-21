@@ -177,6 +177,14 @@ namespace AudioWeb.Controllers
       return Json(songs);
     }
 
+    [HttpGet]
+    [Route("GetTopListenedSongs")]
+    public async Task<IHttpActionResult> GetTopListenedSongs() // Method used for yielding a list of most played songs
+    {
+      var songs = await _songService.GetTopListenedSongs();
+      return Json(songs);
+    }
+
     [HttpPost]
     [Route("CreatePlaylist")]
     public async Task<IHttpActionResult> CreatePlaylist(Playlist playlist) // Method used for creating a new user's playlist

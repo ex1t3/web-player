@@ -48,6 +48,10 @@ E:\repositories\AudioWeb\Service\obj\Debug\Service.csprojResolveAssemblyReferenc
 E:\repositories\AudioWeb\Service\obj\Debug\Service.csproj.CopyComplete
 E:\repositories\AudioWeb\Service\obj\Debug\Service.dll
 E:\repositories\AudioWeb\Service\obj\Debug\Service.pdb
+E:\wamp64\www\web-player\AudioWeb\Service\obj\Debug\Service.csproj.App.config
+E:\wamp64\www\web-player\AudioWeb\Service\obj\Debug\Service.csproj.CoreCompileInputs.cache
+E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\WebPlayerDb.mdf
+E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\WebPlayerDb_log.ldf
 E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\Service.dll.config
 E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\Service.dll
 E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\Service.pdb
@@ -92,11 +96,7 @@ E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\System.Net.Http.Formatting.x
 E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\System.Net.Http.Primitives.xml
 E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\System.Web.Http.xml
 E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\System.Web.Http.Owin.xml
-E:\wamp64\www\web-player\AudioWeb\Service\obj\Debug\Service.csproj.App.config
 E:\wamp64\www\web-player\AudioWeb\Service\obj\Debug\Service.csprojResolveAssemblyReference.cache
-E:\wamp64\www\web-player\AudioWeb\Service\obj\Debug\Service.csproj.CoreCompileInputs.cache
 E:\wamp64\www\web-player\AudioWeb\Service\obj\Debug\Service.csproj.CopyComplete
 E:\wamp64\www\web-player\AudioWeb\Service\obj\Debug\Service.dll
 E:\wamp64\www\web-player\AudioWeb\Service\obj\Debug\Service.pdb
-E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\WebPlayerDb.mdf
-E:\wamp64\www\web-player\AudioWeb\Service\bin\Debug\WebPlayerDb_log.ldf

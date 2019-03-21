@@ -1,148 +1,17 @@
-<div class="jumbotron">
-  <h1>ASP.NET</h1>
-  <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-  <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
-<button id="login">Login</button>
-<button id="check">Check</button>
-<button id="register">Register</button>
-<button id="token">Token</button>
-<button id="logout">Logout</button>
-<button id="external">External</button>
-<div class="row">
-  <div class="col-md-4">
-    <h2>Getting started</h2>
-    <p>
-      ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-      a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-      is an ideal platform for building RESTful applications on the .NET Framework.
-    </p>
-    <p>
-      <a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a>
-    </p>
-  </div>
-  <div class="col-md-4">
-    <h2>Get more libraries</h2>
-    <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-    <p>
-      <a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a>
-    </p>
-  </div>
-  <div class="col-md-4">
-    <h2>Web Hosting</h2>
-    <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-    <p>
-      <a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a>
-    </p>
-  </div>
-</div>
+<!DOCTYPE html>
+<html>
 
-<script>
-  $('#check').click(function () {
-    $.ajax({
-      type: 'GET',
-      url: '/api/values',
-      headers: {
-        Authorization: //він завжди має бути, щоб сервер з атрибутом ауторайз дав доступ
-          'Bearer ' + sessionStorage.getItem('access_token')
-      },
-      success: function (e) {
-        console.log(e);
-      }
-    });
-  });
-  $('#login').click(function () {
-    var loginData = {
-      Username: "test",
-      Password: "1234"
-    };
-    $.ajax({
-      type: 'POST',
-      url: '/api/Account/Login',
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      data: JSON.stringify(loginData),
-      success: function (e) {
-        sessionStorage.setItem('access_token', e.access_token);
-      }
-    });
-  });
-  $('#token').click(function () {
-    var loginData = {
-      grant_type: "password",
-      Username: "test",
-      Password: "1234"
-    };
-    $.ajax({
-      type: 'POST',
-      url: '/Token',
-      data: loginData,
-      success: function (e) {
-        sessionStorage.setItem('access_token', e.access_token);
-      }
-    });
-  });
-  $('#logout').click(function () {
-    $.ajax({
-      type: 'POST',
-      url: '/api/Account/Logout',
-      headers: { Authorization: "Bearer " + sessionStorage.getItem('access_token') },
-      success: function (e) {
-        console.log(e);
-      }
-    });
-  });
-  $('#register').click(function () {
-    var loginData = {
-      Username: "test",
-      Password: "1234"
-    };
-    $.ajax({
-      type: 'POST',
-      url: '/api/Account/Register',
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      data: JSON.stringify(loginData),
-      success: function (e) {
-        sessionStorage.setItem('access_token', e.access_token);
-      }
-    });
-  });
-  $('#external').click(function () {
-    $.ajax({
-      type: "GET",
-      url: '/api/Account/ExternalLogins?returnUrl=%2F&generateState=true',
-      success: function (e) {
-        if (e.length > 0) {
-          window.location = e[0].url;
-        }
-      }
-    });
-  });
-  if (window.location.hash) {
-    var url = window.location.hash.substring(1);
-    history.replaceState(null, null, ' ');
-    const params = new URLSearchParams(url);
-    let paramObj = {};
-    for (var value of params.keys()) {
-      paramObj[value] = params.get(value);
-    }
-    var keyNames = Object.keys(paramObj);
-    switch (keyNames[0]) {
-      case 'access_token':
-        {
-          sessionStorage.setItem('access_token', paramObj.access_token);
-          break;
-        }
-      case 'error_login':
-        {
-          var arr = paramObj.error_login.replace(/_/g, ' ');
-          alert(arr);
-          break;
-        }
+<head>
+  <meta charset=utf-8>
+  <link href="https://fonts.googleapis.com/css?family=Niramit|Nova+Round" rel=stylesheet>
+  <link rel=stylesheet href=https://use.fontawesome.com/releases/v5.4.1/css/all.css
+        integrity=sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz crossorigin=anonymous>
+  <meta name=viewport content="width=device-width,initial-scale=1">
+  <title>dapp</title>
+  <link href=/static/css/app.css rel=stylesheet>
+</head>
 
-      default:
-    }
-  }
-
-</script>
+<body>
+<div id=app></div>
+<script type=text/javascript src=/static/js/manifest.js> </script> <script type=text/javascript
+                                                                           src=/static/js/vendor.js> </script> <script type=text/javascript src=/static/js/app.js> </script> </body> </html>

@@ -207,17 +207,18 @@ export default {
 .songs-header {
   display: flex;
   margin: 10px;
+  font-size: 14px;
   align-items: center;
 }
 .songs-item {
-  display: flex;
-  align-items: center;
-  font-size: 13px;
-  height: 50px;
-  position: relative;
-  padding: 10px 10px;
-  margin: 25px 0;
-  box-shadow: 0 0 20px #dddddd5e;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    height: 50px;
+    position: relative;
+    padding: 10px 10px;
+    margin: 15px 0;
+    box-shadow: 0 0 20px #dddddd5e;
 }
 
 .songs-item::after {

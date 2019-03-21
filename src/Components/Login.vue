@@ -91,6 +91,7 @@ export default {
           that.$root.$emit('deactLoadingRoot')
           sessionStorage.setItem('access_token', response.data.access_token)
           that.$store.dispatch('logIn')
+          that.$store.dispatch('setHomePage')
         }).catch(function (e) {
           that.$root.$emit('deactLoadingRoot')
           that.$root.$emit('errorHandler', e)

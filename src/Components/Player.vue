@@ -314,8 +314,25 @@ export default {
         }
       }).then(function (e) {
         that.$store.dispatch('loadLastPlayedSongs', e.data)
-        that.loadDefinedSongs(that.lastPlayedSongs)
-        that.$root.$emit('deactLoadingRoot')
+        if (that.lastPlayedSongs.length > 0) {
+          that.loadDefinedSongs(that.lastPlayedSongs)
+          that.$main.currentIndex = that.lastPlayedSongs[0].Id
+          that.preloadSong()
+        }
+      }).catch(function (e) {
+        that.$root.$emit('errorHandler', e)
+      })
+
+      // Load top listened songs
+      axios({
+        method: "GET",
+        url: "https://localhost:44343/api/Songs/GetTopListenedSongs",
+        headers: {
+          "Content-Type": "application/json charset=UTF-8",
+          Authorization: "Bearer " + sessionStorage.getItem("access_token")
+        }
+      }).then(function (e) {
+        that.$store.dispatch('loadTopListenedSongs', e.data)
       }).catch(function (e) {
         that.$root.$emit('errorHandler', e)
       })
@@ -353,12 +370,14 @@ export default {
 
     // Scrolles to currently playing song in queue block
     scrollToNextSongInQueue() {
-      let currentSong = document.getElementsByClassName('current-song')
-      let scrolledBlock = document.getElementsByClassName('queue-body')[0]
-      if (currentSong.length > 0) {
-        const elementPos = currentSong[0].offsetTop
-        scrolledBlock.scrollTop = elementPos
-      }
+      setTimeout(() => {
+        let currentSong = document.getElementsByClassName('current-song')
+        let scrolledBlock = document.getElementsByClassName('queue-body')[0]
+        let queueListBlock = document.getElementsByClassName('queue-list')[0]
+        if (currentSong.length > 0) {
+          scrolledBlock.scrollTop = currentSong[0].offsetTop - 65
+        }
+      }, 100)
     },
 
     // Mutting song
@@ -419,10 +438,13 @@ export default {
     },
 
     // Starting/Playing again the song
-    playSong () {
+    playSong (id) {
       this.$main.isPaused = false
       if (this.audio.paused) {
         this.audio.play()
+        if (id >= 0) {
+          this.$store.dispatch('updateLastPlayedSongs', this.songs[id])
+        }
       }
     },
 
@@ -439,8 +461,8 @@ export default {
       } else {
         this.$main.currentIndex = this.shuffleIndexes[this.shuffleIndexes.indexOf(this.$main.currentIndex) + 1]
       }
-      this.preloadSong()
-      this.playSong()
+      let id = this.preloadSong()
+      this.playSong(id)
     },
 
     // Switching $main.currentIndex to the index of the previous song
@@ -450,8 +472,8 @@ export default {
       } else {
         this.$main.currentIndex = this.shuffleIndexes[this.shuffleIndexes.indexOf(this.$main.currentIndex) - 1]
       }
-      this.preloadSong()
-      this.playSong()
+      let id = this.preloadSong()
+      this.playSong(id)
     },
 
     // Updating current song time depending on current duration
@@ -518,8 +540,7 @@ export default {
       } else {
         this.$main.currentIndex = index
         let id = this.preloadSong()
-        this.playSong()
-        this.$store.dispatch('updateLastPlayedSongs', this.songs[id])
+        this.playSong(id)
         axios({
           method: 'POST',
           url: 'https://localhost:44343/api/Songs/IncreaseActivity',
