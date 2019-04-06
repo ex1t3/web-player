@@ -202,7 +202,6 @@ export default {
         })
         .catch(function (e) {
           that.$root.$emit('deactLoadingRoot')
-          that.$root.$emit('errorHandler', e)
         })
     } else {
       that.$root.$emit('deactLoadingRoot')

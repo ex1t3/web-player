@@ -5,11 +5,3 @@ E:\repositories\AudioWeb\Model\obj\Debug\Model.csproj.CoreCompileInputs.cache
 E:\repositories\AudioWeb\Model\obj\Debug\Model.csproj.CopyComplete
 E:\repositories\AudioWeb\Model\obj\Debug\Model.dll
 E:\repositories\AudioWeb\Model\obj\Debug\Model.pdb
-E:\wamp64\www\web-player\AudioWeb\Model\obj\Debug\Model.csprojResolveAssemblyReference.cache
-E:\wamp64\www\web-player\AudioWeb\Model\obj\Debug\Model.csproj.CoreCompileInputs.cache
-E:\wamp64\www\web-player\AudioWeb\Model\bin\Debug\Model.dll
-E:\wamp64\www\web-player\AudioWeb\Model\bin\Debug\Model.pdb
-E:\wamp64\www\web-player\AudioWeb\Model\bin\Debug\System.ComponentModel.Annotations.dll
-E:\wamp64\www\web-player\AudioWeb\Model\obj\Debug\Model.csproj.CopyComplete
-E:\wamp64\www\web-player\AudioWeb\Model\obj\Debug\Model.dll
-E:\wamp64\www\web-player\AudioWeb\Model\obj\Debug\Model.pdb

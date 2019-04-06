@@ -29,6 +29,9 @@ const state = {
   isProfilePage: false,
   isMusicPage: false,
   isActiveSidebar: false,
+  isModalVisible: false,
+  currentContentType: 0,
+  selectedPlaylistIndex: 0,
   lastPlayedSongs: [],
   topListenedSongs: []
 
@@ -45,7 +48,10 @@ const getters = {
   isMusicPage: state => state.isMusicPage,
   isSearchPage: state => state.isSearchPage,
   lastPlayedSongs: state => state.lastPlayedSongs,
-  topListenedSongs: state => state.topListenedSongs
+  topListenedSongs: state => state.topListenedSongs,
+  isModalVisible: state => state.isModalVisible,
+  currentContentType: state => state.currentContentType,
+  selectedPlaylistIndex: state => state.selectedPlaylistIndex
 }
 // initialize store actions
 const actions = {
@@ -90,6 +96,15 @@ const actions = {
   },
   updateLastPlayedSongs ({commit}, data) {
     commit('setNewlastPlayedSong', data)
+  },
+  updateModalVisibility ({commit}, data) {
+    commit('setModalVisibility', data)
+  },
+  updateCurrentContentType ({commit}, data) {
+    commit('setCurrentContentType', data)
+  },
+  updateSelectedPlaylistIndex ({commit}, data) {
+    commit('setSelectedPlaylistIndex', data)
   }
 }
 
@@ -162,6 +177,15 @@ const mutations = {
       state.lastPlayedSongs.length = state.lastPlayedSongs.length - 1
     }
     state.lastPlayedSongs.unshift(data)
+  },
+  setModalVisibility (state, data) {
+    state.isModalVisible = data
+  },
+  setCurrentContentType (state, data) {
+    state.currentContentType = data
+  },
+  setSelectedPlaylistIndex (state, data) {
+    state.selectedPlaylistIndex = data
   }
 }
 // instantiate vuex store

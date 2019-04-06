@@ -246,6 +246,9 @@ display: block;
   .home-page-main-block {
     display: block;
   }
+  .home-page-content-block {
+    display: block;
+  }
 }
 
 @-webkit-keyframes fade-in {
