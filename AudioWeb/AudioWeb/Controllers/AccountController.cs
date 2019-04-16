@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
@@ -9,6 +10,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Results;
 using System.Web.Script.Serialization;
+using Facebook;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
@@ -17,6 +19,7 @@ using Model.Models;
 using Service.Results;
 using Service.Services;
 using Service.SessionHandlers;
+using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace AudioWeb.Controllers
 {
@@ -36,12 +39,8 @@ namespace AudioWeb.Controllers
 
     // POST api/Account/Register
     [HttpPost, AllowAnonymous, Route("Register")]
-    public async Task<IHttpActionResult> RegisterUser(User model, bool isExtrenal = false, string provider = null)
+    public async Task<IHttpActionResult> RegisterUser(User model, bool isExtrenal = false, UserExternalLogin externalLogin = null)
     {
-      //if (UserSessionManager.IsAuthenticated)
-      //{
-      //  return this.BadRequest("User is already logged in.");
-      //}
 
       if (model == null)
       {
@@ -76,15 +75,10 @@ namespace AudioWeb.Controllers
         return this.BadRequest("Sorry! Something went wrong");
       }
 
-      if (model.IsExtraLogged)
+      if (model.IsExtraLogged && externalLogin != null)
       {
-
-        _userService.AddUserExtrenalLogin(new UserExternalLogin()
-        {
-          LoginProvider = provider,
-          UserId = user.Id,
-          ProviderKey = user.Password
-        });
+        externalLogin.UserId = user.Id;
+        _userService.AddUserExtrenalLogin(externalLogin);
       }
       var loginResult = await this.LoginUser(new LoginUserViewModel()
       {
@@ -127,50 +121,36 @@ namespace AudioWeb.Controllers
         return new ChallengeResult(provider, this);
       }
 
-      var user = _userService.GetUserByName(externalLogin.UserName);
-      if (_userService.CheckIfUserExists(externalLogin.UserName, externalLogin.Email))
-      {
-        if (!_userService.CheckPassword(externalLogin.ProviderKey, user.Password))
-        {
-          return BadRequest("Incorrect user data.");
-        }
-      }
-      bool hasRegistered = user != null;
+      var user = _userService.GetUserByProviderKey(externalLogin.ProviderKey, externalLogin.LoginProvider);
+      var hasRegistered = user != null;
 
-      if (hasRegistered) //if user isn't registered yet, we should add him to database, so he'll able to pass all the next logins
+      IEnumerable<Claim> claims = externalLogin.GetClaims();
+      var identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
+      IHttpActionResult result;
+      if (hasRegistered) // if user hasn't registered yet, we should add him to database, so he'll be able to pass all the next logins
       {
-        IEnumerable<Claim> claims = externalLogin.GetClaims();
-        ClaimsIdentity identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
-
-        var result = await LoginUser(new LoginUserViewModel() { Password = _userService.HashPassword(identity.Name), Username = identity.Name }, true);
-        var url = "";
-        if (result is BadRequestErrorMessageResult)
-        {
-          url = "https://" + Request.RequestUri.Authority + "?error_login=" + ((BadRequestErrorMessageResult)result).Message.Replace(" ", "_");
-          Uri uri = new Uri(url);
-          return Redirect(uri);
-        }
-        var token = _userService.GetUserSession(_userService.GetUserByName(identity.Name).Id).AuthToken;
-        url = "https://" + Request.RequestUri.Authority + "#access_token=" + token;
-        return Redirect(url);
+        result = await LoginUser(new LoginUserViewModel() { Password = _userService.HashPassword(identity.Name), Username = identity.Name }, true);
       }
       else
       {
-        IEnumerable<Claim> claims = externalLogin.GetClaims();
-        ClaimsIdentity identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
-        var result = await RegisterUser(new User() { Username = identity.Name, Email = externalLogin.Email, Password = _userService.HashPassword(identity.Name), IsExtraLogged = true}, true, externalLogin.LoginProvider);
-        var url = "";
-        if (result is BadRequestErrorMessageResult)
+        var userExternalLogin = new UserExternalLogin
         {
-          url = "https://" + Request.RequestUri.Authority + "#error_login=" + ((BadRequestErrorMessageResult)result).Message.Replace(" ", "_");
-          Uri uri = new Uri(url);
-          return Redirect(uri);
-        }
-
-        var token = _userService.GetUserSession(_userService.GetUserByName(identity.Name).Id).AuthToken;
-        url = "https://" + Request.RequestUri.Authority + "#access_token=" + token;
-        return Redirect(url);
+          LoginProvider = externalLogin.LoginProvider,
+          ProviderKey = externalLogin.ProviderKey
+        };
+        result = await RegisterUser(new User() { Username = identity.Name, Email = externalLogin.Email, Password = _userService.HashPassword(identity.Name), IsExtraLogged = true}, true, userExternalLogin);
       }
+      var url = "";
+      if (result is BadRequestErrorMessageResult)
+      {
+        url = "https://" + Request.RequestUri.Authority + "#error_login=" + ((BadRequestErrorMessageResult)result).Message.Replace(" ", "_");
+        var uri = new Uri(url);
+        return Redirect(uri);
+      }
+
+      var token = _userService.GetUserSession(_userService.GetUserByName(identity.Name).Id).AuthToken;
+      url = "https://" + Request.RequestUri.Authority + "#access_token=" + token;
+      return Redirect(url);
     }
 
     [HttpGet]
@@ -186,7 +166,6 @@ namespace AudioWeb.Controllers
     public IEnumerable<ExternalLoginViewModel> GetExternalLogins(string returnUrl, bool generateState = false)
     {
       IEnumerable<AuthenticationDescription> descriptions = Authentication.GetExternalAuthenticationTypes();
-      List<ExternalLoginViewModel> logins = new List<ExternalLoginViewModel>();
 
       string state;
 
@@ -200,25 +179,20 @@ namespace AudioWeb.Controllers
         state = null;
       }
 
-      foreach (AuthenticationDescription description in descriptions)
+      return descriptions.Select(description => new ExternalLoginViewModel
       {
-        ExternalLoginViewModel login = new ExternalLoginViewModel
+        Name = description.Caption,
+        Url = Url.Route("SocialLogin", new
         {
-          Name = description.Caption,
-          Url = Url.Route("SocialLogin", new
-          {
-            provider = description.AuthenticationType,
-            response_type = "token",
-            client_id = Startup.PublicClientId,
-            redirect_uri = new Uri(Request.RequestUri, returnUrl).AbsoluteUri,
-            state = state
-          }),
-          State = state
-        };
-        logins.Add(login);
-      }
-
-      return logins;
+          provider = description.AuthenticationType,
+          response_type = "token",
+          client_id = Startup.PublicClientId,
+          redirect_uri = new Uri(Request.RequestUri, returnUrl).AbsoluteUri,
+          state = state
+        }),
+        State = state
+      })
+        .ToList();
     }
 
     // POST api/Account/Login
@@ -227,10 +201,6 @@ namespace AudioWeb.Controllers
     {
       if (!isExternal)
       {
-        //if (User.Identity.Name!=null)
-        //{
-        //  return this.BadRequest("User is already logged in.");
-        //}
         if (!ModelState.IsValid)
         {
           return BadRequest(ModelState);
@@ -243,11 +213,11 @@ namespace AudioWeb.Controllers
 
         var user = _userService.GetUserByName(model.Username);
         if (user == null) return BadRequest("Incorrect user data");
-          if (!_userService.CheckPassword(model.Password, user.Password))
-          {
-            return BadRequest("Incorrect user data");
-          }
+        if (!_userService.CheckPassword(model.Password, user.Password))
+        {
+          return BadRequest("Incorrect user data");
         }
+      }
 
       // Invoke the "token" OWIN service to perform the login (POST /token)
       // Use Microsoft.Owin.Testing.TestServer to perform in-memory HTTP POST request
@@ -258,7 +228,8 @@ namespace AudioWeb.Controllers
         new KeyValuePair<string, string>("username", model.Username),
         new KeyValuePair<string, string>("password", model.Password)
       };
-      
+
+      var requestContext = HttpContext.Current.Request;
       var requestParamsFormUrlEncoded = new FormUrlEncodedContent(requestParams);
       testServer.BaseAddress = new Uri("https://" + Request.RequestUri.Authority);
       var request = testServer.CreateRequest("/Token").And(x => x.Method = HttpMethod.Post)
@@ -276,8 +247,7 @@ namespace AudioWeb.Controllers
         var username = responseData["userName"];
         var owinContext = this.Request.GetOwinContext();
         var userSessionManager = new UserSessionManager(owinContext, _userService);
-        userSessionManager.CreateUserSession(username, authToken);
-
+        userSessionManager.CreateUserSession(username, authToken, requestContext);
         // Cleanup: delete expired sessions from the database
         userSessionManager.DeleteExpiredSessions();
       }
@@ -302,6 +272,7 @@ namespace AudioWeb.Controllers
         message = "Logout successful."
       });
     }
+
     private class ExternalLoginData
     {
       public string LoginProvider { get; set; }
@@ -329,15 +300,9 @@ namespace AudioWeb.Controllers
 
       public static ExternalLoginData FromIdentity(ClaimsIdentity identity)
       {
-        if (identity == null)
-        {
-          return null;
-        }
+        Claim providerKeyClaim = identity?.FindFirst(ClaimTypes.NameIdentifier);
 
-        Claim providerKeyClaim = identity.FindFirst(ClaimTypes.NameIdentifier);
-
-        if (providerKeyClaim == null || String.IsNullOrEmpty(providerKeyClaim.Issuer)
-                                     || String.IsNullOrEmpty(providerKeyClaim.Value))
+        if (string.IsNullOrEmpty(providerKeyClaim?.Issuer) || string.IsNullOrEmpty(providerKeyClaim.Value))
         {
           return null;
         }
@@ -364,7 +329,7 @@ namespace AudioWeb.Controllers
 
         if (strengthInBits % bitsPerByte != 0)
         {
-          throw new ArgumentException("strengthInBits must be evenly divisible by 8.", "strengthInBits");
+          throw new ArgumentException("strengthInBits must be evenly divisible by 8.", nameof(strengthInBits));
         }
 
         int strengthInBytes = strengthInBits / bitsPerByte;

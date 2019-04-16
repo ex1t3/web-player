@@ -1,6 +1,6 @@
 <template>
   <div class="absolute-items">
-    <div class="profiler-round">
+    <div :style="{background: profilePictureSrc}" class="profiler-round">
       <div class="profile-menu">      
         <ul class="profile-link-list">
           <li><i class="fas profile-item-icon fa-user"></i>Profile</li>
@@ -37,59 +37,56 @@
   </div>
 </template>
 <script>
-import store from "../store";
-import axios from "axios";
+import store from '../store';
+import axios from 'axios';
 import {
   mapGetters
-} from "vuex";
+} from 'vuex';
 
 // Exporting data for current template
 export default {
   store,
-  data() {
-    return {
-      message: "dgdgdg"
-    };
-  },
   methods: {
     openTemplate(template) {
-      this.$store.dispatch(template);
+      this.$store.dispatch(template)
     },
     toggleSidebar() {
       if (this.isActiveSidebar) {
-        this.$store.dispatch("deactivateSidebar");
+        this.$store.dispatch('deactivateSidebar')
       } else {
-        this.$store.dispatch("activateSidebar");
+        this.$store.dispatch('activateSidebar')
       }
     },
     logOut() {
-      var that = this;
-      let token = sessionStorage.getItem("access_token");
-      that.$root.$emit("pauseSongRoot");
+      var that = this
+      let token = sessionStorage.getItem('access_token')
+      this.$store.dispatch('updateModalVisibility', false)
+      that.$root.$emit('pauseSongRoot')
       if (token == null) {
-        that.$store.dispatch("logOut");
+        that.$store.dispatch('logOut')
       } else {
         sessionStorage.removeItem('access_token')
         axios({
-            method: "POST",
-            url: "https://localhost:44343/api/Account/Logout",
+            method: 'POST',
+            url: 'https://localhost:44343/api/Account/Logout',
             headers: {
-              Authorization: "Bearer " + token
+              Authorization: 'Bearer ' + token
             }
           })
           .then(function (e) {
             that.$store.dispatch('logOut')
           })
           .catch(function (e) {
-            that.$root.$emit("errorHandler", e)
+            that.$root.$emit('errorHandler', e)
           })
       }
     }
   },
   computed: mapGetters({
-    isActiveSidebar: "isActiveSidebar"
+    isActiveSidebar: 'isActiveSidebar',
+    profilePictureSrc: 'profilePictureSrc'
   })
-};
+}
 </script>
 <style>
 .profile-link-list {
@@ -136,10 +133,9 @@ export default {
   height: 60px;
   align-items: center;
   text-align: center;
-  background: #3a36547a;
   border-radius: 50%;
   cursor: pointer;
-  z-index: 2;
+  z-index: 999;
 }
 .sidebar-active {
   left: 220px;
@@ -212,7 +208,7 @@ ul {
 }
 @media (max-width: 700px) {
   .sidebar-burger {
-  background: rgba(255, 255, 255, 0.7098039215686275); 
+  background: rgba(255, 255, 255, 0.7098039215686275)
   }
 }
 .burger-inner {

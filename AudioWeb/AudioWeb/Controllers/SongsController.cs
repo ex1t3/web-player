@@ -1,8 +1,11 @@
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.ModelBinding;
+using System.Web.Http.Results;
 using Model.Models;
 using Service.Services;
 using Service.SessionHandlers;
@@ -195,6 +198,25 @@ namespace AudioWeb.Controllers
       playlist.UserId = user.Id;
       playlist.Created = DateTime.Now;
       var res = await _songService.CreatePlaylist(playlist);
+      return Json(res);
+    }
+
+    [HttpPost]
+    [Route("EditPlaylist")]
+    public async Task<IHttpActionResult> EditPlaylist(Playlist playlist) // Method used for editing playlist's data
+    {
+      var res = await _songService.EditPlaylist(playlist);
+      return Json(res);
+    }
+
+    [HttpPost]
+    [Route("DeletePlaylist")]
+    public async Task<IHttpActionResult> DeletePlaylist(Playlist playlist) // Method used for deleting user's playlist
+    {
+      var user = _userService.GetUserByName(User.Identity.Name);
+      if (user == null || playlist == null) return BadRequest("Something went wrong");
+      if (user.Id != playlist.UserId) return BadRequest("Something went wrong");
+      var res = await _songService.DeletePlaylist(playlist);
       return Json(res);
     }
 

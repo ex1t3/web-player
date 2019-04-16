@@ -146,8 +146,8 @@ export default {
     }
   },
   mounted () {
-    this.loadSongs()   
-    this.loadPlaylists()   
+    this.loadSongs()
+    this.loadPlaylists()
     this.addListeners()
     this.$root.$on('loadPlaylistsRoot', this.loadPlaylists)
     this.$root.$on('loadSongsRoot', this.loadDefinedSongs)
@@ -219,13 +219,7 @@ export default {
         that.$root.$emit('notificate', 'success', 'Song successfully added to playlist', 3000)
         let index = that.lookUpper(obj.SongId)
         let song = that.songs[index]
-        that.$main.playlists[
-          that.$main.playlists
-          .map(function (e) {
-            return e.Id
-          })
-          .indexOf(playlistId)
-        ].Cover = song.AlbumCover
+        that.$main.playlists[that.$main.playlists.map(function (e) {return e.Id}).indexOf(playlistId)].Cover = song.AlbumCover
         that.$root.$emit('addSongToPlaylist', song, obj.PlaylistId)
       }).catch(function (e) {
         that.$root.$emit('errorHandler', e)
@@ -558,7 +552,7 @@ export default {
       var x = e.clientX
       var timeline = document.getElementsByClassName('player-settings')[0]
       var mainLeft = document.getElementsByClassName('main-player-body')[0].offsetLeft
-      var offset = x - (timeline.offsetLeft + mainLeft) + 60
+      var offset = x - (timeline.offsetLeft + mainLeft) + 50
       let offsetFromatted = this.formatBackVolume(offset)
       if (offsetFromatted >= 0) {
         this.progressVolumeWidth = offset + 'px'
@@ -1083,7 +1077,7 @@ export default {
 }
 
 .volume-raise-block .slider {
-  width: 90%;
+  width: 85%;
   margin: 0 auto;
   left: 0;
   right: 0;

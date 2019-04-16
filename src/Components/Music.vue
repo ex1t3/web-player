@@ -34,8 +34,10 @@ export default {
   },
   mounted() {
     window.addEventListener("resize", this.checkScreenWidth)
+    this.$root.$emit('deactLoadingRoot')
   },
   beforeMount() {
+    this.$root.$emit('actLoadingRoot')
     this.checkScreenWidth()
     this.$root.$on("openInstance", this.openInstance)
   },

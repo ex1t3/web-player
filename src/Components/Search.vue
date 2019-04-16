@@ -66,7 +66,7 @@ import SongsTemplate from './SongsTemplate'
 export default {
   data() {
     return {
-      searchVal: "",
+      searchVal: '',
       isAllFoundedSongsShowed: false,
       isSongsOfFoundedArtistShowed: false,
       foundedSongs: [],
@@ -81,12 +81,12 @@ export default {
     this.checkScreenWidth()
   },
   mounted() {
-    window.addEventListener("resize", this.checkScreenWidth)
+    window.addEventListener('resize', this.checkScreenWidth)
     this.$refs.search.focus()
   },
   methods: {
     checkScreenWidth() {
-      this.$root.$emit("checkScreenWidth")
+      this.$root.$emit('checkScreenWidth')
     },
     searching(e) {
       this.isTyping = true
@@ -99,12 +99,12 @@ export default {
     doneTyping() {
       let that = this
       axios({
-          method: "POST",
-          url: "https://localhost:44343/api/Songs/SearchForSong",
+          method: 'POST',
+          url: 'https://localhost:44343/api/Songs/SearchForSong',
           data: JSON.stringify(that.searchVal),
           headers: {
-            "Content-Type": "application/json charset=UTF-8",
-            Authorization: "Bearer " + sessionStorage.getItem("access_token")
+            'Content-Type': 'application/json charset=UTF-8',
+            Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
           }
         })
         .then(function (e) {
@@ -124,14 +124,14 @@ export default {
           that.isTyping = false
         }).catch(function (e) {
           console.log(e)
-          that.$root.$emit("errorHandler", e)
+          that.$root.$emit('errorHandler', e)
           that.isTyping = false
         })
     },
     stopSearch() {
       clearTimeout(typingTimer)
       this.isTyping = false
-      this.$refs.search.value = ""
+      this.$refs.search.value = ''
     },
     viewSongsOfArtist(artist) {
       this.selectedArtist = artist
@@ -141,8 +141,8 @@ export default {
         url: 'https://localhost:44343/api/Songs/GetSongsOfArtist',
         data: JSON.stringify(artist),
         headers: {
-          "Content-Type": "application/json charset=UTF-8",
-          Authorization: "Bearer " + sessionStorage.getItem("access_token")
+          'Content-Type': 'application/json charset=UTF-8',
+          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
         }
       }).then(function (e) {
         if (e.data.length > 0) {
@@ -151,7 +151,7 @@ export default {
         that.isSongsOfFoundedArtistShowed = true
       }).catch(function (e) {
         console.log(e)
-        that.$root.$emit("errorHandler", e)
+        that.$root.$emit('errorHandler', e)
         that.isTyping = false
       })
     }
@@ -476,7 +476,7 @@ export default {
   transition: all 0.4s ease;
   margin-left: -20px;
   position: relative;
-  font-family: "Niramit", sans-serif;
+  font-family: 'Niramit', sans-serif;
 }
 .player-search:focus {
   outline: none;

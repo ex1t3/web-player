@@ -285,6 +285,18 @@ namespace Service.Services
       return playlist.Id;
     }
 
+    public async Task<bool> EditPlaylist(Playlist playlist)
+    {
+      _dbPlaylist.Update(playlist);
+      return true;
+    }
+
+    public async Task<bool> DeletePlaylist(Playlist playlist)
+    {
+      _dbPlaylist.Delete(playlist);
+      return true;
+    }
+
     public async Task<List<Song>> GetSongsOfArtist(string artist)
     {
       return _dbSong.GetMany(x => x.Artist == artist).ToList();

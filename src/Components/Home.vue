@@ -2,9 +2,8 @@
   <div class="home-page-main-block">
     <div v-if="isPageLoaded && !isAllTopTracksOpened" class="home-page-content-block">
       <h4>Your last played Songs</h4>
-      <div class="home-songs-items-block">
-        <div @click="playSong(item['Id'], 0)" class="home-songs-item"
-          :class="{'current-home-songs-item': $main.currentIndex===item['Id']}" :key="index"
+      <div class="home-songs-items-block last-played-songs">
+        <div @click="playSong(item['Id'], 0)" class="home-songs-item" :key="index"
           v-for="(item, index) in lastPlayedSongs">
           <div class="home-songs-item--cover">
             <img v-bind:src="item.AlbumCover" class="last-played-cover-image">
@@ -47,7 +46,9 @@
 </template>
 <script>
 import axios from 'axios'
-import {mapGetters} from 'vuex'
+import {
+  mapGetters
+} from 'vuex'
 import store from '../store'
 import SongsTemplate from './SongsTemplate'
 
@@ -66,45 +67,44 @@ export default {
     lastPlayedSongs: 'lastPlayedSongs',
     topListenedSongs: 'topListenedSongs'
   }),
-  beforeMount() {
-    this.$root.$emit("checkScreenWidth")
-    this.$root.$emit("actLoadingRoot")
+  beforeMount () {
+    this.$root.$emit('checkScreenWidth')
+    this.$root.$emit('actLoadingRoot')
   },
-  mounted() {
+  mounted () {
     this.checkForDataLoaded()
   },
   methods: {
-    checkForDataLoaded() {
-      setTimeout(() => {
+    checkForDataLoaded () {
+      setTimeout (() => {
         if (this.topListenedSongs.length > 0) {
           setTimeout(() => {
-            this.$root.$emit("deactLoadingRoot")
+            this.$root.$emit('deactLoadingRoot')
             this.isPageLoaded = true
           }, 100)
         } else {
           this.checkForDataLoaded()
         }
       }, 200)
-
     },
-    playSong(index, type) {
+    playSong (index, type) {
       switch (true) {
         case index === this.$main.currentIndex && !this.$main.isPaused:
           {
-            this.$root.$emit("pauseSongRoot")
+            this.$root.$emit('pauseSongRoot')
             return 0
           }
         case index === this.$main.currentIndex:
           {
-            this.$root.$emit("playSongRoot")
+            this.$root.$emit('playSongRoot')
             return 0
           }
         case index !== this.$main.currentIndex:
           {
-            if (type === 0) this.$root.$emit("loadSongsRoot", this.lastPlayedSongs)
-            else this.$root.$emit("loadSongsRoot", this.topListenedSongs)
+            if (type === 0) this.$root.$emit('loadSongsRoot', this.lastPlayedSongs)
+            else this.$root.$emit('loadSongsRoot', this.topListenedSongs)
             this.$main.isPaused = true
-            this.$root.$emit("playDefinedSongRoot", index)
+            this.$root.$emit('playDefinedSongRoot', index)
             break
           }
       }
@@ -118,7 +118,7 @@ export default {
   margin: 0 auto;
 }
 
-.home-page-content-block { 
+.home-page-content-block {
   display: grid;
   animation: fade-in .5s;
 }
@@ -181,6 +181,7 @@ export default {
   padding: 10px 15px;
   box-shadow: 0 0 20px #dddddd5e;
 }
+
 
 .home-songs-item .home-songs-item--name,
 .home-songs-item .home-songs-item--album,

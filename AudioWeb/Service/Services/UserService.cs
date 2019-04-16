@@ -31,7 +31,14 @@ namespace Service.Services
 
     public bool CheckIfUserExists(string username, string email)
     {
-      return _db.Users.Any(x => x.Username == username || x.Email == email);
+      return _db.Users.Any(x => x.Username == username || x.Email == email && email != null);
+    }
+
+    public User GetUserByProviderKey(string providerKey, string loginProvider)
+    {
+      var userExternalLogin =
+        _dbUserExtrenalLogin.Get(x => x.ProviderKey == providerKey && x.LoginProvider == loginProvider);
+      return userExternalLogin != null ? GetUserById(userExternalLogin.UserId) : null;
     }
 
     public string HashPassword(string password)
@@ -70,15 +77,15 @@ namespace Service.Services
       return _dbUser.Get(x => x.Id == id);
     }
 
-    public UserSession GetUserSession(int id)
+    public UserSession GetUserSession(int userId)
     {
-      return _dbSession.Get(x => x.OwnerUserId == id);
+      return _db.UserSessions.OrderByDescending(x => x.ExpirationDateTime).FirstOrDefault(x => x.OwnerUserId == userId);
     }
 
-    public void AddSession(UserSession userSession)
+    public void AddSession(UserSession userSession, TimeSpan defaultTimeOut)
     {
       // Extend the lifetime of the current user's session: current moment + fixed timeout
-      userSession.ExpirationDateTime = DateTime.Now + new TimeSpan(0, 0, 30, 0);
+      userSession.ExpirationDateTime = DateTime.Now + defaultTimeOut;
       _dbSession.Add(userSession);
     }
 

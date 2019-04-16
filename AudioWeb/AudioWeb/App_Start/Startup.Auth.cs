@@ -33,7 +33,7 @@ namespace AudioWeb
         TokenEndpointPath = new PathString("/Token"),
         AuthorizeEndpointPath = new PathString("/api/Account/SocialLogin"),
         Provider = new AppOAuthProvider(PublicClientId),
-        AccessTokenExpireTimeSpan = TimeSpan.FromDays(365),
+        AccessTokenExpireTimeSpan = TimeSpan.FromDays(30),
         AllowInsecureHttp = true // Remove after development mode
       };
     }
@@ -49,19 +49,12 @@ namespace AudioWeb
       app.UseOAuthBearerTokens(OAuthOptions);
       app.UseCookieAuthentication(new CookieAuthenticationOptions());
       app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
-
-      // Uncomment the following lines to enable logging in with third party login providers  
-      //app.UseMicrosoftAccountAuthentication(  
-      //    clientId: "",  
-      //    clientSecret: "");  
-
-      //app.UseTwitterAuthentication(  
-      //   consumerKey: "",  
-      //   consumerSecret: "");  
-
-      app.UseFacebookAuthentication(
-          appId: "204022623821507",
-          appSecret: "ae7d99936c42f782207d3eb868d5e5b2");
+      FacebookAuthenticationOptions options = new FacebookAuthenticationOptions()
+      {
+        AppId = "204022623821507",
+        AppSecret = "ae7d99936c42f782207d3eb868d5e5b2"
+      };
+      app.UseFacebookAuthentication(options);
 
       //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()  
       //{  

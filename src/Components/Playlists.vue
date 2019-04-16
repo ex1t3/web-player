@@ -89,8 +89,8 @@ import Modal from "./Modal"
 
 // importing libs
 import store from '../store'
-import axios from "axios"
-import swal from "sweetalert"
+import axios from 'axios'
+import swal from 'sweetalert'
 
 // Exporting data for current template
 export default {
@@ -109,10 +109,10 @@ export default {
     Modal
   },
   beforeMount() {
-    this.$root.$on("addSongToPlaylist", this.addSongToPlaylist)
+    this.$root.$on('addSongToPlaylist', this.addSongToPlaylist)
   },
   beforeDestroy() {
-    this.$root.$off("addSongToPlaylist", this.addSongToPlaylist)
+    this.$root.$off('addSongToPlaylist', this.addSongToPlaylist)
   },
   methods: {
     addSongToPlaylist(song, playlistId) {
@@ -122,44 +122,44 @@ export default {
     },
     userActionsHandler(flag, successfulMessage, errorMessage) {
       if (flag) {
-        swal("Yes!", successfulMessage, "success")
+        swal('Yes!', successfulMessage, 'success')
       } else {
-        swal("Oops", errorMessage, "error")
+        swal('Oops', errorMessage, 'error')
       }
     },
     openUploads() {
       let that = this
       this.$root.$emit('openInstance', 0, 'My Uploads')
-      this.$root.$emit("actLoadingRoot")
+      this.$root.$emit('actLoadingRoot')
       axios({
-        method: "GET",
-        url: "https://localhost:44343/api/Songs/GetUploadedSongs",
+        method: 'GET',
+        url: 'https://localhost:44343/api/Songs/GetUploadedSongs',
         headers: {
-          "Content-Type": "application/json; charset=UTF-8",
-          Authorization: "Bearer " + sessionStorage.getItem("access_token")
+          'Content-Type': 'application/json; charset=UTF-8',
+          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
         }
       })
         .then(function(e) {
           that.uploadedSongs = e.data
           that.isPlaylistOpened = false
           that.isUploadsOpened = true
-          that.$root.$emit("deactLoadingRoot")
+          that.$root.$emit('deactLoadingRoot')
         })
         .catch(function(e) {
-          that.$root.$emit("deactLoadingRoot")
-          that.$root.$emit("errorHandler", e)
+          that.$root.$emit('deactLoadingRoot')
+          that.$root.$emit('errorHandler', e)
         })
     },
     openPlaylist(id, name) {
       let that = this
       this.$root.$emit('openInstance', 1, name)
-      this.$root.$emit("actLoadingRoot")
+      this.$root.$emit('actLoadingRoot')
       axios({
-        method: "POST",
-        url: "https://localhost:44343/api/Songs/GetPlaylistSongs",
+        method: 'POST',
+        url: 'https://localhost:44343/api/Songs/GetPlaylistSongs',
         headers: {
-          "Content-Type": "application/json; charset=UTF-8",
-          Authorization: "Bearer " + sessionStorage.getItem("access_token")
+          'Content-Type': 'application/json; charset=UTF-8',
+          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
         },
         data: id
       })
@@ -168,11 +168,11 @@ export default {
           that.playlistSongs = e.data
           that.isPlaylistOpened = true
           that.isUploadsOpened = false
-          that.$root.$emit("deactLoadingRoot")
+          that.$root.$emit('deactLoadingRoot')
         })
         .catch(function(e) {
-          that.$root.$emit("deactLoadingRoot")
-          that.$root.$emit("errorHandler", e)
+          that.$root.$emit('deactLoadingRoot')
+          that.$root.$emit('errorHandler', e)
         })
     },
     loadFiles(event) {
@@ -180,15 +180,15 @@ export default {
       let that = this
       for (var i = 0, f = Promise.resolve(); i < files.length; i++) {
         let data = new FormData()
-        data.append("NewSong", files[i])
+        data.append('NewSong', files[i])
         f = f.then(_ =>
           axios({
-            method: "POST",
-            url: "https://localhost:44343/api/Songs/UploadSong",
+            method: 'POST',
+            url: 'https://localhost:44343/api/Songs/UploadSong',
             data: data,
             headers: {
-              "Content-Type": "application/json; charset=UTF-8",
-              Authorization: "Bearer " + sessionStorage.getItem("access_token")
+              'Content-Type': 'application/json; charset=UTF-8',
+              Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
             }
           })
             .then(function(e) {

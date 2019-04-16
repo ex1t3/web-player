@@ -33,7 +33,7 @@
         <div class="mobile-song-artist">{{ item.Artist }}</div>
         <div class="mobile-song-album">{{ item.Album }}</div>
       </div>
-      <div v-if="type != 3" class="song-remove-icon">
+      <div v-if="type < 3" class="song-remove-icon">
         <i @click="removeSong($event, index, item.Id, type)" class="far fa-trash-alt"></i>
       </div>
     </div>

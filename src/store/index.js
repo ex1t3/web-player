@@ -31,6 +31,7 @@ const state = {
   isActiveSidebar: false,
   isModalVisible: false,
   currentContentType: 0,
+  profilePictureSrc: '#ddd',
   selectedPlaylistIndex: 0,
   lastPlayedSongs: [],
   topListenedSongs: []
@@ -51,7 +52,8 @@ const getters = {
   topListenedSongs: state => state.topListenedSongs,
   isModalVisible: state => state.isModalVisible,
   currentContentType: state => state.currentContentType,
-  selectedPlaylistIndex: state => state.selectedPlaylistIndex
+  selectedPlaylistIndex: state => state.selectedPlaylistIndex,
+  profilePictureSrc: state => state.profilePictureSrc
 }
 // initialize store actions
 const actions = {
@@ -105,6 +107,9 @@ const actions = {
   },
   updateSelectedPlaylistIndex ({commit}, data) {
     commit('setSelectedPlaylistIndex', data)
+  },
+  updateProfilePictureSrc ({commit}, data) {
+    commit('setProfilePictureSrc', data)
   }
 }
 
@@ -173,7 +178,7 @@ const mutations = {
     if (state.lastPlayedSongs.some(e => e.Id === data.Id)) {
       let index = state.lastPlayedSongs.map((e) => { return e.Id }).indexOf(data.Id)
       state.lastPlayedSongs.splice(index, 1)
-    } else {
+    } else if (state.lastPlayedSongs.length === 5) {
       state.lastPlayedSongs.length = state.lastPlayedSongs.length - 1
     }
     state.lastPlayedSongs.unshift(data)
@@ -186,6 +191,9 @@ const mutations = {
   },
   setSelectedPlaylistIndex (state, data) {
     state.selectedPlaylistIndex = data
+  },
+  setProfilePictureSrc (state, data) {
+    state.profilePictureSrc = 'url(' + data + ')'
   }
 }
 // instantiate vuex store

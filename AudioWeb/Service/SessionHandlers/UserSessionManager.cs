@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Web;
 using DAL;
 using Microsoft.Owin;
 using Model.Models;
@@ -10,7 +11,7 @@ namespace Service.SessionHandlers
 {
   public class UserSessionManager
   {
-    private static readonly TimeSpan DefaultSessionTimeout = new TimeSpan(0, 0, 30, 0);
+    private static readonly TimeSpan DefaultSessionTimeout = new TimeSpan(30, 0, 0, 0);
     public static bool IsAuthenticated { get; set; }
 
     protected readonly IOwinContext OwinContext;
@@ -38,12 +39,7 @@ namespace Service.SessionHandlers
 
     private string GetCurrentUserId()
     {
-      if (this.OwinContext.Authentication.User.Identity == null)
-      {
-        return null;
-      }
-
-      return this.OwinContext.Authentication.User.Identity.GetUserId();
+      return OwinContext.Authentication.User.Identity?.GetUserId();
     }
 
     /// <summary>
@@ -51,16 +47,18 @@ namespace Service.SessionHandlers
     /// This will configure the user's bearer authorization token to expire after
     /// certain period of time (e.g. 30 minutes, see UserSessionTimeout in Web.config)
     /// </summary>
-    public void CreateUserSession(string username, string authToken)
+    public void CreateUserSession(string username, string authToken, HttpRequest request)
     {
       var userId = _userService.GetUserByName(username).Id;
       IsAuthenticated = true;
       var userSession = new UserSession()
       {
         OwnerUserId = userId,
-        AuthToken = authToken
+        AuthToken = authToken,
+        UserAgent = request.UserAgent,
+        IpAddress = request.UserHostAddress
       };
-      _userService.AddSession(userSession);
+      _userService.AddSession(userSession, DefaultSessionTimeout);
       
     }
 
@@ -71,9 +69,9 @@ namespace Service.SessionHandlers
     /// </summary>
     public void InValidateUserSession()
     {
-      string authToken = this.GetCurrentBearerAuthrorizationToken();
+      var authToken = this.GetCurrentBearerAuthrorizationToken();
       authToken = authToken?.Substring(7);
-      var currentUserId = Int32.Parse(this.GetCurrentUserId());
+      var currentUserId = int.Parse(this.GetCurrentUserId());
       var userSession = this._db.UserSessions.FirstOrDefault(session =>
           session.AuthToken == authToken && session.OwnerUserId == currentUserId);
       IsAuthenticated = false;
@@ -91,10 +89,10 @@ namespace Service.SessionHandlers
     /// <returns>true if the session is valid</returns>
     public bool ReValidateSession()
     {
-      string authToken = this.GetCurrentBearerAuthrorizationToken();
+      var authToken = this.GetCurrentBearerAuthrorizationToken();
       authToken = authToken?.Substring(7);
       IsAuthenticated = true;
-      var currentUserId = this.GetCurrentUserId() == null ? 0 : Int32.Parse(GetCurrentUserId());
+      var currentUserId = this.GetCurrentUserId() == null ? 0 : int.Parse(GetCurrentUserId());
       var userSession = this._db.UserSessions.FirstOrDefault(session => session.AuthToken == authToken && session.OwnerUserId == currentUserId);
 
       if (userSession == null)

@@ -32,6 +32,8 @@ namespace Model.Models
     public int OwnerUserId { get; set; }
     public string AuthToken { get; set; }
     public DateTime ExpirationDateTime { get; set; }
+    public string UserAgent { get; set; }
+    public string IpAddress { get; set; }
   }
 
   public class UserExternalLogin 

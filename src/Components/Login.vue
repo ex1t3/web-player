@@ -106,10 +106,9 @@ export default {
       axios({
         type: 'GET',
         url: 'https://localhost:44343/api/Account/ExternalLogins?returnUrl=%2F&generateState=true'
+      }).then(function (e) {
+        window.location = 'https://localhost:44343' + e.data[provider].url
       })
-        .then(function (e) {
-          window.location = 'https://localhost:44343' + e.data[provider].url
-        })
       this.$root.$emit('deactLoadingRoot')
     },
     register (e) {
@@ -149,6 +148,15 @@ export default {
       })
     }
   },
+  created() {
+		(function(d, s, id){
+			let js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) {return;}
+			js = d.createElement(s); js.id = id;
+			js.src = "https://connect.facebook.net/en_US/sdk.js";
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+	},
   beforeMount() {
     if (window.location.hash) {
       this.$root.$emit('actLoadingRoot')
@@ -166,6 +174,20 @@ export default {
           {
             that.$root.$emit('deactLoadingRoot')
             sessionStorage.setItem('access_token', paramObj.access_token)
+            window.fbAsyncInit = function () {
+              FB.init({
+                appId: '204022623821507',
+                cookie: true,
+                xfbml: true,
+                version: 'v3.2'
+              })
+
+              FB.getLoginStatus(function (response) {
+                let userId = response.authResponse.userID
+                let src = 'https://graph.facebook.com/' + userId + '/picture';
+                that.$store.dispatch('updateProfilePictureSrc', src)
+              })
+            }
             break
           }
         case 'error_login':
@@ -318,13 +340,11 @@ export default {
 }
 .input-group .button-gradient:hover {
     background: linear-gradient(335deg, #9670e7 0%, #f57f52 100%);
-    box-shadow: 0px 11px 8em rgba(167, 151, 255, 0.63);
 }
 .input-group .button-gradient:focus,
 .input-group .button-gradient:active {
     background: #fff;
     color: #000;
-    box-shadow: 0px 11px 8em rgba(167, 151, 255, 0.63)
 }
 .input-group .button-gradient {
     color: white;
@@ -356,6 +376,7 @@ button {
     font-size: 0.7em;
     transition: background-color 0.3s, box-shadow 0.3s, color 0.3s;
     margin: 1em;
+    border: 1px solid;
 }
 .button-google {
     border: 1px solid rgba(219, 68, 55, 0.42);

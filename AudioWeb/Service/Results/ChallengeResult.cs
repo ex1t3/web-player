@@ -21,8 +21,7 @@ namespace Service.Results
     {
       Request.GetOwinContext().Authentication.Challenge(LoginProvider);
 
-      HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-      response.RequestMessage = Request;
+      HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Unauthorized) {RequestMessage = Request};
       return Task.FromResult(response);
     }
   }
