@@ -1,6 +1,7 @@
 <template>
   <div class="absolute-items">
-    <div :style="{background: profilePictureSrc}" class="profiler-round">
+    <div class="profiler-round">
+      <img :src="$login.user.Photo"/>
       <div class="profile-menu">      
         <ul class="profile-link-list">
           <li><i class="fas profile-item-icon fa-user"></i>Profile</li>
@@ -83,8 +84,7 @@ export default {
     }
   },
   computed: mapGetters({
-    isActiveSidebar: 'isActiveSidebar',
-    profilePictureSrc: 'profilePictureSrc'
+    isActiveSidebar: 'isActiveSidebar'
   })
 }
 </script>
@@ -135,7 +135,16 @@ export default {
   text-align: center;
   border-radius: 50%;
   cursor: pointer;
+  background-color: #ddd;
+  box-shadow: 0px 5px 20px rgba(221, 221, 221, 0.7607843137254902);
   z-index: 999;
+}
+.profiler-round img {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  right: 0;
+  border-radius: 50%
 }
 .sidebar-active {
   left: 220px;

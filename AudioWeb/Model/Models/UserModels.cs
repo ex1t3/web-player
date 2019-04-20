@@ -13,15 +13,16 @@ namespace Model.Models
   {   
     public int Id { get; set; }
     [Required]
-    public string Username { get; set; }
+    public string Fullname { get; set; }
     [Required]
     public string Password { get; set; }
     public bool IsExtraLogged { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
+    public string Photo { get; set; }
     public bool EmailConfirmed { get; set; }
-    public IEnumerable<UserExternalLogin> UserExternalLogins { get; set; }
-    public IEnumerable<UserSession> UserSessions { get; set; }
+    public List<UserExternalLogin> UserExternalLogins { get; set; }
+    public List<UserSession> UserSessions { get; set; }
 
     public static int LastPlayedSongLimit = 5;
   }
@@ -29,7 +30,7 @@ namespace Model.Models
   public class UserSession
   {
     public int Id { get; set; }
-    public int OwnerUserId { get; set; }
+    public int UserId { get; set; }
     public string AuthToken { get; set; }
     public DateTime ExpirationDateTime { get; set; }
     public string UserAgent { get; set; }

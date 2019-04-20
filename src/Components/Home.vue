@@ -1,17 +1,19 @@
 <template>
   <div class="home-page-main-block">
     <div v-if="isPageLoaded && !isAllTopTracksOpened" class="home-page-content-block">
-      <h4>Your last played Songs</h4>
-      <div class="home-songs-items-block last-played-songs">
-        <div @click="playSong(item['Id'], 0)" class="home-songs-item" :key="index"
-          v-for="(item, index) in lastPlayedSongs">
-          <div class="home-songs-item--cover">
-            <img v-bind:src="item.AlbumCover" class="last-played-cover-image">
-          </div>
-          <div class="home-songs-item--title">
-            <div class="home-songs-item--name">{{ item.Name }}</div>
-            <div class="home-songs-item--artist">{{ item.Artist }}</div>
-            <div class="home-songs-item--album">{{ item.Album }}</div>
+      <div v-if="lastPlayedSongs.length > 0">
+        <h4>Your last played Songs</h4>
+        <div class="home-songs-items-block last-played-songs">
+          <div @click="playSong(item['Id'], 0)" class="home-songs-item" :key="index"
+            v-for="(item, index) in lastPlayedSongs">
+            <div class="home-songs-item--cover">
+              <img v-bind:src="item.AlbumCover" class="last-played-cover-image">
+            </div>
+            <div class="home-songs-item--title">
+              <div class="home-songs-item--name">{{ item.Name }}</div>
+              <div class="home-songs-item--artist">{{ item.Artist }}</div>
+              <div class="home-songs-item--album">{{ item.Album }}</div>
+            </div>
           </div>
         </div>
       </div>

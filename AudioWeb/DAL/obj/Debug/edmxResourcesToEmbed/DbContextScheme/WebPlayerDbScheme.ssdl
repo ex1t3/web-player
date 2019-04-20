@@ -72,7 +72,7 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Username" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Fullname" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Password" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Name" Type="nvarchar(max)" />
     <Property Name="Email" Type="nvarchar(max)" />
@@ -84,7 +84,7 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="OwnerUserId" Type="int" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
     <Property Name="AuthToken" Type="nvarchar(max)" />
     <Property Name="ExpirationDateTime" Type="datetime" Nullable="false" />
   </EntityType>
@@ -154,7 +154,7 @@
         <PropertyRef Name="Id" />
       </Principal>
       <Dependent Role="UserSessions">
-        <PropertyRef Name="OwnerUserId" />
+        <PropertyRef Name="UserId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

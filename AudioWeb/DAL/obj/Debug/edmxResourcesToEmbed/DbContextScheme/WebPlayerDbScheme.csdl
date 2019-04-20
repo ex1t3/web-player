@@ -87,7 +87,7 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Username" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Fullname" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -105,7 +105,7 @@
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="OwnerUserId" Type="Int32" Nullable="false" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
     <Property Name="AuthToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="ExpirationDateTime" Type="DateTime" Nullable="false" Precision="3" />
     <NavigationProperty Name="User" Relationship="Self.FK_dbo_UserSessions" FromRole="UserSessions" ToRole="Users" />
@@ -260,7 +260,7 @@
         <PropertyRef Name="Id" />
       </Principal>
       <Dependent Role="UserSessions">
-        <PropertyRef Name="OwnerUserId" />
+        <PropertyRef Name="UserId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

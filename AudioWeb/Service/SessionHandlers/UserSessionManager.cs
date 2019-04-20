@@ -47,13 +47,12 @@ namespace Service.SessionHandlers
     /// This will configure the user's bearer authorization token to expire after
     /// certain period of time (e.g. 30 minutes, see UserSessionTimeout in Web.config)
     /// </summary>
-    public void CreateUserSession(string username, string authToken, HttpRequest request)
+    public void CreateUserSession(int userId, string authToken, HttpRequest request)
     {
-      var userId = _userService.GetUserByName(username).Id;
       IsAuthenticated = true;
       var userSession = new UserSession()
       {
-        OwnerUserId = userId,
+        UserId = userId,
         AuthToken = authToken,
         UserAgent = request.UserAgent,
         IpAddress = request.UserHostAddress
@@ -73,7 +72,7 @@ namespace Service.SessionHandlers
       authToken = authToken?.Substring(7);
       var currentUserId = int.Parse(this.GetCurrentUserId());
       var userSession = this._db.UserSessions.FirstOrDefault(session =>
-          session.AuthToken == authToken && session.OwnerUserId == currentUserId);
+          session.AuthToken == authToken && session.UserId == currentUserId);
       IsAuthenticated = false;
       if (userSession != null)
       {
@@ -93,7 +92,7 @@ namespace Service.SessionHandlers
       authToken = authToken?.Substring(7);
       IsAuthenticated = true;
       var currentUserId = this.GetCurrentUserId() == null ? 0 : int.Parse(GetCurrentUserId());
-      var userSession = this._db.UserSessions.FirstOrDefault(session => session.AuthToken == authToken && session.OwnerUserId == currentUserId);
+      var userSession = this._db.UserSessions.FirstOrDefault(session => session.AuthToken == authToken && session.UserId == currentUserId);
 
       if (userSession == null)
       {

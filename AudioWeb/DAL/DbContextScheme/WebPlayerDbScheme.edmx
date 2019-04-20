@@ -77,7 +77,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Username" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Fullname" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Password" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Name" Type="nvarchar(max)" />
           <Property Name="Email" Type="nvarchar(max)" />
@@ -89,7 +89,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="OwnerUserId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
           <Property Name="AuthToken" Type="nvarchar(max)" />
           <Property Name="ExpirationDateTime" Type="datetime" Nullable="false" />
         </EntityType>
@@ -159,7 +159,7 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="UserSessions">
-              <PropertyRef Name="OwnerUserId" />
+              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -394,7 +394,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Username" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Fullname" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -412,7 +412,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OwnerUserId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
           <Property Name="AuthToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ExpirationDateTime" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="User" Relationship="Self.FK_dbo_UserSessions" FromRole="UserSessions" ToRole="Users" />
@@ -567,7 +567,7 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="UserSessions">
-              <PropertyRef Name="OwnerUserId" />
+              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -710,7 +710,7 @@
             <EntityTypeMapping TypeName="WebPlayerDbModel.User">
               <MappingFragment StoreEntitySet="Users">
                 <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Fullname" ColumnName="Fullname" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
@@ -723,7 +723,7 @@
             <EntityTypeMapping TypeName="WebPlayerDbModel.UserSession">
               <MappingFragment StoreEntitySet="UserSessions">
                 <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="OwnerUserId" ColumnName="OwnerUserId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="AuthToken" ColumnName="AuthToken" />
                 <ScalarProperty Name="ExpirationDateTime" ColumnName="ExpirationDateTime" />
               </MappingFragment>

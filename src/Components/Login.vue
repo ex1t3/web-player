@@ -8,8 +8,8 @@
                 <form class="login-form">
                 <div class="login-form-body">
                     <div class="input-group">
-                        <label class="label" for="Username">Username</label>
-                        <input ref="UsernameLogin" class="input-field" type="text" required />
+                        <label class="label" for="Email">Email</label>
+                        <input ref="EmailLogin" class="input-field" type="text" required />
                     </div>
                     <div class="input-group">
                         <label class="label" for="Password">Password</label>
@@ -21,15 +21,15 @@
                 </div>
                     <div class="separator">OR</div>
                     <div class="social-block">
-                        <button @click="externalLogIn(1)" type="button" class="button-form button-google"><i class="form-button-brand fab fa-google"></i>GOOGLE</button>
-                        <button @click="externalLogIn(0)" type="button" class="button-form button-facebook"><i class="form-button-brand fab fa-facebook"></i>FACEBOOK</button>
+                        <button @click="externalLogIn(0)" type="button" class="button-form button-google"><i class="form-button-brand fab fa-google"></i>GOOGLE</button>
+                        <button @click="externalLogIn(1)" type="button" class="button-form button-facebook"><i class="form-button-brand fab fa-facebook"></i>FACEBOOK</button>
                     </div>
                 </form>
                 <form ref="signup" class="signup-form">
                 <div class="login-form-body">
                     <div class="input-group">
-                        <label class="label">Username</label>
-                        <input name="Username" class="input-field" type="text" required />
+                        <label class="label">Fullname</label>
+                        <input name="Fullname" class="input-field" type="text" required />
                     </div>
                     <div class="input-group">
                         <label class="label">Email</label>
@@ -40,27 +40,44 @@
                         <input name="Password" class="input-field" type="password" required />
                     </div>
                     <div class="input-group">
-                        <label class="label">Confrim password</label>
+                        <label class="label">confirm password</label>
                         <input name="ConfirmPassword" class="input-field" type="password" required />
                     </div>
                     <div class="input-group centered">
                         <button v-on:click="register($event)" class="button-form button-gradient" type="submit">SIGN UP</button>
                     </div>
-                    <div class="separator">OR</div>
+                    <!-- <div class="separator">OR</div>
                     <div class="social-block">
                         <button @click="externalLogIn(1)" type="button" class="button-form button-google"><i class="form-button-brand fab fa-google"></i>GOOGLE</button>
                         <button @click="externalLogIn(0)" type="button" class="button-form button-facebook"><i class="form-button-brand fab fa-facebook"></i>FACEBOOK</button>
-                    </div>
+                    </div> -->
                 </div>
                 </form>
             </div>
     </div>
 </template>
 <script>
+// Importing necessary components and libs
 import {mapGetters} from 'vuex'
+import Vue from 'vue'
 import store from '../store'
 import axios from 'axios'
 import swal from 'sweetalert'
+
+// Initializing rootData
+var rootData = new Vue({
+  data: {
+    user: []
+  }
+})
+
+// Installing $login variable for storing reactive data
+rootData.install = function () {
+  Object.defineProperty(Vue.prototype, '$login', {
+    get () { return rootData }
+  })
+}
+Vue.use(rootData)
 
 // Exporting data for current template
 export default {
@@ -71,11 +88,28 @@ export default {
     }
   },
   methods: {
+    postLogin() {
+      let that = this
+      axios({
+        method: 'GET',
+        url: 'https://localhost:44343/api/Account/CheckToken',
+        headers: {
+          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+        }
+      }).then(function (e) {
+        that.$root.$emit('deactLoadingRoot')
+        that.$login.user = e.data
+        that.$store.dispatch('logIn')
+        that.$store.dispatch('setHomePage')
+      }).catch(function (e) {
+        that.$root.$emit('deactLoadingRoot')
+      })
+    },
     logIn (e) {
       this.$root.$emit('actLoadingRoot')
       e.preventDefault()
       let loginData = {
-        Username: this.$refs.UsernameLogin.value,
+        Email: this.$refs.EmailLogin.value,
         Password: this.$refs.PasswordLogin.value
       }
       if (loginData.Username !== '' && loginData.Password !== '') {
@@ -88,10 +122,8 @@ export default {
             'Content-Type': 'application/json; charset=UTF-8'
           }
         }).then(function (response) {
-          that.$root.$emit('deactLoadingRoot')
           sessionStorage.setItem('access_token', response.data.access_token)
-          that.$store.dispatch('logIn')
-          that.$store.dispatch('setHomePage')
+          that.postLogin()
         }).catch(function (e) {
           that.$root.$emit('deactLoadingRoot')
           that.$root.$emit('errorHandler', e)
@@ -120,7 +152,7 @@ export default {
       for (let i = 0; i <= 3; i++) {
         data[form[i].name] = form[i].value
       }
-      if (data.Username === '' || data.Email === '' || data.Password === '') {
+      if (data.Fullname === '' || data.Email === '' || data.Password === '') {
         that.$root.$emit('deactLoadingRoot')
         swal('Oops', 'All fields should be filled', 'error')
         return
@@ -138,25 +170,68 @@ export default {
           'Content-Type': 'application/json; charset=UTF-8'
         }
       }).then(function (response) {
-        that.$root.$emit('deactLoadingRoot')
         sessionStorage.setItem('access_token', response.data.access_token)
-        that.$store.dispatch('logIn')
+        that.postLogin()
       }).catch(function (e) {
         that.$root.$emit('deactLoadingRoot')
         console.log(e)
         that.$root.$emit('errorHandler', e)
       })
+    },
+    updateUser () {
+      let that = this
+      axios({
+        method: 'POST',
+        url: 'https://localhost:44343/api/Account/UpdateUser',
+        data: that.$login.user,
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization' : 'Bearer ' + sessionStorage.getItem('access_token')
+        }
+      })
+    },
+    getFacebookPicture () {
+      let that = this
+      window.fbAsyncInit = function () {
+          FB.init({
+            appId: '204022623821507',
+            cookie: true,
+            xfbml: true,
+            version: 'v3.2'
+          })
+
+          FB.getLoginStatus(function (response) {
+            let userId = response.authResponse.userID
+            let src = 'https://graph.facebook.com/' + userId + '/picture'
+            that.$login.user.Photo = src
+            that.updateUser()
+          })
+      }
+    },
+    getGooglePicture() {
+      let that = this
+      // 2. Initialize the JavaScript client library.
+      gapi.client.init({
+        'apiKey': 'AIzaSyD7FsAX3ZcWVKDJwBldCDkqu97j9r7L9ts',
+        // Your API key will be automatically added to the Discovery Document URLs.
+        'discoveryDocs': ['https://people.googleapis.com/$discovery/rest'],
+        // clientId and scope are optional if auth is not required.
+        'clientId': '598694976413-t3qat6cf9r4vh7gh24tvt7ebn66f5vu7.apps.googleusercontent.com',
+        'scope': 'profile',
+      }).then(function () {
+        // 3. Initialize and make the API request.
+        return gapi.client.people.people.get({
+          'resourceName': 'people/me',
+          'personFields': 'photos'
+        })
+      }).then(function (response) {
+        that.$login.user.Photo = response.result.photos[0].url
+        that.updateUser()
+      }, function (reason) {
+        console.log('Error: ' + reason.result.error.message);
+      })
     }
   },
-  created() {
-		(function(d, s, id){
-			let js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) {return;}
-			js = d.createElement(s); js.id = id;
-			js.src = "https://connect.facebook.net/en_US/sdk.js";
-			fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
-	},
   beforeMount() {
     if (window.location.hash) {
       this.$root.$emit('actLoadingRoot')
@@ -169,64 +244,69 @@ export default {
         paramObj[value] = params.get(value)
       }
       var keyNames = Object.keys(paramObj)
+      console.log(keyNames)
       switch (keyNames[0]) {
         case 'access_token':
           {
-            that.$root.$emit('deactLoadingRoot')
             sessionStorage.setItem('access_token', paramObj.access_token)
-            window.fbAsyncInit = function () {
-              FB.init({
-                appId: '204022623821507',
-                cookie: true,
-                xfbml: true,
-                version: 'v3.2'
-              })
-
-              FB.getLoginStatus(function (response) {
-                let userId = response.authResponse.userID
-                let src = 'https://graph.facebook.com/' + userId + '/picture';
-                that.$store.dispatch('updateProfilePictureSrc', src)
-              })
+            if (keyNames[1] === 'register_facebook') {
+              (function (d, s, id) {
+                let js, fjs = d.getElementsByTagName(s)[0]
+                if (d.getElementById(id)) {
+                  return
+                }
+                js = d.createElement(s)
+                js.id = id;
+                js.src = "https://connect.facebook.net/en_US/sdk.js"
+                fjs.parentNode.insertBefore(js, fjs)
+              }(document, 'script', 'facebook-jssdk'))
+              if (typeof FB == 'undefined') {
+                setTimeout(() => {
+                  this.getFacebookPicture()
+                }, 500)
+              } else {
+                this.getFacebookPicture()
+              }
+            }
+            if (keyNames[1] === 'register_google') {
+              (function (d, s, id) {
+                let js, fjs = d.getElementsByTagName(s)[0]
+                if (d.getElementById(id)) {
+                  return
+                }
+                js = d.createElement(s)
+                js.id = id
+                js.src = "https://apis.google.com/js/api.js"
+                fjs.parentNode.insertBefore(js, fjs)
+              }(document, 'script', 'google-jssdk'))
+              if (typeof gapi == 'undefined') {
+                setTimeout(() => {
+                  gapi.load('client', this.getGooglePicture)
+                }, 500)
+              } else {
+                gapi.load('client', this.getGooglePicture)
+              }          
             }
             break
           }
         case 'error_login':
           {
-            that.$root.$emit('deactLoadingRoot')
             let arr = paramObj.error_login.replace(/_/g, ' ')
             swal('Error', arr, 'error')
             break
           }
-
-        default:
-          this.$root.$emit('deactLoadingRoot')
       }
+      this.$root.$emit('deactLoadingRoot')
     }
   },
-  mounted() {
+  mounted () {
     let that = this
     this.$root.$emit('actLoadingRoot')
     let token = sessionStorage.getItem('access_token')
     if (token !== null) {
-      axios({
-          method: 'GET',
-          url: 'https://localhost:44343/api/Account/CheckToken',
-          headers: {
-            Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
-          }
-        })
-        .then(function (e) {
-          that.$root.$emit('deactLoadingRoot')
-          if (e.data) {
-            that.$store.dispatch('logIn')
-            that.$store.dispatch('setHomePage')
-          }
-        })
-        .catch(function (e) {
-          that.$root.$emit('deactLoadingRoot')
-        })
+      this.postLogin()
     } else {
-      that.$root.$emit('deactLoadingRoot')
+      this.$root.$emit('deactLoadingRoot')
     }
   },
   computed: mapGetters({
@@ -305,12 +385,10 @@ export default {
   opacity: 0;
   width: 0;
 }
-.login-form .input-group {
-    margin: 25px auto;
-}
+
 .input-group {
     width: 60%;
-    margin: 10px auto;
+    margin: 25px auto;
 }
 .input-group .label {
     font-size: 16px;
@@ -418,6 +496,7 @@ button {
     left: 0;
     background: -webkit-linear-gradient(30deg, rgb(243, 133, 120), rgba(31, 28, 236, 0.88));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     font-style: initial;
     font-weight: 300;

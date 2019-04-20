@@ -10,7 +10,8 @@ namespace Model.Models
   public class LoginUserViewModel
   {
     [Required]
-    public string Username { get; set; }
+    public string Email { get; set; }
+    public int ClientId { get; set; }
     [Required]
     public string Password { get; set; }
   }

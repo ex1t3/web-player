@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -24,17 +25,12 @@ namespace Service.Services
       _dbSession = new DbRepository<UserSession>(new DefaultDbFactory());
     }
 
-    public bool CheckIfUserCredentialExists(string username, string password)
+    public bool CheckIfUserExists(string email)
     {
-      return _db.Users.Any(x => x.Password == password && x.Username == username && x.IsExtraLogged == false);
+      return _db.Users.Any(x=> x.Email == email && email != null);
     }
 
-    public bool CheckIfUserExists(string username, string email)
-    {
-      return _db.Users.Any(x => x.Username == username || x.Email == email && email != null);
-    }
-
-    public User GetUserByProviderKey(string providerKey, string loginProvider)
+    public User GetUserByProviderData(string providerKey, string loginProvider)
     {
       var userExternalLogin =
         _dbUserExtrenalLogin.Get(x => x.ProviderKey == providerKey && x.LoginProvider == loginProvider);
@@ -62,24 +58,33 @@ namespace Service.Services
       return user.Id.ToString();
     }
 
-    public List<User> GetAll()
+    public void UpdateUser(User user)
     {
-      return _dbUser.GetAll().ToList();
+      var userBeforeUpdate = _db.Users.AsNoTracking().FirstOrDefault(x => x.Id == user.Id);
+      if (userBeforeUpdate == null) return;
+      user.Password = userBeforeUpdate.Password;
+      _dbUser.Update(user);
     }
 
-    public User GetUserByName(string name)
+    public User GetUserByEmail(string email)
     {
-      return _dbUser.Get(x => x.Username == name);
+      return _dbUser.Get(x => x.Email == email);
+    }
+
+    public User GetUserByIdentityName(string name)
+    {
+      var id = int.Parse(name);
+      return _dbUser.GetById(id);
     }
 
     public User GetUserById(int id)
     {
-      return _dbUser.Get(x => x.Id == id);
+      return _dbUser.GetById(id);
     }
 
     public UserSession GetUserSession(int userId)
     {
-      return _db.UserSessions.OrderByDescending(x => x.ExpirationDateTime).FirstOrDefault(x => x.OwnerUserId == userId);
+      return _db.UserSessions.OrderByDescending(x => x.ExpirationDateTime).FirstOrDefault(x => x.UserId == userId);
     }
 
     public void AddSession(UserSession userSession, TimeSpan defaultTimeOut)

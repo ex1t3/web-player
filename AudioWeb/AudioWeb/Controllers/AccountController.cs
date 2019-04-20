@@ -39,7 +39,7 @@ namespace AudioWeb.Controllers
 
     // POST api/Account/Register
     [HttpPost, AllowAnonymous, Route("Register")]
-    public async Task<IHttpActionResult> RegisterUser(User model, bool isExtrenal = false, UserExternalLogin externalLogin = null)
+    public async Task<IHttpActionResult> RegisterUser(User model, bool isExternal = false)
     {
 
       if (model == null)
@@ -52,19 +52,21 @@ namespace AudioWeb.Controllers
         return this.BadRequest(this.ModelState);
       }
 
-      var emailExists = _userService.CheckIfUserExists(model.Username, model.Email);
-      if (emailExists)
+      var emailExists = _userService.CheckIfUserExists(model.Email);
+      if (emailExists && !isExternal)
       {
-        return this.BadRequest("Username or E-mail are already taken.");
+        return this.BadRequest("E-mail is already taken.");
       }
 
       var user = new User()
       {
-        Username = model.Username,
+        Fullname = model.Fullname,
         Name = model.Name,
         Email = model.Email,
+        Photo =
+          "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAyOTkuOTk3IDI5OS45OTciIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDI5OS45OTcgMjk5Ljk5NzsiIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI1MTJweCIgaGVpZ2h0PSI1MTJweCIgY2xhc3M9IiI+PGc+PGc+Cgk8Zz4KCQk8cGF0aCBkPSJNMTQ5Ljk5NiwwQzY3LjE1NywwLDAuMDAxLDY3LjE1OCwwLjAwMSwxNDkuOTk3YzAsODIuODM3LDY3LjE1NiwxNTAsMTQ5Ljk5NSwxNTBzMTUwLTY3LjE2MywxNTAtMTUwICAgIEMyOTkuOTk2LDY3LjE1NiwyMzIuODM1LDAsMTQ5Ljk5NiwweiBNMTUwLjQ1MywyMjAuNzYzdi0wLjAwMmgtMC45MTZIODUuNDY1YzAtNDYuODU2LDQxLjE1Mi00Ni44NDUsNTAuMjg0LTU5LjA5N2wxLjA0NS01LjU4NyAgICBjLTEyLjgzLTYuNTAyLTIxLjg4Ny0yMi4xNzgtMjEuODg3LTQwLjUxMmMwLTI0LjE1NCwxNS43MTItNDMuNzM4LDM1LjA4OS00My43MzhjMTkuMzc3LDAsMzUuMDg5LDE5LjU4NCwzNS4wODksNDMuNzM4ICAgIGMwLDE4LjE3OC04Ljg5NiwzMy43NTYtMjEuNTU1LDQwLjM2MWwxLjE5LDYuMzQ5YzEwLjAxOSwxMS42NTgsNDkuODAyLDEyLjQxOCw0OS44MDIsNTguNDg4SDE1MC40NTN6IiBkYXRhLW9yaWdpbmFsPSIjMDAwMDAwIiBjbGFzcz0iYWN0aXZlLXBhdGgiIGRhdGEtb2xkX2NvbG9yPSIjQzRDNEM1IiBmaWxsPSIjQzhDOENBIi8+Cgk8L2c+CjwvZz48L2c+IDwvc3ZnPgo=",
         Password = _userService.HashPassword(model.Password),
-        IsExtraLogged = isExtrenal,
+        IsExtraLogged = isExternal,
         EmailConfirmed = model.EmailConfirmed
       };
 
@@ -75,21 +77,84 @@ namespace AudioWeb.Controllers
         return this.BadRequest("Sorry! Something went wrong");
       }
 
-      if (model.IsExtraLogged && externalLogin != null)
+      if (model.IsExtraLogged && model.UserExternalLogins.Count > 0)
       {
-        externalLogin.UserId = user.Id;
-        _userService.AddUserExtrenalLogin(externalLogin);
+        model.UserExternalLogins[0].UserId = user.Id;
+        _userService.AddUserExtrenalLogin(model.UserExternalLogins[0]);
       }
+
       var loginResult = await this.LoginUser(new LoginUserViewModel()
       {
-        Username = model.Username,
-        Password = model.Password
+        ClientId = user.Id,
+        Password = user.Password
       }, true);
 
       return loginResult;
     }
 
 
+    // POST api/Account/Login
+    [HttpPost, AllowAnonymous, Route("Login")]
+    public async Task<IHttpActionResult> LoginUser(LoginUserViewModel model, bool isExternal = false)
+    {
+      if (!isExternal)
+      {
+        if (!ModelState.IsValid)
+        {
+          return BadRequest(ModelState);
+        }
+
+        if (model == null)
+        {
+          return this.BadRequest("Invalid user data");
+        }
+
+        var user = _userService.GetUserByEmail(model.Email);
+        if (user == null) return BadRequest("Incorrect user data");
+        if (!_userService.CheckPassword(model.Password, user.Password))
+        {
+          return BadRequest("Incorrect user data");
+        }
+
+        model.ClientId = user.Id;
+      }
+
+      // Invoke the "token" OWIN service to perform the login (POST /token)
+      // Use Microsoft.Owin.Testing.TestServer to perform in-memory HTTP POST request
+      var testServer = TestServer.Create<Startup>();
+      var requestParams = new List<KeyValuePair<string, string>>
+      {
+        new KeyValuePair<string, string>("grant_type", "password"),
+        new KeyValuePair<string, string>("username", model.ClientId.ToString()),
+        new KeyValuePair<string, string>("password", model.Password)
+      };
+
+      var requestContext = HttpContext.Current.Request;
+      var requestParamsFormUrlEncoded = new FormUrlEncodedContent(requestParams);
+      testServer.BaseAddress = new Uri("https://" + Request.RequestUri.Authority);
+      var request = testServer.CreateRequest("/Token").And(x => x.Method = HttpMethod.Post)
+          .And(x => x.Content = requestParamsFormUrlEncoded);
+      var tokenServiceResponse = await request.PostAsync();
+
+      if (tokenServiceResponse.StatusCode != HttpStatusCode.OK) return this.ResponseMessage(tokenServiceResponse);
+      // Sucessful login --> create user session in the database
+      var responseString = await tokenServiceResponse.Content.ReadAsStringAsync();
+      var jsSerializer = new JavaScriptSerializer();
+      var responseData =
+        jsSerializer.Deserialize<Dictionary<string, string>>(responseString);
+      var authToken = responseData["access_token"];
+      var identity = int.Parse(responseData["userName"]);
+      var owinContext = this.Request.GetOwinContext();
+      var userSessionManager = new UserSessionManager(owinContext, _userService);
+      if (identity > 0)
+      {
+        userSessionManager.CreateUserSession(identity, authToken, requestContext);
+      }
+      // Cleanup: delete expired sessions from the database
+      userSessionManager.DeleteExpiredSessions();
+
+      return this.ResponseMessage(tokenServiceResponse);
+    }
 
     // POST api/Account/Login
     [HttpGet]
@@ -121,26 +186,35 @@ namespace AudioWeb.Controllers
         return new ChallengeResult(provider, this);
       }
 
-      var user = _userService.GetUserByProviderKey(externalLogin.ProviderKey, externalLogin.LoginProvider);
+      var user = _userService.GetUserByProviderData(externalLogin.ProviderKey, externalLogin.LoginProvider);
       var hasRegistered = user != null;
 
       IEnumerable<Claim> claims = externalLogin.GetClaims();
       var identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
       IHttpActionResult result;
+      string url = "", loginType = "&login";
       if (hasRegistered) // if user hasn't registered yet, we should add him to database, so he'll be able to pass all the next logins
       {
-        result = await LoginUser(new LoginUserViewModel() { Password = _userService.HashPassword(identity.Name), Username = identity.Name }, true);
+        result = await LoginUser(new LoginUserViewModel() { Password = externalLogin.ProviderKey, ClientId = user.Id}, true);
       }
       else
       {
+        loginType = "&register_" + externalLogin.LoginProvider.ToLower();
         var userExternalLogin = new UserExternalLogin
         {
           LoginProvider = externalLogin.LoginProvider,
           ProviderKey = externalLogin.ProviderKey
         };
-        result = await RegisterUser(new User() { Username = identity.Name, Email = externalLogin.Email, Password = _userService.HashPassword(identity.Name), IsExtraLogged = true}, true, userExternalLogin);
+        result = await RegisterUser(new User()
+         {
+           Fullname = identity.Name,
+           Email = externalLogin.Email,
+           Password = externalLogin.ProviderKey,
+           IsExtraLogged = true,
+           UserExternalLogins = new List<UserExternalLogin> { userExternalLogin }
+      }, true);
       }
-      var url = "";
+
       if (result is BadRequestErrorMessageResult)
       {
         url = "https://" + Request.RequestUri.Authority + "#error_login=" + ((BadRequestErrorMessageResult)result).Message.Replace(" ", "_");
@@ -148,16 +222,28 @@ namespace AudioWeb.Controllers
         return Redirect(uri);
       }
 
-      var token = _userService.GetUserSession(_userService.GetUserByName(identity.Name).Id).AuthToken;
-      url = "https://" + Request.RequestUri.Authority + "#access_token=" + token;
+      var userId = _userService.GetUserByProviderData(externalLogin.ProviderKey, externalLogin.LoginProvider).Id;
+      var token = _userService.GetUserSession(userId).AuthToken;
+      url = "https://" + Request.RequestUri.Authority + "#access_token=" + token + loginType;
       return Redirect(url);
     }
 
     [HttpGet]
     [Route("CheckToken")]
-    public bool CheckToken()
+    public JsonResult<User> CheckToken()
     {
-      return true;
+      var user = _userService.GetUserByIdentityName(User.Identity.Name);
+      user.Password = null;
+      return Json(user);
+    }
+
+    [HttpPost]
+    [Route("UpdateUser")]
+    public JsonResult<bool> UpdateUser(User user)
+    {
+      if (user == null) return Json(true);
+      _userService.UpdateUser(user);
+      return Json(true);
     }
 
     // GET api/Account/ExternalLogins?returnUrl=%2F&generateState=true
@@ -193,66 +279,6 @@ namespace AudioWeb.Controllers
         State = state
       })
         .ToList();
-    }
-
-    // POST api/Account/Login
-    [HttpPost, AllowAnonymous, Route("Login")]
-    public async Task<IHttpActionResult> LoginUser(LoginUserViewModel model, bool isExternal = false)
-    {
-      if (!isExternal)
-      {
-        if (!ModelState.IsValid)
-        {
-          return BadRequest(ModelState);
-        }
-
-        if (model == null)
-        {
-          return this.BadRequest("Invalid user data");
-        }
-
-        var user = _userService.GetUserByName(model.Username);
-        if (user == null) return BadRequest("Incorrect user data");
-        if (!_userService.CheckPassword(model.Password, user.Password))
-        {
-          return BadRequest("Incorrect user data");
-        }
-      }
-
-      // Invoke the "token" OWIN service to perform the login (POST /token)
-      // Use Microsoft.Owin.Testing.TestServer to perform in-memory HTTP POST request
-      var testServer = TestServer.Create<Startup>();
-      var requestParams = new List<KeyValuePair<string, string>>
-      {
-        new KeyValuePair<string, string>("grant_type", "password"),
-        new KeyValuePair<string, string>("username", model.Username),
-        new KeyValuePair<string, string>("password", model.Password)
-      };
-
-      var requestContext = HttpContext.Current.Request;
-      var requestParamsFormUrlEncoded = new FormUrlEncodedContent(requestParams);
-      testServer.BaseAddress = new Uri("https://" + Request.RequestUri.Authority);
-      var request = testServer.CreateRequest("/Token").And(x => x.Method = HttpMethod.Post)
-          .And(x => x.Content = requestParamsFormUrlEncoded);
-      var tokenServiceResponse = await request.PostAsync();
-
-      if (tokenServiceResponse.StatusCode == HttpStatusCode.OK)
-      {
-        // Sucessful login --> create user session in the database
-        var responseString = await tokenServiceResponse.Content.ReadAsStringAsync();
-        var jsSerializer = new JavaScriptSerializer();
-        var responseData =
-          jsSerializer.Deserialize<Dictionary<string, string>>(responseString);
-        var authToken = responseData["access_token"];
-        var username = responseData["userName"];
-        var owinContext = this.Request.GetOwinContext();
-        var userSessionManager = new UserSessionManager(owinContext, _userService);
-        userSessionManager.CreateUserSession(username, authToken, requestContext);
-        // Cleanup: delete expired sessions from the database
-        userSessionManager.DeleteExpiredSessions();
-      }
-
-      return this.ResponseMessage(tokenServiceResponse);
     }
 
     // POST api/Account/Logout

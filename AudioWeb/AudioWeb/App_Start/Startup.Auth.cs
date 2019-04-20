@@ -3,6 +3,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.Google;
 using Owin;
 using Model.Models;
 using Microsoft.Owin.Security.OAuth;
@@ -49,18 +50,16 @@ namespace AudioWeb
       app.UseOAuthBearerTokens(OAuthOptions);
       app.UseCookieAuthentication(new CookieAuthenticationOptions());
       app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
-      FacebookAuthenticationOptions options = new FacebookAuthenticationOptions()
+      app.UseFacebookAuthentication(new FacebookAuthenticationOptions()
+        {
+          AppId = "204022623821507",
+          AppSecret = "ae7d99936c42f782207d3eb868d5e5b2"
+        });
+      app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
       {
-        AppId = "204022623821507",
-        AppSecret = "ae7d99936c42f782207d3eb868d5e5b2"
-      };
-      app.UseFacebookAuthentication(options);
-
-      //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()  
-      //{  
-      //    ClientId = "",  
-      //    ClientSecret = ""  
-      //});
+        ClientId = "598694976413-t3qat6cf9r4vh7gh24tvt7ebn66f5vu7.apps.googleusercontent.com",
+        ClientSecret = "RNcndUXj9DpwR_oMY-qBXcJm"
+      });
     }
   }
 }

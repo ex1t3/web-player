@@ -1,7 +1,6 @@
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using Service.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,21 +19,18 @@ namespace Service.Providers
     }
 
     /// <inheritdoc />
+    /// /Token
     public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
     {
-      var userService = new UserService();
-
-      
-      var user = userService.GetUserByName(context.UserName);
       ClaimsIdentity oAuthIdentity = new ClaimsIdentity(OAuthDefaults.AuthenticationType);
       ClaimsIdentity cookiesIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationType);
 
       oAuthIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
       cookiesIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
-      oAuthIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-      cookiesIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+      oAuthIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, context.UserName));
+      cookiesIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, context.UserName));
 
-      AuthenticationProperties properties = CreateProperties(user.Username);
+      AuthenticationProperties properties = CreateProperties(context.UserName);
       AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
       context.Validated(ticket);
       context.Request.Context.Authentication.SignIn(cookiesIdentity);
@@ -42,7 +38,7 @@ namespace Service.Providers
 
     public override Task TokenEndpoint(OAuthTokenEndpointContext context)
     {
-      foreach (KeyValuePair<string, string> property in context.Properties.Dictionary)
+      foreach (var property in context.Properties.Dictionary)
       {
         context.AdditionalResponseParameters.Add(property.Key, property.Value);
       }
@@ -64,7 +60,7 @@ namespace Service.Providers
     public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
     {
       if (context.ClientId != _publicClientId) return Task.FromResult<object>(null);
-      Uri expectedRootUri = new Uri(context.Request.Uri, "/");
+      var expectedRootUri = new Uri(context.Request.Uri, "/");
 
       if (expectedRootUri.AbsoluteUri == context.RedirectUri)
       {

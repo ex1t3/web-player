@@ -228,6 +228,7 @@ E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Desharp.dll
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\EntityFramework.dll
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\EntityFramework.SqlServer.dll
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\EntityFramework.SqlServerCompact.dll
+E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Facebook.dll
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Microsoft.AI.Agent.Intercept.dll
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Microsoft.AI.DependencyCollector.dll
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Microsoft.AI.PerfCounterCollector.dll
@@ -284,6 +285,7 @@ E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Desharp.xml
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\EntityFramework.xml
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\EntityFramework.SqlServer.xml
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\EntityFramework.SqlServerCompact.xml
+E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Facebook.xml
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Microsoft.AspNet.Identity.Core.xml
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Microsoft.AspNet.Identity.Owin.xml
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
@@ -296,6 +298,7 @@ E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Microsoft.Owin.Security.Cookies.x
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Microsoft.Owin.Security.Google.xml
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Microsoft.Owin.Security.OAuth.xml
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Microsoft.Owin.Testing.xml
+E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Newtonsoft.Json.pdb
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Newtonsoft.Json.xml
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\System.Net.Http.Formatting.xml
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\System.Web.Http.xml
@@ -324,6 +327,3 @@ E:\wamp64\www\web-player\AudioWeb\AudioWeb\obj\Debug\AudioWeb.csproj.CoreCompile
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\obj\Debug\AudioWeb.csproj.CopyComplete
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\obj\Debug\AudioWeb.dll
 E:\wamp64\www\web-player\AudioWeb\AudioWeb\obj\Debug\AudioWeb.pdb
-E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Newtonsoft.Json.pdb
-E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Facebook.dll
-E:\wamp64\www\web-player\AudioWeb\AudioWeb\bin\Facebook.xml
