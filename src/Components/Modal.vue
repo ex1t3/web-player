@@ -60,7 +60,7 @@ export default {
     selectedPlaylistIndex: 'selectedPlaylistIndex'
   }),
   mounted() {
-    this.playlistName = this.$main.playlists[this.selectedPlaylistIndex].Name
+    if (this.$main.playlists.length > 0) this.playlistName = this.$main.playlists[this.selectedPlaylistIndex].Name
   },
   watch: {
     selectedPlaylistIndex: function () {

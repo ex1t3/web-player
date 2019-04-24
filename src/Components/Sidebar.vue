@@ -4,7 +4,7 @@
       <img :src="$login.user.Photo"/>
       <div class="profile-menu">      
         <ul class="profile-link-list">
-          <li><i class="fas profile-item-icon fa-user"></i>Profile</li>
+          <li @click="openTemplate('setProfilePage')"><i class="fas profile-item-icon fa-user"></i>Profile</li>
           <li><i class="fas profile-item-icon fa-cog"></i>Settings</li>
           <li @click="logOut()"><i class="fas profile-item-icon fa-sign-out-alt"></i>Logout</li>
         </ul>

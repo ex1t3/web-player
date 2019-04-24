@@ -180,6 +180,7 @@ export default {
   border-radius: 3px;
   min-width: 150px;
   height: 70px;
+  animation: fade-in .3s;
   padding: 10px 15px;
   box-shadow: 0 0 20px #dddddd5e;
 }

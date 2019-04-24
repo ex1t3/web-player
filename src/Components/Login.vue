@@ -86,7 +86,68 @@ export default {
     return {
       loginActive: true
     }
+  }, 
+  created () { 
+    // load Google API
+		(function(d, s, id){
+			let js, gjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) {return;}
+			js = d.createElement(s); js.id = id;
+			js.src = "https://apis.google.com/js/api.js";
+			gjs.parentNode.insertBefore(js, gjs);
+		}(document, 'script', 'google-jssdk'));
   },
+  beforeMount () {
+    if (window.location.hash) {
+      this.$root.$emit('actLoadingRoot')
+      let that = this
+      var url = window.location.hash.substring(1)
+      history.replaceState(null, null, ' ')
+      const params = new URLSearchParams(url)
+      let paramObj = {}
+      for (var value of params.keys()) {
+        paramObj[value] = params.get(value)
+      }
+      var keyNames = Object.keys(paramObj)
+      console.log(keyNames)
+      switch (keyNames[0]) {
+        case 'access_token':
+          {
+            sessionStorage.setItem('access_token', paramObj.access_token)
+            if (keyNames[1] === 'register_google') {         
+              if (typeof gapi == 'undefined') {
+                setTimeout(() => {
+                  gapi.load('client', this.getGooglePicture)
+                }, 5000)
+              } else {
+                gapi.load('client', this.getGooglePicture)
+              }          
+            }
+            break
+          }
+        case 'error_login':
+          {
+            let arr = paramObj.error_login.replace(/_/g, ' ')
+            swal('Error', arr, 'error')
+            break
+          }
+      }
+      this.$root.$emit('deactLoadingRoot')
+    }
+  },
+  mounted () {
+    let that = this
+    this.$root.$emit('actLoadingRoot')
+    let token = sessionStorage.getItem('access_token')
+    if (token !== null) {
+      this.postLogin()
+    } else {
+      this.$root.$emit('deactLoadingRoot')
+    }
+  },
+  computed: mapGetters({
+    isLoggedIn: 'isLoggedIn'
+  }),
   methods: {
     postLogin() {
       let that = this
@@ -190,24 +251,6 @@ export default {
         }
       })
     },
-    getFacebookPicture () {
-      let that = this
-      window.fbAsyncInit = function () {
-          FB.init({
-            appId: '204022623821507',
-            cookie: true,
-            xfbml: true,
-            version: 'v3.2'
-          })
-
-          FB.getLoginStatus(function (response) {
-            let userId = response.authResponse.userID
-            let src = 'https://graph.facebook.com/' + userId + '/picture'
-            that.$login.user.Photo = src
-            that.updateUser()
-          })
-      }
-    },
     getGooglePicture() {
       let that = this
       // 2. Initialize the JavaScript client library.
@@ -231,87 +274,7 @@ export default {
         console.log('Error: ' + reason.result.error.message);
       })
     }
-  },
-  beforeMount() {
-    if (window.location.hash) {
-      this.$root.$emit('actLoadingRoot')
-      let that = this
-      var url = window.location.hash.substring(1)
-      history.replaceState(null, null, ' ')
-      const params = new URLSearchParams(url)
-      let paramObj = {}
-      for (var value of params.keys()) {
-        paramObj[value] = params.get(value)
-      }
-      var keyNames = Object.keys(paramObj)
-      console.log(keyNames)
-      switch (keyNames[0]) {
-        case 'access_token':
-          {
-            sessionStorage.setItem('access_token', paramObj.access_token)
-            if (keyNames[1] === 'register_facebook') {
-              (function (d, s, id) {
-                let js, fjs = d.getElementsByTagName(s)[0]
-                if (d.getElementById(id)) {
-                  return
-                }
-                js = d.createElement(s)
-                js.id = id;
-                js.src = "https://connect.facebook.net/en_US/sdk.js"
-                fjs.parentNode.insertBefore(js, fjs)
-              }(document, 'script', 'facebook-jssdk'))
-              if (typeof FB == 'undefined') {
-                setTimeout(() => {
-                  this.getFacebookPicture()
-                }, 500)
-              } else {
-                this.getFacebookPicture()
-              }
-            }
-            if (keyNames[1] === 'register_google') {
-              (function (d, s, id) {
-                let js, fjs = d.getElementsByTagName(s)[0]
-                if (d.getElementById(id)) {
-                  return
-                }
-                js = d.createElement(s)
-                js.id = id
-                js.src = "https://apis.google.com/js/api.js"
-                fjs.parentNode.insertBefore(js, fjs)
-              }(document, 'script', 'google-jssdk'))
-              if (typeof gapi == 'undefined') {
-                setTimeout(() => {
-                  gapi.load('client', this.getGooglePicture)
-                }, 500)
-              } else {
-                gapi.load('client', this.getGooglePicture)
-              }          
-            }
-            break
-          }
-        case 'error_login':
-          {
-            let arr = paramObj.error_login.replace(/_/g, ' ')
-            swal('Error', arr, 'error')
-            break
-          }
-      }
-      this.$root.$emit('deactLoadingRoot')
-    }
-  },
-  mounted () {
-    let that = this
-    this.$root.$emit('actLoadingRoot')
-    let token = sessionStorage.getItem('access_token')
-    if (token !== null) {
-      this.postLogin()
-    } else {
-      this.$root.$emit('deactLoadingRoot')
-    }
-  },
-  computed: mapGetters({
-    isLoggedIn: 'isLoggedIn'
-  })
+  }
 }
 </script>
 <style>

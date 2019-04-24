@@ -47,6 +47,8 @@ namespace AudioWeb.Controllers
         return this.BadRequest("Invalid user data.");
       }
 
+      var userPicture =
+        "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAyOTkuOTk3IDI5OS45OTciIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDI5OS45OTcgMjk5Ljk5NzsiIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI1MTJweCIgaGVpZ2h0PSI1MTJweCIgY2xhc3M9IiI+PGc+PGc+Cgk8Zz4KCQk8cGF0aCBkPSJNMTQ5Ljk5NiwwQzY3LjE1NywwLDAuMDAxLDY3LjE1OCwwLjAwMSwxNDkuOTk3YzAsODIuODM3LDY3LjE1NiwxNTAsMTQ5Ljk5NSwxNTBzMTUwLTY3LjE2MywxNTAtMTUwICAgIEMyOTkuOTk2LDY3LjE1NiwyMzIuODM1LDAsMTQ5Ljk5NiwweiBNMTUwLjQ1MywyMjAuNzYzdi0wLjAwMmgtMC45MTZIODUuNDY1YzAtNDYuODU2LDQxLjE1Mi00Ni44NDUsNTAuMjg0LTU5LjA5N2wxLjA0NS01LjU4NyAgICBjLTEyLjgzLTYuNTAyLTIxLjg4Ny0yMi4xNzgtMjEuODg3LTQwLjUxMmMwLTI0LjE1NCwxNS43MTItNDMuNzM4LDM1LjA4OS00My43MzhjMTkuMzc3LDAsMzUuMDg5LDE5LjU4NCwzNS4wODksNDMuNzM4ICAgIGMwLDE4LjE3OC04Ljg5NiwzMy43NTYtMjEuNTU1LDQwLjM2MWwxLjE5LDYuMzQ5YzEwLjAxOSwxMS42NTgsNDkuODAyLDEyLjQxOCw0OS44MDIsNTguNDg4SDE1MC40NTN6IiBkYXRhLW9yaWdpbmFsPSIjMDAwMDAwIiBjbGFzcz0iYWN0aXZlLXBhdGgiIGRhdGEtb2xkX2NvbG9yPSIjQzRDNEM1IiBmaWxsPSIjQzhDOENBIi8+Cgk8L2c+CjwvZz48L2c+IDwvc3ZnPgo=";
       if (!this.ModelState.IsValid)
       {
         return this.BadRequest(this.ModelState);
@@ -58,13 +60,21 @@ namespace AudioWeb.Controllers
         return this.BadRequest("E-mail is already taken.");
       }
 
+      var isExternalCompleted = false;
+      if (isExternal && model.UserExternalLogins.Count > 0)
+      {
+        isExternalCompleted = true;
+        if (model.UserExternalLogins[0].LoginProvider.ToLower() == "facebook")
+        {
+          userPicture = "https://graph.facebook.com/" + model.UserExternalLogins[0].ProviderKey + "/picture";
+        }
+      }
       var user = new User()
       {
         Fullname = model.Fullname,
         Name = model.Name,
         Email = model.Email,
-        Photo =
-          "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAyOTkuOTk3IDI5OS45OTciIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDI5OS45OTcgMjk5Ljk5NzsiIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSI1MTJweCIgaGVpZ2h0PSI1MTJweCIgY2xhc3M9IiI+PGc+PGc+Cgk8Zz4KCQk8cGF0aCBkPSJNMTQ5Ljk5NiwwQzY3LjE1NywwLDAuMDAxLDY3LjE1OCwwLjAwMSwxNDkuOTk3YzAsODIuODM3LDY3LjE1NiwxNTAsMTQ5Ljk5NSwxNTBzMTUwLTY3LjE2MywxNTAtMTUwICAgIEMyOTkuOTk2LDY3LjE1NiwyMzIuODM1LDAsMTQ5Ljk5NiwweiBNMTUwLjQ1MywyMjAuNzYzdi0wLjAwMmgtMC45MTZIODUuNDY1YzAtNDYuODU2LDQxLjE1Mi00Ni44NDUsNTAuMjg0LTU5LjA5N2wxLjA0NS01LjU4NyAgICBjLTEyLjgzLTYuNTAyLTIxLjg4Ny0yMi4xNzgtMjEuODg3LTQwLjUxMmMwLTI0LjE1NCwxNS43MTItNDMuNzM4LDM1LjA4OS00My43MzhjMTkuMzc3LDAsMzUuMDg5LDE5LjU4NCwzNS4wODksNDMuNzM4ICAgIGMwLDE4LjE3OC04Ljg5NiwzMy43NTYtMjEuNTU1LDQwLjM2MWwxLjE5LDYuMzQ5YzEwLjAxOSwxMS42NTgsNDkuODAyLDEyLjQxOCw0OS44MDIsNTguNDg4SDE1MC40NTN6IiBkYXRhLW9yaWdpbmFsPSIjMDAwMDAwIiBjbGFzcz0iYWN0aXZlLXBhdGgiIGRhdGEtb2xkX2NvbG9yPSIjQzRDNEM1IiBmaWxsPSIjQzhDOENBIi8+Cgk8L2c+CjwvZz48L2c+IDwvc3ZnPgo=",
+        Photo = userPicture,
         Password = _userService.HashPassword(model.Password),
         IsExtraLogged = isExternal,
         EmailConfirmed = model.EmailConfirmed
@@ -77,7 +87,7 @@ namespace AudioWeb.Controllers
         return this.BadRequest("Sorry! Something went wrong");
       }
 
-      if (model.IsExtraLogged && model.UserExternalLogins.Count > 0)
+      if (isExternalCompleted)
       {
         model.UserExternalLogins[0].UserId = user.Id;
         _userService.AddUserExtrenalLogin(model.UserExternalLogins[0]);

@@ -4,13 +4,14 @@
         <Music v-if="isMusicPage"/>
         <Search v-if="isSearchPage"/>
         <div v-if="isSettingsPage">Settings</div>
-        <div v-if="isProfilePage">Profile</div>
+        <Profile v-if="isProfilePage"/>
     </div>
 </template>
 <script>
 import store from '../store'
 import Music from '../Components/Music'
 import Search from '../Components/Search'
+import Profile from '../Components/Profile'
 import Home from '../Components/Home'
 import {mapGetters} from 'vuex'
 
@@ -31,6 +32,7 @@ export default {
   components: {
     Music,
     Search,
+    Profile,
     Home
   }
 }
