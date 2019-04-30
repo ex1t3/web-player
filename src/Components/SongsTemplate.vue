@@ -133,6 +133,7 @@ export default {
       switch (type) {
         // 0 - Uploaded songs
         case 0: {
+          this.songs.splice(index, 1)
           this.$root.$emit('notificate', 'success', 'Song deleted from uploaded', 3000)
           return true
         }

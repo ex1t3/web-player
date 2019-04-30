@@ -72,7 +72,6 @@ namespace AudioWeb.Controllers
       var user = new User()
       {
         Fullname = model.Fullname,
-        Name = model.Name,
         Email = model.Email,
         Photo = userPicture,
         Password = _userService.HashPassword(model.Password),
@@ -252,7 +251,8 @@ namespace AudioWeb.Controllers
     public JsonResult<bool> UpdateUser(User user)
     {
       if (user == null) return Json(true);
-      _userService.UpdateUser(user);
+      if (user.Id.ToString() == User.Identity.Name) _userService.UpdateUser(user);
+      else return Json(false);
       return Json(true);
     }
 

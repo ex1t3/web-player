@@ -47,10 +47,10 @@ namespace AudioWeb.Controllers
       {
         Name = tags.Title,
         Artist = artists,
-        Album = tags.Album ?? "",
+        Album = tags.Album ?? "-",
         Activity = 0,
         Duration = null,
-        Genre = genres ?? "",
+        Genre = genres ?? null,
         AlbumCover = image,
         Source = newFileName,
         Year = tags.Year.ToString()

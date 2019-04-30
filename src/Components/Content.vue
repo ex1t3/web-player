@@ -3,8 +3,12 @@
         <Home v-if="isHomePage"/>
         <Music v-if="isMusicPage"/>
         <Search v-if="isSearchPage"/>
-        <div v-if="isSettingsPage">Settings</div>
+        <Settings v-if="isSettingsPage"/>
         <Profile v-if="isProfilePage"/>
+
+        <!-- GLOBAL STYLES -->
+        <Tabs v-if="isMusicPage || isSettingsPage"/>
+        <ContentForm v-if="isProfilePage || isSettingsPage"/>
     </div>
 </template>
 <script>
@@ -12,7 +16,10 @@ import store from '../store'
 import Music from '../Components/Music'
 import Search from '../Components/Search'
 import Profile from '../Components/Profile'
+import Settings from '../Components/Settings'
 import Home from '../Components/Home'
+import Tabs from './Styles/Tabs'
+import ContentForm from './Styles/ContentForm'
 import {mapGetters} from 'vuex'
 
 // Exporting data for current template
@@ -33,7 +40,10 @@ export default {
     Music,
     Search,
     Profile,
-    Home
+    Settings,
+    Home,
+    Tabs,
+    ContentForm,
   }
 }
 </script>

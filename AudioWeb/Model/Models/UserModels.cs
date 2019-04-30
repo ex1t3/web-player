@@ -17,10 +17,11 @@ namespace Model.Models
     [Required]
     public string Password { get; set; }
     public bool IsExtraLogged { get; set; }
-    public string Name { get; set; }
     public string Email { get; set; }
     public string Photo { get; set; }
+    public string Country { get; set; }
     public bool EmailConfirmed { get; set; }
+    public bool IsMale { get; set; } = true;
     public List<UserExternalLogin> UserExternalLogins { get; set; }
     public List<UserSession> UserSessions { get; set; }
 
@@ -43,5 +44,22 @@ namespace Model.Models
     public int UserId { get; set; }
     public string LoginProvider { get; set; }
     public string ProviderKey { get; set; }
+  }
+  public class LoginUserViewModel
+  {
+    [Required]
+    public string Email { get; set; }
+    public int ClientId { get; set; }
+    [Required]
+    public string Password { get; set; }
+  }
+
+  public class ExternalLoginViewModel
+  {
+    public string Name { get; set; }
+
+    public string Url { get; set; }
+
+    public string State { get; set; }
   }
 }

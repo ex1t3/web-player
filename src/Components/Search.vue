@@ -52,7 +52,7 @@
           </div>
         </div>
       </div>
-      <div class="nothing-found-notification" v-if="nothingWasFound">Sorry, we couldn't found the song or artist you've
+      <div class="nothing-found-notification" v-if="nothingWasFound">Sorry, we couldn't find the song or artist you've
         typed</div>
     </div>
   </div>

@@ -240,7 +240,6 @@ export default {
       })
     },
     updateUser () {
-      let that = this
       axios({
         method: 'POST',
         url: 'https://localhost:44343/api/Account/UpdateUser',

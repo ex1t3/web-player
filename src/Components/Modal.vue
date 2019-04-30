@@ -14,7 +14,7 @@
       <div v-if="currentContentType === 0" class="modal-content">
           <h4 class="centered">Name your new playlist</h4>
           <div class="input-group">
-            <input v-model="playlistName" ref="playlistName" name="playlistName" placeholder="Playlist"
+            <input ref="playlistName" placeholder="Playlist"
               class="input-field" type="text" required>
           </div>
           <div class="input-group centered">
@@ -24,7 +24,7 @@
       <div v-if="currentContentType === 1" class="modal-content">
         <h4 class="centered">Choose new name for {{ playlistName }}</h4>
         <div class="input-group">
-          <input v-model="playlistName" ref="playlistName" name="playlistName" placeholder="Playlist"
+          <input v-model="playlistName" name="playlistName" placeholder="Playlist"
             class="input-field" type="text" required>
         </div>
         <div class="input-group centered">
@@ -71,9 +71,9 @@ export default {
     createPlaylist() {
       let that = this
       let obj = {
-        Name: this.playlistName
+        Name: this.$refs.playlistName.value
       }
-      if (this.checkPlaylistValidity()) {
+      if (this.checkPlaylistValidity(obj.Name)) {
         axios({
           method: 'POST',
           url: 'https://localhost:44343/api/Songs/CreatePlaylist',
@@ -142,7 +142,7 @@ export default {
         })
     },
     editPlaylist () {
-      if (this.checkPlaylistValidity()) {
+      if (this.checkPlaylistValidity(this.playlistName)) {
         let that = this
         let oldName = this.$main.playlists[this.selectedPlaylistIndex].Name
         this.$main.playlists[this.selectedPlaylistIndex].Name = this.playlistName
@@ -169,8 +169,8 @@ export default {
         
       }
     },
-    checkPlaylistValidity () {
-      if (this.playlistName === '') {
+    checkPlaylistValidity (name) {
+      if (name === '') {
         this.$root.$emit(
           'notificate',
           'error',
@@ -180,7 +180,7 @@ export default {
         return false;
       }
       let flag =
-        this.$main.playlists.find(el => el.Name === this.playlistName) !==
+        this.$main.playlists.find(el => el.Name === name) !==
         undefined
       if (flag) {
         this.$root.$emit(

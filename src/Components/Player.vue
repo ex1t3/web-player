@@ -107,7 +107,7 @@ export default {
       songs: [],
       duration: '0:00',
       progressWidth: '0%',
-      progressVolumeWidth: '100%',
+      progressVolumeWidth: '85%',
       currentTime: '0:00',
       title: ' Loading ... ',
       isDragged: false,

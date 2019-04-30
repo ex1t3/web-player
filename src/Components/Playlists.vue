@@ -176,32 +176,34 @@ export default {
         })
     },
     loadFiles(event) {
-      let files = event.target.files
-      let that = this
-      for (var i = 0, f = Promise.resolve(); i < files.length; i++) {
-        let data = new FormData()
-        data.append('NewSong', files[i])
-        f = f.then(_ =>
-          axios({
-            method: 'POST',
-            url: 'https://localhost:44343/api/Songs/UploadSong',
-            data: data,
-            headers: {
-              'Content-Type': 'application/json; charset=UTF-8',
-              Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
-            }
-          })
-            .then(function(e) {
-              if (!e.data) return 0
-              let index = that.uploadedSongs.map(function(obj) { return obj.Id }).indexOf(e.data.Id)
-              if (index != -1) { 
+        let files = event.target.files
+        let that = this
+        for (var i = 0, f = Promise.resolve(); i < files.length; i++) {
+          let data = new FormData()
+          data.append('NewSong', files[i])
+          f = f.then(_ =>
+            axios({
+              method: 'POST',
+              url: 'https://localhost:44343/api/Songs/UploadSong',
+              data: data,
+              headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+                Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+              }
+            }).then(function (e) {
+              if (!e.data) return that.$root.$emit('notificate', 'error', 'Some songs couldn\'t be uploaded' , 3000)
+              let index = that.uploadedSongs.map(function (obj) {
+                return obj.Id
+              }).indexOf(e.data.Id)
+              if (index != -1) {
                 that.uploadedSongs.splice(index, 1)
               }
               that.uploadedSongs.unshift(e.data)
+            }).catch(function (e) {
+              that.$root.$emit('notificate', 'error', 'Some songs weren\'t uploaded. Maybe their size\'s too high', 3000)
             })
-            .catch(function(e) {})
-        )
-      }
+          )
+        }
     }
   }
 }

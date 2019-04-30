@@ -31,4 +31,3 @@ E:\wamp64\www\web-player\AudioWeb\DAL\bin\Debug\EntityFramework.SqlServerCompact
 E:\wamp64\www\web-player\AudioWeb\DAL\obj\Debug\DAL.csproj.CopyComplete
 E:\wamp64\www\web-player\AudioWeb\DAL\obj\Debug\DAL.dll
 E:\wamp64\www\web-player\AudioWeb\DAL\obj\Debug\DAL.pdb
-E:\wamp64\www\web-player\AudioWeb\DAL\obj\Debug\DAL.Migrations.ddd.resources

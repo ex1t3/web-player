@@ -5,7 +5,7 @@
       <div class="profile-menu">      
         <ul class="profile-link-list">
           <li @click="openTemplate('setProfilePage')"><i class="fas profile-item-icon fa-user"></i>Profile</li>
-          <li><i class="fas profile-item-icon fa-cog"></i>Settings</li>
+          <li @click="openTemplate('setSettingsPage')"><i class="fas profile-item-icon fa-cog"></i>Settings</li>
           <li @click="logOut()"><i class="fas profile-item-icon fa-sign-out-alt"></i>Logout</li>
         </ul>
       </div>
@@ -95,8 +95,8 @@ export default {
     position: absolute;
     background: #fff;
     text-align: left;
-    padding: 10px;
-    width: 100px;
+    width: 130px;
+    border-radius: 5px;
     animation: fade-in 0.5s;
   box-shadow: 3px 2px 20px rgba(0, 0, 0, 0.14901960784313725);
 }
@@ -111,12 +111,17 @@ export default {
   top: -7px;
   border-color: transparent transparent #fff;
 }
+.profile-link-list li {
+    padding: 10px;
+    border-bottom: 1px solid rgba(200, 200, 202, 0.2);
+    cursor: pointer;
+}
+.profile-link-list li:hover {
+  background: rgba(200, 200, 202, 0.1);
+  border-bottom: 1px solid transparent;
+}
 .profile-item-icon {
   margin-right: 7px;
-}
-.profile-link-list li:not(:first-of-type) {
-  cursor: pointer;
-  padding-top: 10px;
 }
 .profile-menu {
   display: none;
