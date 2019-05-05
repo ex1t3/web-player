@@ -60,13 +60,13 @@ export default {
     },
     logOut() {
       var that = this
-      let token = sessionStorage.getItem('access_token')
+      let token = localStorage.getItem('access_token')
       this.$store.dispatch('updateModalVisibility', false)
       that.$root.$emit('pauseSongRoot')
       if (token == null) {
         that.$store.dispatch('logOut')
       } else {
-        sessionStorage.removeItem('access_token')
+        localStorage.removeItem('access_token')
         axios({
             method: 'POST',
             url: 'https://localhost:44343/api/Account/Logout',

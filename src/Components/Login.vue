@@ -113,7 +113,7 @@ export default {
       switch (keyNames[0]) {
         case 'access_token':
           {
-            sessionStorage.setItem('access_token', paramObj.access_token)
+            localStorage.setItem('access_token', paramObj.access_token)
             if (keyNames[1] === 'register_google') {         
               if (typeof gapi == 'undefined') {
                 setTimeout(() => {
@@ -138,7 +138,7 @@ export default {
   mounted () {
     let that = this
     this.$root.$emit('actLoadingRoot')
-    let token = sessionStorage.getItem('access_token')
+    let token = localStorage.getItem('access_token')
     if (token !== null) {
       this.postLogin()
     } else {
@@ -155,7 +155,7 @@ export default {
         method: 'GET',
         url: 'https://localhost:44343/api/Account/CheckToken',
         headers: {
-          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+          Authorization: 'Bearer ' + localStorage.getItem('access_token')
         }
       }).then(function (e) {
         that.$root.$emit('deactLoadingRoot')
@@ -183,7 +183,7 @@ export default {
             'Content-Type': 'application/json; charset=UTF-8'
           }
         }).then(function (response) {
-          sessionStorage.setItem('access_token', response.data.access_token)
+          localStorage.setItem('access_token', response.data.access_token)
           that.postLogin()
         }).catch(function (e) {
           that.$root.$emit('deactLoadingRoot')
@@ -231,7 +231,7 @@ export default {
           'Content-Type': 'application/json; charset=UTF-8'
         }
       }).then(function (response) {
-        sessionStorage.setItem('access_token', response.data.access_token)
+        localStorage.setItem('access_token', response.data.access_token)
         that.postLogin()
       }).catch(function (e) {
         that.$root.$emit('deactLoadingRoot')
@@ -246,7 +246,7 @@ export default {
         data: that.$login.user,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization' : 'Bearer ' + sessionStorage.getItem('access_token')
+          'Authorization' : 'Bearer ' + localStorage.getItem('access_token')
         }
       })
     },

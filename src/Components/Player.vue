@@ -180,7 +180,7 @@ export default {
         url: 'https://localhost:44343/api/Songs/GetPlaylists',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+          Authorization: 'Bearer ' + localStorage.getItem('access_token')
         }
       }).then(function (e) {
         that.$main.playlists = e.data
@@ -212,7 +212,7 @@ export default {
         url: 'https://localhost:44343/api/Songs/AddSongToPlaylist',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+          Authorization: 'Bearer ' + localStorage.getItem('access_token')
         },
         data: obj
       }).then(function (e) {
@@ -238,7 +238,7 @@ export default {
           data: currentIndex,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+            Authorization: 'Bearer ' + localStorage.getItem('access_token')
           }
         }).then(function (e) {
           let song = that.songs[that.lookUpper(currentIndex)]
@@ -256,7 +256,7 @@ export default {
           data: instance,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+            Authorization: 'Bearer ' + localStorage.getItem('access_token')
           }
         }).then(function (e) {
           var index = that.favLookUpper(currentIndex)
@@ -304,7 +304,7 @@ export default {
         url: "https://localhost:44343/api/Songs/GetLastPlayedSongs",
         headers: {
           "Content-Type": "application/json charset=UTF-8",
-          Authorization: "Bearer " + sessionStorage.getItem("access_token")
+          Authorization: "Bearer " + localStorage.getItem("access_token")
         }
       }).then(function (e) {
         that.$store.dispatch('loadLastPlayedSongs', e.data)
@@ -323,7 +323,7 @@ export default {
         url: "https://localhost:44343/api/Songs/GetTopListenedSongs",
         headers: {
           "Content-Type": "application/json charset=UTF-8",
-          Authorization: "Bearer " + sessionStorage.getItem("access_token")
+          Authorization: "Bearer " + localStorage.getItem("access_token")
         }
       }).then(function (e) {
         that.$store.dispatch('loadTopListenedSongs', e.data)
@@ -336,7 +336,7 @@ export default {
         method: 'GET',
         url: 'https://localhost:44343/api/Songs/GetFavoriteSongs',
         headers: {
-          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+          Authorization: 'Bearer ' + localStorage.getItem('access_token')
         }
       }).then(function (e) {
         that.$main.favoriteSongs = e.data
@@ -540,7 +540,7 @@ export default {
           url: 'https://localhost:44343/api/Songs/IncreaseActivity',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+            Authorization: 'Bearer ' + localStorage.getItem('access_token')
           },
           data: index
         })

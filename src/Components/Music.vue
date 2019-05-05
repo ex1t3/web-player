@@ -4,7 +4,7 @@
     <input type="radio" id="tab2" name="tab-control">
     <MusicsPageHeader :currentPlaylistName="currentPlaylist" :isFavoriteTracksPageOpened="isFavorites" :isUploadsOpened="isUploads" :isPlaylistOpened="isPlaylist"/>   
     <div class="content">
-      <Playlists :pageType="currentPageType" :isUploadsOpened="isUploads" :isPlaylistOpened="isPlaylist"/>
+      <Playlists :pageType="currentPageType" :currentPlaylistName="currentPlaylist" :isUploadsOpened="isUploads" :isPlaylistOpened="isPlaylist"/>
       <Favorites :pageType="currentPageType" />
     </div>
   </div>

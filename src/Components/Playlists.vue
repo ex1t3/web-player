@@ -1,7 +1,7 @@
 <template>
   <!-- PLAYLISTS -->
   <section>
-    <h2>{{ isPlaylistOpened || isUploadsOpened ? currentPlaylistName : 'My Playlists' }}</h2>
+    <h2>{{ isPlaylistOpened ? currentPlaylistName : 'My Playlists' || isUploadsOpened ? currentPlaylistName : 'My Playlists' }}</h2>
     <div v-bind:class="{hidden: isPlaylistOpened || isUploadsOpened}" class="playlists-block">
       <!-- CREATE PLAYLIST -->
       <div @click="$store.dispatch('updateModalVisibility', true), $store.dispatch('updateCurrentContentType', 0)" class="playlist-block create-playlist">
@@ -136,7 +136,7 @@ export default {
         url: 'https://localhost:44343/api/Songs/GetUploadedSongs',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+          Authorization: 'Bearer ' + localStorage.getItem('access_token')
         }
       })
         .then(function(e) {
@@ -159,7 +159,7 @@ export default {
         url: 'https://localhost:44343/api/Songs/GetPlaylistSongs',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+          Authorization: 'Bearer ' + localStorage.getItem('access_token')
         },
         data: id
       })
@@ -188,7 +188,7 @@ export default {
               data: data,
               headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
-                Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+                Authorization: 'Bearer ' + localStorage.getItem('access_token')
               }
             }).then(function (e) {
               if (!e.data) return that.$root.$emit('notificate', 'error', 'Some songs couldn\'t be uploaded' , 3000)

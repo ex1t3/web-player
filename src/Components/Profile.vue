@@ -3,14 +3,14 @@
     <div class="profile-form">
       <form>
         <div class="input-group">
-          <label for="profile_Email">Email:</label>
           <input @keyup="checkEmailValidity" v-model="$login.user.Email" type="email" name="Email" class="content-input"
             :class="{'input-failed': !isEmailValid}" id="profile_Email" />
+          <label for="profile_Email">Email:</label>
         </div>
         <div class="input-group">
-          <label for="profile_Fullname">Fullname:</label>
           <input v-model="$login.user.Fullname" type="text" name="Fullname" class="content-input"
             :class="{'input-failed': !checkStringValidity($login.user.Fullname)}" id="profile_Fullname" />
+          <label for="profile_Fullname">Fullname:</label>
         </div>
         <div class="input-group">
           <label class="radio-label" for="profile_Gender">Gender:</label>
@@ -26,9 +26,9 @@
           </span>
         </div>
         <div class="input-group">
-          <label for="profile_Country">Country:</label>
           <input  v-model="$login.user.Country" type="text" name="Country" class="content-input"
             :class="{'input-failed': !checkStringValidity($login.user.Country)}" id="profile_Country" />
+          <label for="profile_Country">Country:</label>
         </div>
         <div class="input-group">
           <button @click="updateUser" type="button" class="button-form">SAVE</button>
@@ -74,7 +74,7 @@ export default {
         data: that.$login.user,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization' : 'Bearer ' + sessionStorage.getItem('access_token')
+          'Authorization' : 'Bearer ' + localStorage.getItem('access_token')
         }
       }).then(function (e) {
         if (e.data) {

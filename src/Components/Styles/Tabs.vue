@@ -1,3 +1,6 @@
+<template>
+</template>
+
 <style>
 .tabs {
   left: 50%;
@@ -325,6 +328,7 @@
     margin-top: 20px;
   }
   .tabs .content section h2 {
+    font-size: 16px;
     display: block;
   }
 }

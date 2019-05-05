@@ -113,6 +113,11 @@ export default {
   padding-left: 10px;
   animation: fade-in 0.5s;
 }
+@media (max-width: 700px) {
+ .return-block { 
+   font-size: 14px;
+ }
+}
 .return-block i {
   margin-right: 10px;
   transition: margin 0.3s;

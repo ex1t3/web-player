@@ -79,7 +79,7 @@ export default {
           url: 'https://localhost:44343/api/Songs/CreatePlaylist',
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+            Authorization: 'Bearer ' + localStorage.getItem('access_token')
           },
           data: obj
         })
@@ -123,7 +123,7 @@ export default {
               url: 'https://localhost:44343/api/Songs/DeletePlaylist',
               headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
-                Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+                Authorization: 'Bearer ' + localStorage.getItem('access_token')
               },
               data: JSON.stringify(obj)
             }).then(function (e) {
@@ -153,7 +153,7 @@ export default {
           url: 'https://localhost:44343/api/Songs/EditPlaylist',
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
-            Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+            Authorization: 'Bearer ' + localStorage.getItem('access_token')
           },
           data: JSON.stringify(obj)
         }).then(function (e) {

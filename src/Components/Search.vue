@@ -104,7 +104,7 @@ export default {
           data: JSON.stringify(that.searchVal),
           headers: {
             'Content-Type': 'application/json charset=UTF-8',
-            Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+            Authorization: 'Bearer ' + localStorage.getItem('access_token')
           }
         })
         .then(function (e) {
@@ -142,7 +142,7 @@ export default {
         data: JSON.stringify(artist),
         headers: {
           'Content-Type': 'application/json charset=UTF-8',
-          Authorization: 'Bearer ' + sessionStorage.getItem('access_token')
+          Authorization: 'Bearer ' + localStorage.getItem('access_token')
         }
       }).then(function (e) {
         if (e.data.length > 0) {
@@ -168,6 +168,11 @@ export default {
   align-items: center;
   cursor: pointer;
   animation: fade-in 0.5s;
+}
+@media (max-width: 700px) {
+ .return-block, .move-to-block { 
+   font-size: 14px;
+ }
 }
 .return-block {
   margin: 0px 0px 10px 0px;

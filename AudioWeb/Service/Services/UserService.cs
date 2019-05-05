@@ -58,11 +58,14 @@ namespace Service.Services
       return user.Id.ToString();
     }
 
-    public void UpdateUser(User user)
+    public void UpdateUser(User user, bool isPasswordChanging = false)
     {
-      var userBeforeUpdate = _db.Users.AsNoTracking().FirstOrDefault(x => x.Id == user.Id);
-      if (userBeforeUpdate == null) return;
-      user.Password = userBeforeUpdate.Password;
+      if (!isPasswordChanging)
+      {
+        var userBeforeUpdate = _db.Users.AsNoTracking().FirstOrDefault(x => x.Id == user.Id);
+        if (userBeforeUpdate == null) return;
+        user.Password = userBeforeUpdate.Password;
+      }
       _dbUser.Update(user);
     }
 
@@ -75,6 +78,11 @@ namespace Service.Services
     {
       var id = int.Parse(name);
       return _dbUser.GetById(id);
+    }
+
+    public async Task<List<UserSession>> GetUserSessions(int id)
+    {
+      return _dbSession.GetMany(x => x.UserId == id).ToList();
     }
 
     public User GetUserById(int id)
@@ -92,6 +100,14 @@ namespace Service.Services
       // Extend the lifetime of the current user's session: current moment + fixed timeout
       userSession.ExpirationDateTime = DateTime.Now + defaultTimeOut;
       _dbSession.Add(userSession);
+    }
+    public void TerminateSession(int sessionId, int userId)
+    {
+      var userSession = _dbSession.Get(x => x.Id == sessionId && x.UserId == userId);
+      if (userSession != null)
+      {
+        _dbSession.Delete(userSession);
+      }
     }
 
     public void DeleteSession(UserSession userSession)

@@ -1,3 +1,5 @@
+<template>
+</template>
 <style>
 .content-input {
     font-size: 20px;
@@ -6,40 +8,54 @@
     border-radius: 0px;
     box-shadow: 0px 1px 0px 0 #5d5d5d;
     border: 0;
-    padding: 20px 0 20px 10px;
+    padding: 20px 0 10px 10px;
     width: 100%;
     font-family: "Montserrat", "Helevtica", sans-serif;
     color: #3a3654;
     margin-left: -5px;
-    transition: .3s box-shadow;
+    z-index: 2;
+    background: transparent;
+    transition: .3s;
 }
 .input-failed {
-  box-shadow: 0px 0px 0px 2px rgba(255, 0, 0, 0.46)
+  box-shadow: 0 2px 0px 0px rgba(232, 76, 76, 0.8)
 }
 .input-group {
     width: 70%;
     margin: 15px auto;
     text-align: center;
     clear: both;
+    position: relative;
 }
 .input-group label {
   display: block;
   text-align: left;
   margin-left: -5px;
+  position: absolute;
+  top: 10%;
 }
+
 .content-input:active,
 .content-input:focus {
   box-shadow: 0px 0px 0px 2px #5d5d5d;
+  margin-top: 30px;
+  padding: 20px 0 20px 10px;
 }
+
+.content-input:active + label,
+.content-input:focus + label {
+    top: 0;
+  
+}
+
 .radio-block {
-  display: initial;
+    display: initial;
     padding: 15px;
     box-shadow: 0px 0px 0px 1px #5d5d5d45;
     position: relative;
-    margin-right: 15px;
     float: left;
-    margin-bottom: 15px;
     transition: .3s box-shadow;
+    margin: 35px 15px 10px 0;
 }
 .radio-block:hover,
 .radio-block.checked-radio {
@@ -78,6 +94,7 @@ form {
   .content-input {
     padding: 10px 0px 10px 6px;
     font-size: 16px;
+    margin-top: 20px;
     margin-left: -3px;
   }
 

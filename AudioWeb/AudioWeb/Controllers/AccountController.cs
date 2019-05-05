@@ -250,10 +250,50 @@ namespace AudioWeb.Controllers
     [Route("UpdateUser")]
     public JsonResult<bool> UpdateUser(User user)
     {
-      if (user == null) return Json(true);
-      if (user.Id.ToString() == User.Identity.Name) _userService.UpdateUser(user);
+      if (user == null) return Json(false);
+      if (user.Id.ToString() == User.Identity.Name) _userService.UpdateUser(user, false);
       else return Json(false);
       return Json(true);
+    }
+
+    [HttpPost]
+    [Route("TerminateSession")]
+    public JsonResult<bool> TerminateSession([FromBody] int id)
+    {
+      var userIdentity = User.Identity.Name;
+      _userService.TerminateSession(id, int.Parse(userIdentity));
+      return Json(true);
+    }
+
+    [HttpPost]
+    [Route("ChangePassword")]
+    public JsonResult<bool> ChangePassword(ChangingPasswordViewModel cpvm)
+    {
+      if (cpvm == null) return Json(false);
+      var user = _userService.GetUserByIdentityName(User.Identity.Name);
+      if (cpvm.NewPassword != cpvm.ConfirmPassword) return Json(false);
+      if (!_userService.CheckPassword(cpvm.CurrentPassword, user.Password)) return Json(false);
+      user.Password = _userService.HashPassword(cpvm.NewPassword);
+      _userService.UpdateUser(user, true);
+      return Json(true);
+    }
+
+    [HttpGet]
+    [Route("GetActiveSessions")]
+    public async Task<IHttpActionResult> GetActiveSessions()
+    {
+      var user = _userService.GetUserByIdentityName(User.Identity.Name);
+      var sessions = await _userService.GetUserSessions(user.Id);
+      var result = sessions.OrderByDescending(x => x.ExpirationDateTime)
+        .Select(session => new JsonObject
+        {
+          ["Id"] = session.Id,
+          ["IpAddress"] = session.IpAddress,
+          ["UserAgent"] = session.UserAgent,
+          ["ExpiresIn"] = (session.ExpirationDateTime - DateTime.Now).Days
+        })
+        .ToList();
+      return Json(result);
     }
 
     // GET api/Account/ExternalLogins?returnUrl=%2F&generateState=true
