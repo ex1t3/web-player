@@ -1,18 +1,18 @@
 <template>
   <div class="profile-main-block">
     <div class="profile-form">
-      <form>
-        <div class="input-group">
+      <form class="content-form">
+        <div class="content-input-group">
           <input @keyup="checkEmailValidity" v-model="$login.user.Email" type="email" name="Email" class="content-input"
             :class="{'input-failed': !isEmailValid}" id="profile_Email" />
           <label for="profile_Email">Email:</label>
         </div>
-        <div class="input-group">
+        <div class="content-input-group">
           <input v-model="$login.user.Fullname" type="text" name="Fullname" class="content-input"
             :class="{'input-failed': !checkStringValidity($login.user.Fullname)}" id="profile_Fullname" />
           <label for="profile_Fullname">Fullname:</label>
         </div>
-        <div class="input-group">
+        <div class="content-input-group">
           <label class="radio-label" for="profile_Gender">Gender:</label>
           <span @click="$login.user.IsMale = true" class="radio-block" :class="{'checked-radio': $login.user.IsMale}">Male
             <input class="radio-item" type="radio" name="Gender"
@@ -25,12 +25,12 @@
             <i class="fas fa-check"></i>
           </span>
         </div>
-        <div class="input-group">
+        <div class="content-input-group">
           <input  v-model="$login.user.Country" type="text" name="Country" class="content-input"
             :class="{'input-failed': !checkStringValidity($login.user.Country)}" id="profile_Country" />
           <label for="profile_Country">Country:</label>
         </div>
-        <div class="input-group">
+        <div class="content-input-group">
           <button @click="updateUser" type="button" class="button-form">SAVE</button>
         </div>
       </form>

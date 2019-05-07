@@ -42,7 +42,7 @@
         <i class="fas fa-arrow-left"></i>
         <div>Back to Home page</div>
       </div>
-      <SongsTemplate :type="4" :songs="topListenedSongs" />
+      <SongsTemplate :type="3" :songs="topListenedSongs" />
     </div>
   </div>
 </template>

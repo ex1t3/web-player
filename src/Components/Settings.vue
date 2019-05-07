@@ -37,23 +37,23 @@
       <div class="content">
         <section>
           <h2>Change Password</h2>
-          <form>
-            <div class="input-group">
+          <form class="content-form">
+            <div class="content-input-group">
               <input v-model="currentPassword" type="password" name="CurrentPassword"
                 class="content-input" :class="{'input-failed': false}" id="settings_CurrentPassword" />
               <label for="settings_CurrentPassword">Current Password:</label>
             </div>
-            <div class="input-group">
+            <div class="content-input-group">
               <input v-model="newPassword" type="password" name="NewPassword" class="content-input"
                 :class="{'input-failed': false}" id="settings_NewPassword" />
               <label for="settings_NewPassword">New Password:</label>
             </div>
-            <div class="input-group">
+            <div class="content-input-group">
               <input v-model="confirmPassword" type="password" name="ConfirmPassword" class="content-input"
                 :class="{'input-failed': false}" id="settings_ConfirmPassword" />
               <label for="settings_ConfirmPassword">Confirm Password:</label>
             </div>
-            <div class="input-group">
+            <div class="content-input-group">
               <button @click="changePassword" type="button" class="button-form">CHANGE</button>
             </div>
           </form>

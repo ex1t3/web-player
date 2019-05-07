@@ -116,9 +116,16 @@ export default {
   },
   methods: {
     addSongToPlaylist(song, playlistId) {
-      if (this.currentPlaylist == playlistId) {
-        this.playlistSongs.push(song)
+      if (this.currentPlaylist == playlistId && !checkForExistence(song)) {
+        this.playlistSongs.unshift(song)
       }
+    },
+    checkForExistence (song) {
+      for (let i = 0; i < this.playlistSongs.length; i++) {
+        const element = this.playlistSongs[i]
+        return song.Id === element.Id
+      }
+      return false
     },
     userActionsHandler(flag, successfulMessage, errorMessage) {
       if (flag) {

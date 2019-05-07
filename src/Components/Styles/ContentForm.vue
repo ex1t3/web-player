@@ -20,14 +20,14 @@
 .input-failed {
   box-shadow: 0 2px 0px 0px rgba(232, 76, 76, 0.8)
 }
-.input-group {
+.content-input-group {
     width: 70%;
-    margin: 15px auto;
+    margin: 25px auto;
     text-align: center;
     clear: both;
     position: relative;
 }
-.input-group label {
+.content-input-group label {
   display: block;
   text-align: left;
   margin-left: -5px;
@@ -82,9 +82,9 @@
     top: -3px;
     opacity: 0;
 }
-form {
+.content-form {
     width: 50%;
-    margin: 20px auto;
+    margin: 50px auto;
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0px 0px 20px 9px #cccccc59;
@@ -98,15 +98,15 @@ form {
     margin-left: -3px;
   }
 
-  .input-group label {
+  .content-input-group label {
     margin-left: -3px;
   }
 
-  .input-group {
+  .content-input-group {
     width: 90%;
   }
 
-  form {
+  .content-form {
     width: 100%;
     padding: 0;
     margin: 0;

@@ -31,6 +31,7 @@ const state = {
   isActiveSidebar: false,
   isModalVisible: false,
   currentContentType: 0,
+  currentSortType: 0,
   selectedPlaylistIndex: 0,
   lastPlayedSongs: [],
   topListenedSongs: []
@@ -51,7 +52,8 @@ const getters = {
   topListenedSongs: state => state.topListenedSongs,
   isModalVisible: state => state.isModalVisible,
   currentContentType: state => state.currentContentType,
-  selectedPlaylistIndex: state => state.selectedPlaylistIndex
+  selectedPlaylistIndex: state => state.selectedPlaylistIndex,
+  currentSortType: state => state.currentSortType
 }
 // initialize store actions
 const actions = {
@@ -105,6 +107,9 @@ const actions = {
   },
   updateSelectedPlaylistIndex ({commit}, data) {
     commit('setSelectedPlaylistIndex', data)
+  },
+  updateCurrentSortType ({commit}, data) {
+    commit('setCurrentSortType', data)
   }
 }
 
@@ -186,6 +191,9 @@ const mutations = {
   },
   setSelectedPlaylistIndex (state, data) {
     state.selectedPlaylistIndex = data
+  },
+  setCurrentSortType (state, data) {
+    state.currentSortType = data
   }
 }
 // instantiate vuex store

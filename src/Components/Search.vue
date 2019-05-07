@@ -4,7 +4,7 @@
       <div @click="isAllFoundedSongsShowed = false" class="return-block"><i class="fas fa-arrow-left"></i><div>Back to search</div></div>
         <div class="songs">
           <div class="songs-block">
-            <SongsTemplate :songs="foundedSongs" :type="3" />
+            <SongsTemplate :songs="foundedSongs" :type="4" />
           </div>
         </div>
     </div>
@@ -13,7 +13,7 @@
       <h3 class="centered">{{ selectedArtist }}</h3>
         <div class="songs">
           <div class="songs-block">
-            <SongsTemplate :songs="songsOfArtist" :type="3" />
+            <SongsTemplate :songs="songsOfArtist" :type="4" />
           </div>
         </div>
     </div>
@@ -37,7 +37,7 @@
         <h3>Songs</h3>
         <div class="songs">
           <div class="songs-block">
-            <SongsTemplate :songs="foundedSongs.slice(0,3)" :type="3" />
+            <SongsTemplate :songs="foundedSongs.slice(0,3)" :type="4" />
           </div>
         </div>
         <div v-if="foundedSongs.length > 3" class="move-to-block">
