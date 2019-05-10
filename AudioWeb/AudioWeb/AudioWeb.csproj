@@ -412,7 +412,13 @@
     <Content Include="Songs\19-03-13_800633_audio_web.mp3" />
     <Content Include="Songs\19-03-13_816908_audio_web.mp3" />
     <Content Include="Songs\19-03-13_954426_audio_web.mp3" />
-    <Content Include="Web.config" />
+    <Content Include="static\css\app.css" />
+    <Content Include="static\js\app.js" />
+    <Content Include="static\js\manifest.js" />
+    <Content Include="static\js\vendor.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -439,6 +445,12 @@
     </None>
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Web.config" />
+    <None Include="Properties\PublishProfiles\audioweb - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\AudioWeb20190507111517 - Web Deploy.pubxml" />
+    <Content Include="static\css\app.css.map" />
+    <Content Include="static\js\app.js.map" />
+    <Content Include="static\js\manifest.js.map" />
+    <Content Include="static\js\vendor.js.map" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="OutlookFacebookProvider">

@@ -76,7 +76,7 @@ export default {
       if (this.checkPlaylistValidity(obj.Name)) {
         axios({
           method: 'POST',
-          url: 'https://localhost:44343/api/Songs/CreatePlaylist',
+          url: 'https://audioweb.freeasphost.net/api/Songs/CreatePlaylist',
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
             Authorization: 'Bearer ' + localStorage.getItem('access_token')
@@ -120,7 +120,7 @@ export default {
             let obj = this.$main.playlists[that.selectedPlaylistIndex]
             axios({
               method: 'POST',
-              url: 'https://localhost:44343/api/Songs/DeletePlaylist',
+              url: 'https://audioweb.freeasphost.net/api/Songs/DeletePlaylist',
               headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
                 Authorization: 'Bearer ' + localStorage.getItem('access_token')
@@ -150,7 +150,7 @@ export default {
         this.$store.dispatch('updateModalVisibility', false)
         axios({
           method: 'POST',
-          url: 'https://localhost:44343/api/Songs/EditPlaylist',
+          url: 'https://audioweb.freeasphost.net/api/Songs/EditPlaylist',
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
             Authorization: 'Bearer ' + localStorage.getItem('access_token')

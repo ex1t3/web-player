@@ -140,7 +140,7 @@ export default {
       this.$root.$emit('actLoadingRoot')
       axios({
         method: 'GET',
-        url: 'https://localhost:44343/api/Songs/GetUploadedSongs',
+        url: 'https://audioweb.freeasphost.net/api/Songs/GetUploadedSongs',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           Authorization: 'Bearer ' + localStorage.getItem('access_token')
@@ -163,7 +163,7 @@ export default {
       this.$root.$emit('actLoadingRoot')
       axios({
         method: 'POST',
-        url: 'https://localhost:44343/api/Songs/GetPlaylistSongs',
+        url: 'https://audioweb.freeasphost.net/api/Songs/GetPlaylistSongs',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           Authorization: 'Bearer ' + localStorage.getItem('access_token')
@@ -191,7 +191,7 @@ export default {
           f = f.then(_ =>
             axios({
               method: 'POST',
-              url: 'https://localhost:44343/api/Songs/UploadSong',
+              url: 'https://audioweb.freeasphost.net/api/Songs/UploadSong',
               data: data,
               headers: {
                 'Content-Type': 'application/json; charset=UTF-8',

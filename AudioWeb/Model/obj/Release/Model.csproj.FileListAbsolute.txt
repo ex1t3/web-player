@@ -1,0 +1,8 @@
+E:\wamp64\www\web-player\AudioWeb\Model\bin\Release\Model.dll
+E:\wamp64\www\web-player\AudioWeb\Model\bin\Release\Model.pdb
+E:\wamp64\www\web-player\AudioWeb\Model\bin\Release\System.ComponentModel.Annotations.dll
+E:\wamp64\www\web-player\AudioWeb\Model\obj\Release\Model.csprojResolveAssemblyReference.cache
+E:\wamp64\www\web-player\AudioWeb\Model\obj\Release\Model.csproj.CoreCompileInputs.cache
+E:\wamp64\www\web-player\AudioWeb\Model\obj\Release\Model.csproj.CopyComplete
+E:\wamp64\www\web-player\AudioWeb\Model\obj\Release\Model.dll
+E:\wamp64\www\web-player\AudioWeb\Model\obj\Release\Model.pdb

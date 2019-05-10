@@ -183,7 +183,7 @@ export default {
       let that = this
       axios({
         method: 'POST',
-        url: 'https://localhost:44343/api/Songs/RemoveSongFromInstance',
+        url: 'https://audioweb.freeasphost.net/api/Songs/RemoveSongFromInstance',
         data: instance,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',

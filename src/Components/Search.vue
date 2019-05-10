@@ -100,7 +100,7 @@ export default {
       let that = this
       axios({
           method: 'POST',
-          url: 'https://localhost:44343/api/Songs/SearchForSong',
+          url: 'https://audioweb.freeasphost.net/api/Songs/SearchForSong',
           data: JSON.stringify(that.searchVal),
           headers: {
             'Content-Type': 'application/json charset=UTF-8',
@@ -138,7 +138,7 @@ export default {
       let that = this
       axios({
         method: 'POST',
-        url: 'https://localhost:44343/api/Songs/GetSongsOfArtist',
+        url: 'https://audioweb.freeasphost.net/api/Songs/GetSongsOfArtist',
         data: JSON.stringify(artist),
         headers: {
           'Content-Type': 'application/json charset=UTF-8',

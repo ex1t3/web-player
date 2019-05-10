@@ -114,7 +114,7 @@ export default {
           if (willLogOut) {
             axios({
               method: 'POST',
-              url: 'https://localhost:44343/api/Account/Logout',
+              url: 'https://audioweb.freeasphost.net/api/Account/Logout',
               headers: {
                 Authorization: 'Bearer ' + localStorage.getItem('access_token')
               }
@@ -130,7 +130,7 @@ export default {
         let item = this.sessions[index].Id
         axios({
           method: 'POST',
-          url: 'https://localhost:44343/api/Account/TerminateSession',
+          url: 'https://audioweb.freeasphost.net/api/Account/TerminateSession',
           data: item,
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
@@ -148,7 +148,7 @@ export default {
       let that = this    
       axios({
         method: 'GET',
-        url: 'https://localhost:44343/api/Account/GetActiveSessions',
+        url: 'https://audioweb.freeasphost.net/api/Account/GetActiveSessions',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization' : 'Bearer ' + localStorage.getItem('access_token')
@@ -176,7 +176,7 @@ export default {
       }
       axios({
         method: 'POST',
-        url: 'https://localhost:44343/api/Account/ChangePassword',
+        url: 'https://audioweb.freeasphost.net/api/Account/ChangePassword',
         data: obj,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
