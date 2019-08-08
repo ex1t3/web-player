@@ -70,7 +70,7 @@ export default {
       }
       axios({
         method: 'POST',
-        url: 'https://audioweb.freeasphost.net/api/Account/UpdateUser',
+        url: 'https://localhost:44343/api/Account/UpdateUser',
         data: that.$login.user,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',

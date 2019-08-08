@@ -25,11 +25,11 @@ namespace AudioWeb.Controllers
 {
   [SessionAuthorize]
   [RoutePrefix("api/account")]
-  public class UsersController : ApiController
+  public class AccountController : ApiController
   {
     private readonly UserService _userService;
 
-    public UsersController()
+    public AccountController()
     {
       this._userService = new UserService();
     }
@@ -282,6 +282,9 @@ namespace AudioWeb.Controllers
     [Route("GetActiveSessions")]
     public async Task<IHttpActionResult> GetActiveSessions()
     {
+
+      var userSessionManager = new UserSessionManager(_userService);
+      userSessionManager.DeleteExpiredSessions();
       var user = _userService.GetUserByIdentityName(User.Identity.Name);
       var sessions = await _userService.GetUserSessions(user.Id);
       var result = sessions.OrderByDescending(x => x.ExpirationDateTime)
@@ -290,7 +293,7 @@ namespace AudioWeb.Controllers
           ["Id"] = session.Id,
           ["IpAddress"] = session.IpAddress,
           ["UserAgent"] = session.UserAgent,
-          ["ExpiresIn"] = (session.ExpirationDateTime - DateTime.Now).Days
+          ["ExpiresIn"] = (session.ExpirationDateTime - DateTime.Now).Days == 0 ? (session.ExpirationDateTime - DateTime.Now).Hours + " hours" : (session.ExpirationDateTime - DateTime.Now).Days + " days"
         })
         .ToList();
       return Json(result);

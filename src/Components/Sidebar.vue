@@ -70,7 +70,7 @@ export default {
         localStorage.removeItem('access_token')
         axios({
             method: 'POST',
-            url: 'https://audioweb.freeasphost.net/api/Account/Logout',
+            url: 'https://localhost:44343/api/Account/Logout',
             headers: {
               Authorization: 'Bearer ' + token
             }

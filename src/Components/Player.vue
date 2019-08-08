@@ -12,16 +12,16 @@
           </div>
         </div>
       </div>
-      <i data-toggler="true" v-bind:class="{'active-icon': isAddMenuActive}" @click="isAddMenuActive = !isAddMenuActive"
+      <i title="Add to playlist" data-toggler="true" v-bind:class="{'active-icon': isAddMenuActive}" @click="isAddMenuActive = !isAddMenuActive"
         class="fas fa-plus"></i>
-      <i @click="favHandler($event)" class="fa-heart" v-bind:class="{fas: favLookUpper($main.currentIndex) > -1, far: favLookUpper($main.currentIndex) < 0}"></i>
+      <i title="Favorite" @click="favHandler($event)" class="fa-heart" v-bind:class="{fas: favLookUpper($main.currentIndex) > -1, far: favLookUpper($main.currentIndex) < 0}"></i>
     </div>
     <div class="main-player-body">
       <div class="player-buttons">
-        <button class="player-button-icon" @click="playPrev()"><i class="fas fa-backward"></i></button>
-        <button class="player-button-icon" @click="playSong()" v-bind:class="{hidden : !$main.isPaused}"><i class="fas fa-play"></i></button>
-        <button class="player-button-icon" @click="pauseSong()" v-bind:class="{hidden : $main.isPaused}"><i class="fas fa-pause"></i></button>
-        <button class="player-button-icon" @click="playNext()"><i class="fas fa-forward"></i></button></div>
+        <button title="Play previous track" class="player-button-icon" @click="playPrev()"><i class="fas fa-backward"></i></button>
+        <button title="Play" class="player-button-icon" @click="playSong()" v-bind:class="{hidden : !$main.isPaused}"><i class="fas fa-play"></i></button>
+        <button title="Pause" class="player-button-icon" @click="pauseSong()" v-bind:class="{hidden : $main.isPaused}"><i class="fas fa-pause"></i></button>
+        <button title="Play next track" class="player-button-icon" @click="playNext()"><i class="fas fa-forward"></i></button></div>
       <div class="player-trackline">
         <div class="title">{{ title }}</div>
         <div class="timeline">
@@ -36,7 +36,7 @@
       </div>
       <div class="mobile-settings"><i class="fas fa-sliders-h"></i></div>
       <div class="player-settings">
-        <i @click="muteSong($event)" v-bind:class="{hidden: isVolumeOff}" class="fas fa-volume-up">
+        <i title="Mute song" @click="muteSong($event)" v-bind:class="{hidden: isVolumeOff}" class="fas fa-volume-up">
           <div @click="stopProp($event)" class="volume-raise-block">
             <div @click="onVolumeChange($event)" class="slider">
               <div class="progress" v-bind:style="{ width: progressVolumeWidth}">
@@ -45,10 +45,10 @@
             </div>
           </div>
         </i>
-        <i @click="unMuteSong()" v-bind:class="{hidden: !isVolumeOff, 'player-settings-active': isVolumeOff}" class="fas fa-volume-mute"></i>
-        <i @click="isActiveQueue = !isActiveQueue" class="fas fa-th-list"></i>
-        <i @click="shuffleSongs()" v-bind:class="{'player-settings-active': isShuffled}" class="fas fa-random"></i>
-        <i @click="isReplayed=!isReplayed" v-bind:class="{'player-settings-active': isReplayed}" class="fas fa-redo"></i>
+        <i title="Unmute song" @click="unMuteSong()" v-bind:class="{hidden: !isVolumeOff, 'player-settings-active': isVolumeOff}" class="fas fa-volume-mute"></i>
+        <i title="Playlist queue" @click="isActiveQueue = !isActiveQueue" class="fas fa-th-list"></i>
+        <i title="Shuffle playlist" @click="shuffleSongs()" v-bind:class="{'player-settings-active': isShuffled}" class="fas fa-random"></i>
+        <i title="Repeat track" @click="isReplayed=!isReplayed" v-bind:class="{'player-settings-active': isReplayed}" class="fas fa-redo"></i>
       </div>
     </div>
     <div v-bind:class="{'queue-active': isActiveQueue}" class="music-queue-block">
@@ -177,7 +177,7 @@ export default {
       let that = this
       axios({
         method: 'GET',
-        url: 'https://audioweb.freeasphost.net/api/Songs/GetPlaylists',
+        url: 'https://localhost:44343/api/Songs/GetPlaylists',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           Authorization: 'Bearer ' + localStorage.getItem('access_token')
@@ -209,7 +209,7 @@ export default {
       }
       axios({
         method: 'POST',
-        url: 'https://audioweb.freeasphost.net/api/Songs/AddSongToPlaylist',
+        url: 'https://localhost:44343/api/Songs/AddSongToPlaylist',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           Authorization: 'Bearer ' + localStorage.getItem('access_token')
@@ -234,7 +234,7 @@ export default {
       if (flag) {
         axios({
           method: 'POST',
-          url: 'https://audioweb.freeasphost.net/api/Songs/AddFavoriteSong',
+          url: 'https://localhost:44343/api/Songs/AddFavoriteSong',
           data: currentIndex,
           headers: {
             'Content-Type': 'application/json',
@@ -252,7 +252,7 @@ export default {
         let instance = JSON.stringify({SongId: currentIndex, Type: 2})
         axios({
           method: 'POST',
-          url: 'https://audioweb.freeasphost.net/api/Songs/RemoveSongFromInstance',
+          url: 'https://localhost:44343/api/Songs/RemoveSongFromInstance',
           data: instance,
           headers: {
             'Content-Type': 'application/json',
@@ -301,7 +301,7 @@ export default {
       // Load last played songs
       axios({
         method: "GET",
-        url: "https://audioweb.freeasphost.net/api/Songs/GetLastPlayedSongs",
+        url: "https://localhost:44343/api/Songs/GetLastPlayedSongs",
         headers: {
           "Content-Type": "application/json charset=UTF-8",
           Authorization: "Bearer " + localStorage.getItem("access_token")
@@ -320,7 +320,7 @@ export default {
       // Load top listened songs
       axios({
         method: "GET",
-        url: "https://audioweb.freeasphost.net/api/Songs/GetTopListenedSongs",
+        url: "https://localhost:44343/api/Songs/GetTopListenedSongs",
         headers: {
           "Content-Type": "application/json charset=UTF-8",
           Authorization: "Bearer " + localStorage.getItem("access_token")
@@ -334,7 +334,7 @@ export default {
       // Load favorites
       axios({
         method: 'GET',
-        url: 'https://audioweb.freeasphost.net/api/Songs/GetFavoriteSongs',
+        url: 'https://localhost:44343/api/Songs/GetFavoriteSongs',
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token')
         }
@@ -537,7 +537,7 @@ export default {
         this.playSong(id)
         axios({
           method: 'POST',
-          url: 'https://audioweb.freeasphost.net/api/Songs/IncreaseActivity',
+          url: 'https://localhost:44343/api/Songs/IncreaseActivity',
           headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + localStorage.getItem('access_token')
@@ -570,7 +570,7 @@ export default {
       this.audio.volume = this.isVolumeOff ? 0 : this.volume
       let index = this.lookUpper(this.$main.currentIndex)
       if (index != -1) {
-        this.audio.src = 'https://audioweb.freeasphost.net/Songs/' + this.songs[index]['Source']
+        this.audio.src = 'https://localhost:44343/Songs/' + this.songs[index]['Source']
         this.currentPoster = this.songs[index]['AlbumCover']
         this.title = this.songs[index]['Name'] + ' · ' + this.songs[index]['Artist']
         this.scrollToNextSongInQueue()
@@ -835,6 +835,7 @@ export default {
 .main-player-poster img {
   width: 100%;
   height: 100%;
+      border-radius: 50%;
 }
 
 .player-trackline {

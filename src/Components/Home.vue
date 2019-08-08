@@ -1,6 +1,6 @@
 <template>
   <div class="home-page-main-block">
-    <div v-if="isPageLoaded && !isAllTopTracksOpened" class="home-page-content-block">
+    <div v-if="isPageLoaded && !isAllTopTracksOpened && !isGenreSongsOpened" class="home-page-content-block">
       <div v-if="lastPlayedSongs.length > 0">
         <h4>Your last played Songs</h4>
         <div class="home-songs-items-block last-played-songs">
@@ -36,6 +36,21 @@
         <div>View top 100 tracks</div>
         <i class="fas fa-arrow-right"></i>
       </div>
+      <h4>Genres you might like</h4>
+      <div class="home-genres-block">
+        <div @click="getSongsOfCertainGenre(index)" class="home-genres-item"
+             :key="index" v-for="(item, index) in genres">
+          {{ item }}
+        </div>
+      </div>
+    </div>
+    <div v-if="isGenreSongsOpened">
+      <div @click="isGenreSongsOpened = false" class="return-block">
+        <i class="fas fa-arrow-left"></i>
+        <div>Back to Home page</div>
+      </div>
+      <h3 class="centered">{{ genres[selectedGenreSongsIndex] }}</h3>
+      <SongsTemplate :type="5" :songs="genreSongs" />
     </div>
     <div v-if="isAllTopTracksOpened">
       <div @click="isAllTopTracksOpened = false" class="return-block">
@@ -59,6 +74,10 @@ export default {
   data() {
     return {
       isPageLoaded: false,
+      isGenreSongsOpened: false,
+      selectedGenreSongsIndex: 0,
+      genres: [],
+      genreSongs: [],
       isAllTopTracksOpened: false
     }
   },
@@ -74,9 +93,24 @@ export default {
     this.$root.$emit('actLoadingRoot')
   },
   mounted () {
+    this.loadGenres()
     this.checkForDataLoaded()
   },
   methods: {
+    loadGenres () {
+      let that = this
+      axios({
+        method: 'GET',
+        url: 'https://localhost:44343/api/Songs/GetGenresList',
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token')
+        }
+      }).then(function (e) {
+        that.genres = e.data
+      }).catch(function (e) {
+        that.$root.$emit('errorHandler', e)
+      })
+    },
     checkForDataLoaded () {
       setTimeout (() => {
         if (this.topListenedSongs.length > 0) {
@@ -88,6 +122,27 @@ export default {
           this.checkForDataLoaded()
         }
       }, 200)
+    },
+    getSongsOfCertainGenre (index) {
+      this.$root.$emit('actLoadingRoot')
+      let that = this
+      this.selectedGenreSongsIndex = index
+      axios({
+        method: 'POST',
+        url: 'https://localhost:44343/api/Songs/GetSongsOfCertainGenre',
+        data: JSON.stringify(this.genres[index]),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          Authorization: 'Bearer ' + localStorage.getItem('access_token')
+        }
+      }).then(function (e) {
+        that.$root.$emit('deactLoadingRoot')
+        that.genreSongs = e.data
+        that.isGenreSongsOpened = true
+      }).catch(function (e) {
+        that.$root.$emit('deactLoadingRoot')
+        that.$root.$emit('errorHandler', e)
+      })
     },
     playSong (index, type) {
       switch (true) {
@@ -115,6 +170,9 @@ export default {
 }
 </script>
 <style scoped>
+h4 {
+  margin-top: 40px;
+}
 .home-page-main-block {
   width: 95%;
   margin: 0 auto;
@@ -152,7 +210,7 @@ export default {
    margin: 0px -5px 0px 15px;
 }
 
-.home-songs-items-block {
+.home-songs-items-block, .home-genres-block {
     display: block;
 }
 
@@ -175,6 +233,7 @@ export default {
   position: relative;
   margin: 0px 25px 15px 0px;
   display: flex;
+  transition: background .5s;
   align-items: center;
   font-size: 13px;
   border-radius: 3px;
@@ -185,6 +244,24 @@ export default {
   box-shadow: 0 0 20px #dddddd5e;
 }
 
+ .home-genres-item {
+    float: left;
+    position: relative;
+    margin: 0px 25px 15px 0px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    border-radius: 3px;
+    min-width: 30px !important;
+    height: 30px !important;
+    animation: fade-in .3s;
+    padding: 10px 15px;
+    box-shadow: 0 0 20px #dddddd5e;
+    text-transform: capitalize;
+    background: #74708f;
+    cursor: pointer;
+    color: #fff;
+ }
 
 .home-songs-item .home-songs-item--name,
 .home-songs-item .home-songs-item--album,
@@ -226,16 +303,16 @@ display: block;
 }
 
 @media (max-width: 700px) {
-  .home-songs-items-block {
+  .home-songs-items-block, .home-genres-block {
     overflow-x: scroll;
     overflow-y: hidden;
     height: 100px;
     width: 100%;
     white-space: nowrap;
   }
-  .home-songs-item {
+  .home-songs-item, .home-genres-item {
     float: none;
-    display: inline-block;
+    display: inline-flex;
     min-width: 90px;
     height: 55px
   }

@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Model.Models.DeletedInstance">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAABAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Models\DeletedInstance.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.FavoriteSong">
+    <Position X="5.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAABAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\FavoriteSong.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.LastPlayedSong">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAABAAAAAAAAAAgQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\LastPlayedSong.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.Playlist">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAwAAAAAAAQAAAAAACAAAAA=</HashCode>
+      <FileName>Models\Playlist.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.PlaylistSong">
+    <Position X="0.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAABAAAAAAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\PlaylistSong.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.SearchingViewModel">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Models\SearchingViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.Song">
+    <Position X="2.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAABgACAAAAAAIAAAQAAIQAAAAAAAAACEAAAAA=</HashCode>
+      <FileName>Models\Song.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.UploadedSong">
+    <Position X="4" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAABAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\UploadedSong.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.User">
+    <Position X="5.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAICAAAAACAAACAAAAACAAAAAAIAhAACAAQAIAAAAAA=</HashCode>
+      <FileName>Models\UserModels.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.UserSession">
+    <Position X="2.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAQAAAQAAAAAQCAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\UserModels.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.UserExternalLogin">
+    <Position X="0.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAgAAAAAEAAAABAAAAAAAAA=</HashCode>
+      <FileName>Models\UserModels.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.LoginUserViewModel">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAgAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Models\UserModels.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.ExternalLoginViewModel">
+    <Position X="4" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAACAAABAAAAAA=</HashCode>
+      <FileName>Models\UserModels.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model.Models.ChangingPasswordViewModel">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAABAAAAIAA=</HashCode>
+      <FileName>Models\UserModels.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

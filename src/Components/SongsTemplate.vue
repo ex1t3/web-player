@@ -183,7 +183,7 @@ export default {
       let that = this
       axios({
         method: 'POST',
-        url: 'https://audioweb.freeasphost.net/api/Songs/RemoveSongFromInstance',
+        url: 'https://localhost:44343/api/Songs/RemoveSongFromInstance',
         data: instance,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -200,13 +200,15 @@ export default {
       switch (type) {
         // 0 - Uploaded songs
         case 0: {
-          this.workingSongs.splice(index, 1)
+          this.songs.splice(index, 1)
+          this.sliceFunction(this.defaultCountOfItemsToLoad * this.countOfScrollTimes)
           this.$root.$emit('notificate', 'success', 'Song deleted from uploaded', 3000)
           return true
         }
         // 1 - Playlist songs
         case 1: {
-          this.workingSongs.splice(index, 1)
+          this.songs.splice(index, 1)
+          this.sliceFunction(this.defaultCountOfItemsToLoad * this.countOfScrollTimes)
           this.$root.$emit('notificate', 'success', 'Song deleted from playlist', 3000)  
           return true
         }

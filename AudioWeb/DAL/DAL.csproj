@@ -70,48 +70,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DbContextScheme\FavoriteSong.cs">
-      <DependentUpon>WebPlayerDbScheme.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DbContextScheme\LastPlayedSong.cs">
-      <DependentUpon>WebPlayerDbScheme.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DbContextScheme\Playlist.cs">
-      <DependentUpon>WebPlayerDbScheme.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DbContextScheme\PlaylistSong.cs">
-      <DependentUpon>WebPlayerDbScheme.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DbContextScheme\Song.cs">
-      <DependentUpon>WebPlayerDbScheme.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DbContextScheme\UploadedSong.cs">
-      <DependentUpon>WebPlayerDbScheme.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DbContextScheme\User.cs">
-      <DependentUpon>WebPlayerDbScheme.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DbContextScheme\UserExternalLogin.cs">
-      <DependentUpon>WebPlayerDbScheme.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DbContextScheme\UserSession.cs">
-      <DependentUpon>WebPlayerDbScheme.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DbContextScheme\WebPlayerDbScheme.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>WebPlayerDbScheme.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DbContextScheme\WebPlayerDbScheme.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>WebPlayerDbScheme.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DbContextScheme\WebPlayerDbScheme.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>WebPlayerDbScheme.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\201904141454584_changedUserSession.cs" />
     <Compile Include="Migrations\201904141454584_changedUserSession.Designer.cs">
       <DependentUpon>201904141454584_changedUserSession.cs</DependentUpon>
@@ -129,13 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EntityDeploy Include="DbContextScheme\WebPlayerDbScheme.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>WebPlayerDbScheme.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="DbContextScheme\WebPlayerDbScheme.edmx.diagram">
-      <DependentUpon>WebPlayerDbScheme.edmx</DependentUpon>
-    </None>
+    <None Include="ClassDiagram1.cd" />
     <None Include="obj\Debug\DAL.csproj.CoreCompileInputs.cache" />
     <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
     <None Include="packages.config" />
@@ -165,18 +117,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="DbContextScheme\WebPlayerDbScheme.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>WebPlayerDbScheme.edmx</DependentUpon>
-      <LastGenOutput>WebPlayerDbScheme.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="DbContextScheme\WebPlayerDbScheme.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>WebPlayerDbScheme.edmx</DependentUpon>
-      <LastGenOutput>WebPlayerDbScheme.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201904141454584_changedUserSession.resx">

@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DAL.WebPlayerDbContext">
+    <Position X="4" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAQACAAAAAAACAAAAAEAAAAEAAABAAAACAgAAQAABA=</HashCode>
+      <FileName>WebPlayerDbContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DAL.Repository.DbRepository&lt;TEntity&gt;" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>gAYAgAAAAAAgAgBAAAAAAAAAAAEAAAAACgAAAAAAAIA=</HashCode>
+      <FileName>Repository\DbRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DAL.Repository.DefaultDbFactory" BaseTypeListCollapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAACAAAABAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Repository\DefaultDbFactory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Interface Name="DAL.Repository.IDbFactory">
+    <Position X="2.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Repository\IDbFactory.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="DAL.Repository.IDbRepository&lt;TEntity&gt;">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAAAAAAgAABAAAAAAAAAAAEAAAAAAgAAAAAAAIA=</HashCode>
+      <FileName>Repository\IDbRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

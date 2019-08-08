@@ -72,7 +72,7 @@
               <div class="sessions-content-item">{{ index + 1 }}</div>
               <div class="sessions-content-item"><i title="IP Address" class="mobile-icon fas fa-map-marker-alt"></i> {{ item.IpAddress }}</div>
               <div class="sessions-content-item"><i title="Device type" class="mobile-icon fas fa-tablet-alt"></i> {{ index === 0 ? '[Current Session]' : item.UserAgent }}</div>
-              <div class="sessions-content-item"><i title="Valid for" class="mobile-icon fas fa-calendar-check"></i> {{ item.ExpiresIn + ' days' }}</div>
+              <div class="sessions-content-item"><i title="Valid for" class="mobile-icon fas fa-calendar-check"></i> {{ item.ExpiresIn }}</div>
               <div class="sessions-content-item"><i title="Terminate session" @click="terminateSession(index)" class="far fa-trash-alt"></i></div>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default {
           if (willLogOut) {
             axios({
               method: 'POST',
-              url: 'https://audioweb.freeasphost.net/api/Account/Logout',
+              url: 'https://localhost:44343/api/Account/Logout',
               headers: {
                 Authorization: 'Bearer ' + localStorage.getItem('access_token')
               }
@@ -130,7 +130,7 @@ export default {
         let item = this.sessions[index].Id
         axios({
           method: 'POST',
-          url: 'https://audioweb.freeasphost.net/api/Account/TerminateSession',
+          url: 'https://localhost:44343/api/Account/TerminateSession',
           data: item,
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
@@ -148,7 +148,7 @@ export default {
       let that = this    
       axios({
         method: 'GET',
-        url: 'https://audioweb.freeasphost.net/api/Account/GetActiveSessions',
+        url: 'https://localhost:44343/api/Account/GetActiveSessions',
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization' : 'Bearer ' + localStorage.getItem('access_token')
@@ -176,7 +176,7 @@ export default {
       }
       axios({
         method: 'POST',
-        url: 'https://audioweb.freeasphost.net/api/Account/ChangePassword',
+        url: 'https://localhost:44343/api/Account/ChangePassword',
         data: obj,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',

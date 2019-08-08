@@ -153,7 +153,7 @@ export default {
       let that = this
       axios({
         method: 'GET',
-        url: 'https://audioweb.freeasphost.net/api/Account/CheckToken',
+        url: 'https://localhost:44343/api/Account/CheckToken',
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token')
         }
@@ -177,7 +177,7 @@ export default {
         let that = this
         axios({
           method: 'POST',
-          url: 'https://audioweb.freeasphost.net/api/Account/Login',
+          url: 'https://localhost:44343/api/Account/Login',
           data: loginData,
           headers: {
             'Content-Type': 'application/json; charset=UTF-8'
@@ -198,7 +198,7 @@ export default {
       this.$root.$emit('actLoadingRoot')
       axios({
         type: 'GET',
-        url: 'https://audioweb.freeasphost.net/api/Account/ExternalLogins?returnUrl=%2F&generateState=true'
+        url: 'https://localhost:44343/api/Account/ExternalLogins?returnUrl=%2F&generateState=true'
       }).then(function (e) {
         window.location = 'https://localhost:44343' + e.data[provider].url
       })
@@ -225,7 +225,7 @@ export default {
       }
       axios({
         method: 'POST',
-        url: 'https://audioweb.freeasphost.net/api/Account/Register',
+        url: 'https://localhost:44343/api/Account/Register',
         data: data,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8'
@@ -242,7 +242,7 @@ export default {
     updateUser () {
       axios({
         method: 'POST',
-        url: 'https://audioweb.freeasphost.net/api/Account/UpdateUser',
+        url: 'https://localhost:44343/api/Account/UpdateUser',
         data: that.$login.user,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',

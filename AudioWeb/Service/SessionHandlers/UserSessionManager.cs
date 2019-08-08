@@ -25,6 +25,12 @@ namespace Service.SessionHandlers
       _userService = userService;
     }
 
+    public UserSessionManager(UserService userService)
+    {
+      _userService = userService;
+      _db = new WebPlayerDbContext();
+    }
+
     /// <returns>The current bearer authorization token from the HTTP headers</returns>
     private string GetCurrentBearerAuthrorizationToken()
     {

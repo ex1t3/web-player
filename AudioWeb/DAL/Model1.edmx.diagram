@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="e1717a8f02124528b2bffe9eb95c39df" Name="Diagram1">
+        <EntityTypeShape EntityType="WebPlayerDbModel.FavoriteSong" Width="1.5" PointX="3.25" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebPlayerDbModel.LastPlayedSong" Width="1.5" PointX="5.5" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebPlayerDbModel.Playlist" Width="1.5" PointX="3.75" PointY="6.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebPlayerDbModel.PlaylistSong" Width="1.5" PointX="6" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebPlayerDbModel.Song" Width="1.5" PointX="8.125" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebPlayerDbModel.UploadedSong" Width="1.5" PointX="2.375" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebPlayerDbModel.UserExternalLogin" Width="1.5" PointX="0.5" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebPlayerDbModel.User" Width="1.5" PointX="0.5" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="WebPlayerDbModel.UserSession" Width="1.5" PointX="0.5" PointY="6.875" IsExpanded="true" />
+        <AssociationConnector Association="WebPlayerDbModel.SongId" ManuallyRouted="false" />
+        <AssociationConnector Association="WebPlayerDbModel.UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="WebPlayerDbModel.Last_SongId" ManuallyRouted="false" />
+        <AssociationConnector Association="WebPlayerDbModel.Last_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="WebPlayerDbModel.FK_dbo_Playlists" ManuallyRouted="false" />
+        <AssociationConnector Association="WebPlayerDbModel.FK_dbo_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="WebPlayerDbModel.FK_dbo_Songs" ManuallyRouted="false" />
+        <AssociationConnector Association="WebPlayerDbModel.FK_SongId" ManuallyRouted="false" />
+        <AssociationConnector Association="WebPlayerDbModel.FK_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="WebPlayerDbModel.FK_dbo_UserExternalLogins" ManuallyRouted="false" />
+        <AssociationConnector Association="WebPlayerDbModel.FK_dbo_UserSessions" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
